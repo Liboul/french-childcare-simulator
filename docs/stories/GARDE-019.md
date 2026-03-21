@@ -36,7 +36,7 @@ Le résultat se rapproche de la promesse spec (**revenu disponible final**) au l
 
 ## Done checklist
 
-- [ ] Story spec
-- [ ] Implémentation + tests
-- [ ] Commit `GARDE-019`
-- [ ] Sprint log
+- [x] Story spec
+- [x] Implémentation + tests
+- [x] Commit `GARDE-019`
+- [x] Sprint log

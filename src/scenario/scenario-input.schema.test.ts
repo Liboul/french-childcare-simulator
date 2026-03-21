@@ -11,6 +11,45 @@ describe("safeParseScenarioInput", () => {
     expect(r.issues.some((i) => i.path.join(".") === "brutInput")).toBe(true);
   });
 
+  it("rejette incomeTax avec net et brut simultanés", () => {
+    const r = safeParseScenarioInput({
+      household: { taxYear: 2026 },
+      brutInput: { mode: "creche_privee", monthlyParticipationEur: 500 },
+      cmg: {
+        cumul: {},
+        annualReferenceIncomeN2Eur: 20_000,
+        structureDependentChildren: 1,
+        childAgeBand: "under3",
+        monthlyStructureExpenseEur: 500,
+        hourlyCrecheFeeEur: 9,
+      },
+      incomeTax: {
+        annualNetTaxableIncomeEur: 30_000,
+        annualGrossSalaryEur: 40_000,
+        householdTaxParts: 1,
+        filing: "individual",
+      },
+    });
+    expect(r.ok).toBe(false);
+  });
+
+  it("accepte incomeTax avec seulement annualHouseholdIncomeAfterIncomeTaxEur", () => {
+    const r = safeParseScenarioInput({
+      household: { taxYear: 2026 },
+      brutInput: { mode: "creche_privee", monthlyParticipationEur: 500 },
+      cmg: {
+        cumul: {},
+        annualReferenceIncomeN2Eur: 20_000,
+        structureDependentChildren: 1,
+        childAgeBand: "under3",
+        monthlyStructureExpenseEur: 500,
+        hourlyCrecheFeeEur: 9,
+      },
+      incomeTax: { annualHouseholdIncomeAfterIncomeTaxEur: 40_000 },
+    });
+    expect(r.ok).toBe(true);
+  });
+
   it("accepte chaque fichier JSON sous docs/demo-scenarios/", () => {
     const dir = join(process.cwd(), "docs", "demo-scenarios");
     const names = readdirSync(dir).filter((f) => f.endsWith(".json"));

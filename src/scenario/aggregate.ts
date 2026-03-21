@@ -7,6 +7,13 @@ import { taxCreditKindForChildcareMode } from "../tax-credits/types";
 import { brutInputReferencedRuleIds } from "../uncertainty/brut-rule-refs";
 import { buildUncertaintyReport } from "../uncertainty/report";
 import { appendStep, emptyTrace } from "../trace/trace";
+import {
+  annualNetTaxableFromGrossSalaryEur,
+  estimateFrenchIncomeTax2026,
+  incomeTaxBaremeFr2026,
+} from "../income-tax";
+import type { FrenchIncomeTaxEstimate2026 } from "../income-tax/estimate-fr-2026";
+import { buildIncomeTaxLimitationHints } from "./income-tax-hints";
 import { buildLimitationHints } from "./limitation-hints";
 import { buildScenarioMeta } from "./scenario-meta";
 import type { ScenarioInput, ScenarioResult, ScenarioTaxCreditContext } from "./types";
@@ -31,7 +38,7 @@ function defaultTaxCreditContext(): ScenarioTaxCreditContext {
 
 /**
  * Chaîne brut mensuel → CMG → crédit d’impôt (routé par mode) → reste à charge équivalent.
- * Pas de TMI : le « disponible » repose sur `baselineDisposableIncomeMonthlyEur` fourni par l’appelant.
+ * IR / TMI (GARDE-019) : optionnel via `incomeTax` + barème `config/income-tax-bareme.fr-2026.json`.
  */
 export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): ScenarioResult {
   const meta = buildScenarioMeta(pack);
@@ -171,6 +178,29 @@ export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): S
   );
   const netHouseholdBurdenMonthlyEur = round2(netHouseholdBurdenAnnualEur / MONTHS_PER_TAX_YEAR);
 
+  let incomeTaxEstimate: FrenchIncomeTaxEstimate2026 | null = null;
+  const it = input.incomeTax;
+  if (it) {
+    const hasNet = it.annualNetTaxableIncomeEur != null;
+    const hasGross = it.annualGrossSalaryEur != null;
+    if (hasNet || hasGross) {
+      const parts = it.householdTaxParts!;
+      const filing = it.filing!;
+      const rni = hasNet
+        ? it.annualNetTaxableIncomeEur!
+        : annualNetTaxableFromGrossSalaryEur(it.annualGrossSalaryEur!, incomeTaxBaremeFr2026);
+      incomeTaxEstimate = estimateFrenchIncomeTax2026({
+        annualNetTaxableIncomeEur: rni,
+        householdTaxParts: parts,
+        filing,
+      });
+      warnings.push(...incomeTaxEstimate.warnings);
+    }
+    if (input.household.taxYear !== incomeTaxBaremeFr2026.taxYear) {
+      warnings.push("income_tax_bareme_2026_used_tax_year_mismatch");
+    }
+  }
+
   let employerSupportDeltaAnnualEur: number | null = null;
   if (
     input.declaredEmployerChildcareSupportAnnualEur != null &&
@@ -185,10 +215,25 @@ export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): S
     }
   }
 
-  const disposableIncomeMonthlyEur =
-    input.baselineDisposableIncomeMonthlyEur != null
-      ? round2(input.baselineDisposableIncomeMonthlyEur - netHouseholdBurdenMonthlyEur)
-      : null;
+  let disposableIncomeMonthlyEur: number | null = null;
+  const afterIrAnnual = it?.annualHouseholdIncomeAfterIncomeTaxEur;
+  if (afterIrAnnual != null) {
+    disposableIncomeMonthlyEur = round2(
+      afterIrAnnual / MONTHS_PER_TAX_YEAR - netHouseholdBurdenMonthlyEur,
+    );
+  } else if (input.baselineDisposableIncomeMonthlyEur != null) {
+    const baseline = input.baselineDisposableIncomeMonthlyEur;
+    const irMonthly = incomeTaxEstimate
+      ? round2(incomeTaxEstimate.incomeTaxNetAfterDecoteAnnualEur / MONTHS_PER_TAX_YEAR)
+      : 0;
+    const skipIrOnBaseline = it?.monthlyResourcesAlreadyAccountForIncomeTax === true;
+    if (incomeTaxEstimate != null && !skipIrOnBaseline) {
+      disposableIncomeMonthlyEur = round2(baseline - irMonthly - netHouseholdBurdenMonthlyEur);
+      warnings.push("income_tax_subtracted_from_baseline_verify_not_double_with_pas_dr07");
+    } else {
+      disposableIncomeMonthlyEur = round2(baseline - netHouseholdBurdenMonthlyEur);
+    }
+  }
 
   order += 1;
   trace = appendStep(trace, {
@@ -198,7 +243,9 @@ export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): S
     label: "Reste à charge équivalent (foyer)",
     formula: "max(0, brut_annuel − CMG_annuel − crédit_impôt_annuel) ; mensuel = ÷12",
     narrative:
-      "Crédit d’impôt traité comme allègement monétaire équivalent ; pas d’impôt sur le revenu marginal modélisé ici.",
+      incomeTaxEstimate != null
+        ? "Crédit d’impôt traité comme allègement monétaire équivalent ; IR barème estimé séparément (DR-07, hors plafonnement QF)."
+        : "Crédit d’impôt traité comme allègement monétaire équivalent ; IR foyer optionnel via `incomeTax`.",
     sources: [],
   });
 
@@ -217,6 +264,11 @@ export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): S
     netHouseholdBurdenMonthlyEur,
     disposableIncomeMonthlyEur,
     employerSupportDeltaAnnualEur,
+    estimatedIncomeTaxGrossAnnualEur: incomeTaxEstimate?.incomeTaxGrossAnnualEur ?? null,
+    estimatedIncomeTaxNetAfterDecoteAnnualEur:
+      incomeTaxEstimate?.incomeTaxNetAfterDecoteAnnualEur ?? null,
+    marginalIncomeTaxRate: incomeTaxEstimate?.marginalIncomeTaxRate ?? null,
+    incomeTaxQuotientEur: incomeTaxEstimate?.quotientEur ?? null,
   };
 
   const referencedRuleIds = [
@@ -227,11 +279,14 @@ export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): S
     referencedRuleIds,
   });
 
-  const limitationHints = buildLimitationHints({
-    mode: input.brutInput.mode,
-    cmgStatus: cmg.status,
-    cmgWarnings: cmg.warnings,
-  });
+  const limitationHints = [
+    ...buildLimitationHints({
+      mode: input.brutInput.mode,
+      cmgStatus: cmg.status,
+      cmgWarnings: cmg.warnings,
+    }),
+    ...buildIncomeTaxLimitationHints(incomeTaxEstimate),
+  ];
 
   return { snapshot, trace, warnings, uncertainty, meta, limitationHints };
 }

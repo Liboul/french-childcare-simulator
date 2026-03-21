@@ -9,6 +9,7 @@ export {
 export type {
   LimitationHint,
   ScenarioCmgInput,
+  ScenarioIncomeTaxInput,
   ScenarioInput,
   ScenarioMeta,
   ScenarioResult,

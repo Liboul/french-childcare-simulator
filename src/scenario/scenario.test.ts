@@ -230,4 +230,130 @@ describe("computeScenarioSnapshot", () => {
     expect(r.snapshot.employerSupportDeltaAnnualEur).toBe(0);
     expect(r.warnings).not.toContain("employer_childcare_support_differs_from_reference_scenario");
   });
+
+  it("sans incomeTax : champs IR absents (null)", () => {
+    const r = computeScenarioSnapshot(pack, {
+      household: household2026,
+      brutInput: {
+        mode: "nounou_domicile",
+        hourlyGrossEur: 12,
+        hoursPerMonth: 80,
+        employerShareOfGross: 0.42,
+      },
+      cmg: {
+        cumul: {},
+        monthlyReferenceIncomeEur: 4000,
+        householdEffortRank: 1,
+        hourlyDeclaredGrossEur: 12,
+        heuresParMois: 80,
+      },
+    });
+    expect(r.snapshot.estimatedIncomeTaxGrossAnnualEur).toBeNull();
+    expect(r.snapshot.marginalIncomeTaxRate).toBeNull();
+  });
+
+  it("incomeTax (RNI) : snapshot IR + limitation QF", () => {
+    const r = computeScenarioSnapshot(pack, {
+      household: household2026,
+      brutInput: {
+        mode: "nounou_domicile",
+        hourlyGrossEur: 12,
+        hoursPerMonth: 80,
+        employerShareOfGross: 0.42,
+      },
+      cmg: {
+        cumul: {},
+        monthlyReferenceIncomeEur: 4000,
+        householdEffortRank: 1,
+        hourlyDeclaredGrossEur: 12,
+        heuresParMois: 80,
+      },
+      incomeTax: {
+        annualNetTaxableIncomeEur: 30_000,
+        householdTaxParts: 1,
+        filing: "individual",
+      },
+    });
+    expect(r.snapshot.estimatedIncomeTaxGrossAnnualEur).toBe(2103.99);
+    expect(r.snapshot.marginalIncomeTaxRate).toBe(0.3);
+    expect(r.limitationHints.map((h) => h.code)).toContain(
+      "income_tax_quotient_familial_plafond_non_modele",
+    );
+  });
+
+  it("annualHouseholdIncomeAfterIncomeTaxEur seul : disponible = après IR /12 − RAC", () => {
+    const r = computeScenarioSnapshot(pack, {
+      household: household2026,
+      brutInput: {
+        mode: "nounou_domicile",
+        hourlyGrossEur: 12,
+        hoursPerMonth: 80,
+        employerShareOfGross: 0.42,
+      },
+      cmg: {
+        cumul: {},
+        monthlyReferenceIncomeEur: 4000,
+        householdEffortRank: 1,
+        hourlyDeclaredGrossEur: 12,
+        heuresParMois: 80,
+      },
+      incomeTax: { annualHouseholdIncomeAfterIncomeTaxEur: 48_000 },
+    });
+    expect(r.snapshot.estimatedIncomeTaxGrossAnnualEur).toBeNull();
+    expect(r.snapshot.disposableIncomeMonthlyEur).toBe(
+      Math.round((4000 - r.snapshot.netHouseholdBurdenMonthlyEur) * 100) / 100,
+    );
+  });
+
+  it("baseline + incomeTax : IR mensuel estimé déduit (warning PAS)", () => {
+    const base = computeScenarioSnapshot(pack, {
+      household: household2026,
+      brutInput: {
+        mode: "nounou_domicile",
+        hourlyGrossEur: 12,
+        hoursPerMonth: 80,
+        employerShareOfGross: 0.42,
+      },
+      cmg: {
+        cumul: {},
+        monthlyReferenceIncomeEur: 4000,
+        householdEffortRank: 1,
+        hourlyDeclaredGrossEur: 12,
+        heuresParMois: 80,
+      },
+      baselineDisposableIncomeMonthlyEur: 5000,
+    });
+    const r = computeScenarioSnapshot(pack, {
+      household: household2026,
+      brutInput: {
+        mode: "nounou_domicile",
+        hourlyGrossEur: 12,
+        hoursPerMonth: 80,
+        employerShareOfGross: 0.42,
+      },
+      cmg: {
+        cumul: {},
+        monthlyReferenceIncomeEur: 4000,
+        householdEffortRank: 1,
+        hourlyDeclaredGrossEur: 12,
+        heuresParMois: 80,
+      },
+      baselineDisposableIncomeMonthlyEur: 5000,
+      incomeTax: {
+        annualNetTaxableIncomeEur: 30_000,
+        householdTaxParts: 1,
+        filing: "individual",
+      },
+    });
+    const irM = Math.round((2103.99 / 12) * 100) / 100;
+    expect(r.snapshot.disposableIncomeMonthlyEur).toBe(
+      Math.round((5000 - irM - r.snapshot.netHouseholdBurdenMonthlyEur) * 100) / 100,
+    );
+    expect(r.snapshot.disposableIncomeMonthlyEur).toBeLessThan(
+      base.snapshot.disposableIncomeMonthlyEur!,
+    );
+    expect(r.warnings).toContain(
+      "income_tax_subtracted_from_baseline_verify_not_double_with_pas_dr07",
+    );
+  });
 });

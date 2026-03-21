@@ -6,6 +6,7 @@ export * from "./exporters/index";
 export * from "./employer-benefits/index";
 export * from "./family-allowances/index";
 export * from "./household/index";
+export * from "./income-tax/index";
 export * from "./scenario/index";
 export * from "./uncertainty/index";
 export * from "./tax-credits/index";

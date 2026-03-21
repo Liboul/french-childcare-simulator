@@ -139,6 +139,17 @@ const householdSchema = z
   })
   .strict();
 
+const scenarioIncomeTaxSchema = z
+  .object({
+    annualNetTaxableIncomeEur: z.number().optional(),
+    annualGrossSalaryEur: z.number().optional(),
+    householdTaxParts: z.number().positive().optional(),
+    filing: z.enum(["individual", "joint"]).optional(),
+    annualHouseholdIncomeAfterIncomeTaxEur: z.number().optional(),
+    monthlyResourcesAlreadyAccountForIncomeTax: z.boolean().optional(),
+  })
+  .strict();
+
 export const scenarioInputSchema = z
   .object({
     household: householdSchema,
@@ -148,8 +159,48 @@ export const scenarioInputSchema = z
     baselineDisposableIncomeMonthlyEur: z.number().optional(),
     declaredEmployerChildcareSupportAnnualEur: z.number().optional(),
     referenceEmployerChildcareSupportAnnualEur: z.number().optional(),
+    incomeTax: scenarioIncomeTaxSchema.optional(),
   })
-  .strict();
+  .strict()
+  .superRefine((val, ctx) => {
+    const it = val.incomeTax;
+    if (!it) return;
+    const hasNet = it.annualNetTaxableIncomeEur != null;
+    const hasGross = it.annualGrossSalaryEur != null;
+    const hasAfter = it.annualHouseholdIncomeAfterIncomeTaxEur != null;
+    if (hasNet && hasGross) {
+      ctx.addIssue({
+        code: "custom",
+        message:
+          "incomeTax: fournir au plus un des champs annualNetTaxableIncomeEur et annualGrossSalaryEur",
+        path: ["incomeTax"],
+      });
+    }
+    if (hasNet || hasGross) {
+      if (it.householdTaxParts == null) {
+        ctx.addIssue({
+          code: "custom",
+          message:
+            "incomeTax.householdTaxParts requis lorsque le revenu net imposable ou brut est renseigné",
+          path: ["incomeTax", "householdTaxParts"],
+        });
+      }
+      if (it.filing == null) {
+        ctx.addIssue({
+          code: "custom",
+          message: "incomeTax.filing requis lorsque le revenu net imposable ou brut est renseigné",
+          path: ["incomeTax", "filing"],
+        });
+      }
+    } else if (!hasAfter) {
+      ctx.addIssue({
+        code: "custom",
+        message:
+          "incomeTax: renseigner annualHouseholdIncomeAfterIncomeTaxEur ou une assiette (net / brut) + parts + filing",
+        path: ["incomeTax"],
+      });
+    }
+  });
 
 export type ScenarioValidationIssue = {
   path: (string | number)[];

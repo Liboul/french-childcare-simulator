@@ -15,6 +15,27 @@ export type ScenarioMeta = {
 /** Champs CMG sans `mode` : le mode est toujours `brutInput.mode`. */
 export type ScenarioCmgInput = Omit<CmgEstimateRequest, "mode">;
 
+/** Paramètres IR / quotient pour GARDE-019 (DR-07). */
+export type ScenarioIncomeTaxInput = {
+  /** Revenu net imposable annuel foyer (€) — prime sur le brut dérivé. */
+  annualNetTaxableIncomeEur?: number;
+  /** Salaires bruts annuels foyer (€) — RNI via abattement 10 % min/max (`config/income-tax-bareme.fr-2026.json`). */
+  annualGrossSalaryEur?: number;
+  /** Requis si `annualNetTaxableIncomeEur` ou `annualGrossSalaryEur` est renseigné. */
+  householdTaxParts?: number;
+  /** Requis pour l’estimation IR si assiette (net ou brut) renseignée. */
+  filing?: "individual" | "joint";
+  /**
+   * Revenu annuel foyer après IR (hors crédit garde modélisé ici) — base recommandée pour le disponible mensuel ÷12.
+   */
+  annualHouseholdIncomeAfterIncomeTaxEur?: number;
+  /**
+   * Si true avec `baselineDisposableIncomeMonthlyEur` : la base est déjà nette d’IR (ex. alignée sur le PAS) ;
+   * ne pas soustraire l’estimation IR annuelle au disponible.
+   */
+  monthlyResourcesAlreadyAccountForIncomeTax?: boolean;
+};
+
 /** Contexte crédit d’impôt pour l’agrégateur (une ligne enfant / foyer simplifié). */
 export type ScenarioTaxCreditContext = {
   childQualifiesForHorsDomicileCredit: boolean;
@@ -37,6 +58,8 @@ export type ScenarioInput = {
   declaredEmployerChildcareSupportAnnualEur?: number;
   /** Référence pour comparer les scénarios (« coût employeur constant »). */
   referenceEmployerChildcareSupportAnnualEur?: number;
+  /** Estimation IR / TMI / disponible (barème versionné, DR-07). */
+  incomeTax?: ScenarioIncomeTaxInput;
 };
 
 export type ScenarioSnapshot = {
@@ -56,6 +79,11 @@ export type ScenarioSnapshot = {
   netHouseholdBurdenMonthlyEur: number;
   disposableIncomeMonthlyEur: number | null;
   employerSupportDeltaAnnualEur: number | null;
+  /** Présent si `incomeTax` fourni — hors plafonnement QF et hors autres crédits / réductions. */
+  estimatedIncomeTaxGrossAnnualEur: number | null;
+  estimatedIncomeTaxNetAfterDecoteAnnualEur: number | null;
+  marginalIncomeTaxRate: number | null;
+  incomeTaxQuotientEur: number | null;
 };
 
 /** @see `buildLimitationHints` — GARDE-022 */

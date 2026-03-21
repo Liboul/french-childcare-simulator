@@ -6,7 +6,8 @@ Guide pour le **harness** (skill Claude, Custom GPT, etc.) : poser les questions
 
 - Année visée : en général **`household.taxYear`** = `2026` (aligné sur le pack `config/rules.fr-2026.json`).
 - Un calcul = **un mode de garde** ; pour comparer plusieurs modes, relancer avec un autre `brutInput.mode`.
-- Rappeler : **pas de TMI** ; **crèche publique / inter-entreprises** → CMG souvent `unsupported` (voir `limitationHints` dans la réponse).
+- **TMI / IR** : optionnel via **`incomeTax`** (revenu net imposable ou brut + parts, ou seulement revenu après IR pour le disponible) — voir **DR-07** ; ne pas confondre avec le **PAS** sur fiche de paie.
+- **crèche publique / inter-entreprises** → CMG souvent `unsupported` (voir `limitationHints` dans la réponse).
 
 ## 1. Mode de garde
 
@@ -55,7 +56,8 @@ Demander le mode parmi :
 
 ## 4. Options fréquentes
 
-- **`baselineDisposableIncomeMonthlyEur`** : pour afficher un « disponible » après RAC (sinon `null`).
+- **`baselineDisposableIncomeMonthlyEur`** : pour afficher un « disponible » après RAC (sinon `null`). Avec **`incomeTax`** (assiette RNI ou brut), le moteur peut soustraire l’IR estimé / 12 — vérifier qu’il n’y a pas **double comptage** avec un revenu déjà net de PAS (`monthlyResourcesAlreadyAccountForIncomeTax`).
+- **`incomeTax.annualHouseholdIncomeAfterIncomeTaxEur`** : si le foyer connaît son revenu **après IR** annuel, prioritaire pour le disponible (= ce montant ÷ 12 − RAC mensuel).
 - **`taxCredit`** : précisions crédit d’impôt (garde hors domicile, CESU préfinancé, etc.).
 - **Soutien employeur** : `declaredEmployerChildcareSupportAnnualEur` + `referenceEmployerChildcareSupportAnnualEur` pour le delta.
 

@@ -15,5 +15,11 @@
     "noEmit": true,
     "rootDir": "."
   },
-  "include": ["src/**/*.ts", "scripts/**/*.ts", "harness/**/*.ts", "vitest.config.ts"]
+  "include": [
+    "src/**/*.ts",
+    "scripts/**/*.ts",
+    "harness/**/*.ts",
+    "vitest.config.ts",
+    "config/**/*.json"
+  ]
 }
