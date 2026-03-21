@@ -73,12 +73,13 @@ This section is the **sprint-level audit trail**: what shipped, whether executio
 
 **Where:** append a row to the table below. If the backlog order or story list changes, update the [Backlog](#backlog-stories) section in the same edit so the plan stays coherent.
 
-| Story ID      | Completed (date) | Outcome & notes                                                                                                                                                                                                      |
-| ------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **GARDE-001** | 2026-03-21       | Done. Bun + strict TS + Vitest + ESLint + Prettier + EditorConfig + `config/` + GitHub Actions CI (`bun run ci`). Minimal `src/` placeholder; README. Prettier also applied to existing `docs/*.md` on first format. |
-| **GARDE-002** | 2026-03-21       | Done. `src/trace/`: `SourceRef`, blocks A–G + labels, `CalculationStep`, `CalculationTrace`, `emptyTrace` / `appendStep`. Barrel export from `src/index.ts`.                                                         |
-| **GARDE-003** | 2026-03-21       | Done. Zod `rulePackSchema` + `parseRulePack`, categories, `todoVerify` OR sources per rule. `config/rules.example.json`. Dependency `zod`.                                                                           |
-| **GARDE-004** | 2026-03-21       | Done. Deep research outputs committed: `docs/research/DR-01-CMG-CAF.md` … `DR-05-PROVIDER-HARNESS.md`; prompts live under `docs/research/prompts/*-PROMPT.md`.                                                       |
+| Story ID      | Completed (date) | Outcome & notes                                                                                                                                                                                                       |
+| ------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **GARDE-001** | 2026-03-21       | Done. Bun + strict TS + Vitest + ESLint + Prettier + EditorConfig + `config/` + GitHub Actions CI (`bun run ci`). Minimal `src/` placeholder; README. Prettier also applied to existing `docs/*.md` on first format.  |
+| **GARDE-002** | 2026-03-21       | Done. `src/trace/`: `SourceRef`, blocks A–G + labels, `CalculationStep`, `CalculationTrace`, `emptyTrace` / `appendStep`. Barrel export from `src/index.ts`.                                                          |
+| **GARDE-003** | 2026-03-21       | Done. Zod `rulePackSchema` + `parseRulePack`, categories, `todoVerify` OR sources per rule. `config/rules.example.json`. Dependency `zod`.                                                                            |
+| **GARDE-004** | 2026-03-21       | Done. Deep research outputs committed: `docs/research/DR-01-CMG-CAF.md` … `DR-05-PROVIDER-HARNESS.md`; prompts live under `docs/research/prompts/*-PROMPT.md`.                                                        |
+| **GARDE-005** | 2026-03-21       | Done. `config/rules.fr-2026.json` (DR-01–04 parameters + Service-Public/Légifrance refs, `todoVerify` où requis), `findRule`, tests sur le pack ; pas d’extension Zod (paramètres restent `Record<string, unknown>`). |
 
 ---
 

@@ -8,4 +8,5 @@ export {
   rulePackSchema,
   sourceRefConfigSchema,
 } from "./schema";
+export { findRule } from "./find-rule";
 export { type ParseResult, parseRulePack } from "./parse";

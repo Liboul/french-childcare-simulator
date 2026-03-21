@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import example from "../../config/rules.example.json" with { type: "json" };
+import rulesFr2026 from "../../config/rules.fr-2026.json" with { type: "json" };
+import { findRule } from "./find-rule";
 import { parseRulePack } from "./parse";
 import { rulePackSchema } from "./schema";
 
@@ -63,5 +65,30 @@ describe("rulePackSchema", () => {
     };
     const result = parseRulePack(good);
     expect(result.ok).toBe(true);
+  });
+
+  it("accepts rules.fr-2026.json and exposes expected parameters", () => {
+    const result = parseRulePack(rulesFr2026);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const { data } = result;
+    expect(data.version).toBe("2026.1.0");
+    expect(data.effectiveFrom).toBe("2026-01-01");
+    expect(data.rules.length).toBeGreaterThan(10);
+
+    const smic = findRule(data, "tarif-smic-horaire-metropole-2026");
+    expect(smic?.parameters).toMatchObject({ hourlyGrossEur: 12.02 });
+
+    const credit = findRule(data, "credit-impot-garde-hors-domicile");
+    expect(credit?.parameters).toMatchObject({
+      maxEligibleExpensePerChildFullCustodyEur: 3500,
+      rate: 0.5,
+    });
+
+    const cmgDom = findRule(data, "cmg-emploi-direct-garde-domicile-2026-04");
+    expect(cmgDom?.parameters).toMatchObject({
+      hourlyReferenceCostEur: 10.5,
+      maxHourlySalaryCountedEur: 15.18,
+    });
   });
 });
