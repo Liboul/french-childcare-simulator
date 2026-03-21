@@ -1,32 +1,51 @@
 ---
 name: comparatif-modes-garde-fr-2026
-description: >
-  Estimation transparente des coûts de garde d'enfants en France (2026) via le moteur du dépôt
-  agent-comparatif-modes-de-garde — brut, CMG, crédit d'impôt simplifié, reste à charge, incertitudes.
+description: Garde enfants FR 2026 — exécute toujours node scripts/simulate.mjs sur un JSON ScenarioInput ; brut, CMG, crédit impôt, reste à charge.
 ---
 
 # Comparatif modes de garde (France, 2026)
 
 ## Rôle
 
-Tu **orchestrates** la collecte des données et l’appel au **calculateur**, tu ne recalcules pas les montants à la main.
+Tu **orchestrates** la collecte des données et l’appel au **calculateur**, tu ne recalcules **jamais** les montants à la main.
+
+## Règle non négociable — simulation
+
+Dès que tu as un objet JSON **`ScenarioInput`** valide (ou dès que tu veux **vérifier** un brouillon), tu **dois** lancer le moteur embarqué :
+
+```bash
+node scripts/simulate.mjs chemin/vers/scenario.json
+```
+
+ou, si le JSON est sur **stdin** :
+
+```bash
+node scripts/simulate.mjs - < chemin/vers/scenario.json
+```
+
+- **Sortie standard** : document JSON complet du résultat moteur (`snapshot`, `warnings`, `trace`, `meta`, etc.) — c’est la **seule** source de vérité pour les montants.
+- **Sortie erreur** : si validation impossible, JSON avec `error: "validation_failed"` et `issues[]` — complète les champs manquants puis **relance** `simulate.mjs`.
+- **Interdit** : estimer CMG, crédit d’impôt ou reste à charge sans avoir **au moins une fois** exécuté `simulate.mjs` pour ce scénario (sauf si l’utilisateur te colle déjà une sortie complète du même script).
+
+Pour **comparer plusieurs modes**, construis **un JSON par mode** et exécute **une fois par fichier** (le moteur calcule **un** mode par requête).
 
 ## Contexte d’exécution
 
-- **Dépôt complet clone** (Claude Code, etc.) : tu as `src/`, `config/`, Bun → exécute le moteur **dans le repo**.
-- **Archive skill seule** (ZIP claude.ai) : tu n’as en général **pas** le moteur TS ; utilise **`INTAKE.md`** (ordre des questions), **`REFERENCE.md`**, **`examples/*.json`**, **`openapi.yaml`**, **`scenario-input.schema.json`**, et configure un **outil HTTP / MCP** vers une API qui expose `POST /v1/calculate`, **ou** demande à l’utilisateur de coller la sortie d’une exécution locale.
+- **Skill ZIP (claude.ai)** : le bundle contient **`scripts/simulate.mjs`** (Node, dépendances incluses). Active **l’exécution de code** dans les paramètres du compte si requis. Pas d’API HTTP ni de serveur à lancer : **uniquement** ce script.
+- **Dépôt complet + Bun** (Claude Code, etc.) : tu peux aussi `bun run demo:scenario docs/demo-scenarios/<fichier>.json` ou importer `harness/handle-calculate.ts` — même logique que `simulate.mjs`.
 
-## Outils
+## Ressources du skill
 
-- **Préféré avec dépôt + Bun** : `bun run demo:scenario docs/demo-scenarios/<fichier>.json`, ou import `computeScenarioSnapshot` / `harness/handle-calculate.ts` (voir ADR dans le repo : `docs/architecture/ADR-0001-pluggable-provider-harness.md`).
-- **Avec ZIP sans repo** : mêmes JSON que les fichiers dans **`examples/`** ; spec **`openapi.yaml`** pour brancher une Action HTTP.
-- **HTTP** : `POST /v1/calculate` avec un corps **`ScenarioInput`**. Dev local : `bun run harness:serve` → `http://127.0.0.1:8787/v1/calculate`.
+- **`INTAKE.md`** : ordre des questions pour remplir `ScenarioInput`.
+- **`REFERENCE.md`** : champs par `mode`, limites moteur.
+- **`scenario-input.schema.json`** : contrat JSON.
+- **`examples/*.json`** : gabarits à copier puis adapter avant de passer à `simulate.mjs`.
 
 ## Procédure
 
 1. Suis **`INTAKE.md`** puis **`REFERENCE.md`** pour les champs par `mode` ; pose des questions **progressives**.
-2. Construis le JSON (`household`, `brutInput`, `cmg`, options) et lance le calcul (CLI, code, ou POST). En cas d’erreur **422**, relis `issues[]` pour compléter les champs.
-3. Présente **snapshot**, **warnings**, **limitationHints**, **uncertainty**, **`meta`** (versions) ; rappelle les limites (pas de TMI, crèche publique / PSU, etc.).
+2. Écris le JSON dans un fichier (ou pipe stdin), puis exécute **`node scripts/simulate.mjs …`**. En cas de **`validation_failed`**, relis `issues[]` et corrige.
+3. Présente **snapshot**, **warnings**, **limitationHints**, **uncertainty**, **`meta`** (versions) ; rappelle les limites (TMI / IR optionnels via `incomeTax`, crèche publique / PSU, etc.).
 
 ## Transport de la nounou (`nounou_domicile`, `nounou_partagee`)
 
@@ -44,9 +63,9 @@ Lorsque l’utilisateur compare plusieurs modes et choisit **nounou à domicile*
 - Si **partagé** : renseigne `brutInput.householdShareOfEmploymentCost` avec la **quote-part du coût d’emploi** supportée par ce foyer (nombre entre 0 et 1, ex. `0.5`). Saisis alors `hourlyGrossEur` et `hoursPerMonth` comme le **contrat / volume total** avant répartition (salaire brut total × heures totales), pour que le moteur applique la part au salaire et aux cotisations patronales du foyer.
 - Fais **cohérents** les champs CMG `hourlyDeclaredGrossEur` et `heuresParMois` avec ce que **ce foyer déclare** à la CAF (souvent les heures et montants correspondant à sa quote-part, pas le contrat agrégé). Un avertissement moteur rappelle cet alignement lorsque la part est inférieure à 1.
 - Alternative moteur : le mode `nounou_partagee` avec `simultaneousChildrenCount: 1` et `householdShareOfSalary` reprend une logique proche et ajoute une **majoration** si plusieurs enfants sont accueillis **simultanément** par la même garde ; pour un simple partage entre foyers sans majoration « simultanés », préfère `nounou_domicile` + `householdShareOfEmploymentCost`.
-- **Autres coûts complémentaires** (congés, lissages fin de contrat, etc.) : remplis `brutInput.domicileComplementaryCosts` selon **`REFERENCE.md`** et `docs/research/DR-06-EMPLOI-DOMICILE-COUTS-COMPLEMENTAIRES.md` ; le **transport** suit la section **Transport de la nounou** ci-dessus. Présente **`monthlyBrutTaxCreditAssietteEur`** quand il diffère du brut total.
+- **Autres coûts complémentaires** (congés, lissages fin de contrat, etc.) : remplis `brutInput.domicileComplementaryCosts` selon **`REFERENCE.md`** ; le **transport** suit la section **Transport de la nounou** ci-dessus. Présente **`monthlyBrutTaxCreditAssietteEur`** quand il diffère du brut total.
 
 ## Rappels
 
-- Moteur **sans TMI** ; crèche publique = CMG souvent `unsupported` dans ce modèle.
+- Le moteur reste soumis aux **limites** listées dans **`REFERENCE.md`** (IR, crèche publique, annualisation CI, etc.).
 - Sources officielles : dans le dépôt, `docs/SOURCES_OFFICIELLES.md` ; sinon résumer Service-Public / CAF / impots.gouv / URSSAF.

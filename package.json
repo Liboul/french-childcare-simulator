@@ -14,6 +14,7 @@
     "ci": "bun run typecheck && bun run lint && bun run format && bun run test",
     "demo:scenario": "bun run scripts/run-demo-scenario.ts",
     "harness:serve": "bun run harness/server.ts",
+    "build:claude-skill-runner": "bun run scripts/build-claude-skill-runner.ts",
     "package:claude-skill": "bun run scripts/package-claude-skill.ts",
     "schema:scenario": "bun run scripts/generate-scenario-json-schema.ts"
   },

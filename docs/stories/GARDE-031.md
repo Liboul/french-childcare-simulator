@@ -7,7 +7,7 @@
 
 ## User / product value
 
-Le pipeline garantit que l’artefact publiable **contient toujours** `SKILL.md`, `REFERENCE.md`, `openapi.yaml`, et les exemples.
+Le pipeline garantit que l’artefact publiable **contient toujours** `SKILL.md`, `REFERENCE.md`, `scripts/simulate.mjs`, et les exemples (**GARDE-035** : plus d’`openapi.yaml` dans le ZIP skill).
 
 ## Scope
 

@@ -1,11 +1,13 @@
 # Référence harness — `ScenarioInput` (ZIP / hors IDE)
 
-Ce fichier est **embarqué dans le skill** pour les usages **sans** accès au dépôt complet. Le moteur TypeScript vit dans le repo ; sans clone ni API HTTP, le modèle ne peut **pas** calculer seul.
+Ce fichier est **embarqué dans le skill** pour les usages **sans** accès au dépôt complet. Le calcul passe par **`scripts/simulate.mjs`** (bundle Node, règles incluses).
 
-## Deux façons d’obtenir un calcul
+## Obtenir un calcul
 
-1. **Dépôt + Bun** (recommandé) : à la racine du repo, `bun install` puis `bun run demo:scenario docs/demo-scenarios/<fichier>.json` (ou un chemin vers un JSON valide).
-2. **HTTP** : `POST /v1/calculate` avec le même JSON ; schéma dans `openapi.yaml` (copié à côté de ce fichier dans l’archive).
+1. **Skill ZIP (claude.ai)** : `node scripts/simulate.mjs <fichier.json>` ou `node scripts/simulate.mjs - < fichier.json` — sortie JSON moteur sur stdout ; erreurs de validation sur stderr au format `{ "error": "validation_failed", "issues": [...] }`.
+2. **Dépôt + Bun** : à la racine du repo, `bun install` puis `bun run demo:scenario docs/demo-scenarios/<fichier>.json` (ou un chemin vers un JSON valide) — même logique que `simulate.mjs`.
+
+**OpenAPI / GPT / autres canaux** : le fichier `harness/openapi.yaml` dans le **dépôt** décrit encore `POST /v1/calculate` pour les intégrations HTTP ; il **n’est plus** copié dans l’archive skill Claude (**GARDE-035**).
 
 ## Forme générale du JSON (`ScenarioInput`)
 

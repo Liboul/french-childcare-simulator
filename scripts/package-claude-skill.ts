@@ -1,6 +1,6 @@
 /**
  * Assemble a Claude Skill folder + ZIP for upload (claude.ai) or sharing.
- * See docs/shipping/README.md § Anthropic — packager et publier.
+ * Builds `scripts/simulate.mjs` first (GARDE-035). See docs/shipping/README.md.
  */
 import { copyFile, mkdir, readdir, rm } from "node:fs/promises";
 import { join } from "node:path";
@@ -11,20 +11,37 @@ const skillName = "comparatif-modes-garde-fr-2026";
 const bundleRoot = join(root, "dist", "claude-skill");
 const outDir = join(bundleRoot, skillName);
 
+const buildRunner = spawnSync(
+  "bun",
+  ["run", join(root, "scripts", "build-claude-skill-runner.ts")],
+  {
+    cwd: root,
+    stdio: "inherit",
+  },
+);
+if (buildRunner.status !== 0) {
+  process.exit(buildRunner.status ?? 1);
+}
+
 await rm(bundleRoot, { recursive: true, force: true });
 await mkdir(join(outDir, "examples"), { recursive: true });
+await mkdir(join(outDir, "scripts"), { recursive: true });
 
 const fileCopies: [string, string][] = [
   [join(root, "harness/claude/SKILL.md"), join(outDir, "SKILL.md")],
   [join(root, "harness/claude/REFERENCE.md"), join(outDir, "REFERENCE.md")],
   [join(root, "harness/INTAKE.md"), join(outDir, "INTAKE.md")],
-  [join(root, "harness/openapi.yaml"), join(outDir, "openapi.yaml")],
   [join(root, "harness/scenario-input.schema.json"), join(outDir, "scenario-input.schema.json")],
 ];
 
 for (const [from, to] of fileCopies) {
   await copyFile(from, to);
 }
+
+await copyFile(
+  join(root, "dist", "claude-skill-runner", "simulate.mjs"),
+  join(outDir, "scripts", "simulate.mjs"),
+);
 
 const demoDir = join(root, "docs", "demo-scenarios");
 const demos = (await readdir(demoDir)).filter((f) => f.endsWith(".json"));

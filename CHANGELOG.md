@@ -14,6 +14,7 @@ Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 - **`ScenarioResult.limitationHints`** : codes FR + liens pour chemins CMG limités (GARDE-022).
 - Script `schema:scenario`, doc **INTAKE**, quickstarts `docs/shipping/quickstart-*.md`, `docs/shipping/PRODUCTION-HARNESS.md`, `CONTRIBUTING.md`, modèles GitHub issues.
 - CI : contrôle de dérive du schéma JSON + présence des fichiers dans le ZIP skill (GARDE-029–031).
+- **Skill Claude (GARDE-035)** : bundle Node `scripts/simulate.mjs` dans le ZIP (plus d’`openapi.yaml` dans l’archive) ; `build:claude-skill-runner`.
 
 ### Changed
 

@@ -4,7 +4,7 @@ Enveloppe **hors moteur** : HTTP de dev, **OpenAPI** pour Actions GPT, instructi
 Décision d’architecture : [ADR-0001](../docs/architecture/ADR-0001-pluggable-provider-harness.md).
 
 **→ Livraison par fournisseur (Claude / ChatGPT / Gemini) :** [`docs/shipping/README.md`](../docs/shipping/README.md) (**GARDE-018**).  
-**ZIP skill Claude :** `bun run package:claude-skill` → `dist/comparatif-modes-garde-fr-2026-skill.zip`.
+**ZIP skill Claude :** `bun run package:claude-skill` → `dist/comparatif-modes-garde-fr-2026-skill.zip` (inclut **`scripts/simulate.mjs`**, sans `openapi.yaml` dans l’archive — **GARDE-035**).
 
 ## Faut-il lancer l’API ?
 

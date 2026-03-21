@@ -1,6 +1,6 @@
 # Playbook d’entretien — collecte `ScenarioInput`
 
-Guide pour le **harness** (skill Claude, Custom GPT, etc.) : poser les questions **dans cet ordre** réduit les allers-retours avec `POST /v1/calculate` (réponses **422** si champs manquants — voir schéma Zod / JSON Schema).
+Guide pour le **harness** (skill Claude, Custom GPT, etc.) : poser les questions **dans cet ordre** réduit les allers-retours avec le validateur (`simulate.mjs` → `validation_failed` + `issues[]` si champs manquants — voir schéma Zod / JSON Schema).
 
 ## 0. Préambule
 

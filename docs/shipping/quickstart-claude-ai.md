@@ -4,7 +4,9 @@ Objectif : utiliser le **skill uploadé** quand tu **n’as pas** le dépôt sur
 
 1. Sur ta machine de build : `bun run package:claude-skill` → récupère `dist/comparatif-modes-garde-fr-2026-skill.zip`.
 2. [Claude](https://claude.ai) → **Settings** → **Skills** (intitulé exact selon la doc du moment) → **Upload** le ZIP.
-3. Active les capacités nécessaires (**code execution** / connecteurs HTTP si tu appelles une API — selon produit).
-4. **Sans API déployée** : le skill guide la collecte et le JSON mais **ne calcule pas** seul ; il faut soit coller le résultat de `bun run demo:scenario` exécuté ailleurs, soit brancher un **POST /v1/calculate** HTTPS (voir [`PRODUCTION-HARNESS.md`](./PRODUCTION-HARNESS.md)).
+3. Active **l’exécution de code** (intitulé exact selon la doc Anthropic du moment) : le skill s’appuie sur **`scripts/simulate.mjs`** (Node, bundle autonome).
+4. Le modèle doit lancer **`node scripts/simulate.mjs <scenario.json>`** (voir `SKILL.md` dans l’archive) ; pas d’API HTTP requise pour ce canal.
 
-Fichiers dans le ZIP utiles au modèle : **`INTAKE.md`**, **`REFERENCE.md`**, **`examples/*.json`**, **`openapi.yaml`**, **`scenario-input.schema.json`**.
+Fichiers dans le ZIP utiles au modèle : **`SKILL.md`**, **`INTAKE.md`**, **`REFERENCE.md`**, **`scripts/simulate.mjs`**, **`examples/*.json`**, **`scenario-input.schema.json`**.
+
+Pour une intégration **HTTPS** (Custom GPT, etc.), le contrat OpenAPI reste dans le dépôt : [`harness/openapi.yaml`](../../harness/openapi.yaml) — il n’est **pas** inclus dans le ZIP skill Claude (**GARDE-035**).
