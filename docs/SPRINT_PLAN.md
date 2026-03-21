@@ -91,6 +91,7 @@ This section is the **sprint-level audit trail**: what shipped, whether executio
 | **GARDE-010** | 2026-03-21       | Done. `src/scenario/` : `computeScenarioSnapshot` (brut + CMG + crédit ×12), reste à charge équivalent, disponible optionnel, delta soutien employeur vs référence ; trace en 4 étapes. Pas d’IR marginal.                                                  |
 | **GARDE-011** | 2026-03-21       | Done. `src/uncertainty/` : `listTodoVerifyRules`, `readPajemploiIndicativeRates` (variante DR-03/DR-04 explicite), `engineWarningsToFlags`, `buildUncertaintyReport` ; scénario enrichi `uncertainty` (todoVerify ∩ règles référencées).                    |
 | **GARDE-012** | 2026-03-21       | Done. `src/exporters/` : `buildScenarioExportBundle`, export **JSON** / **CSV** (multi-tables) / **HTML** ; sources pack pour règles référencées.                                                                                                           |
+| **GARDE-014** | 2026-03-21       | Done. `src/integration/matrix.test.ts` : matrice ≥8 scénarios (RAC ≥0, cumul PreParE, inéligibilité micro-crèche, PSU/unsupported, assmat/MAM, préfinancé, gate CESU×CMG, export JSON).                                                                     |
 
 ---
 
