@@ -145,19 +145,19 @@ Les crèches privées (associatives ou commerciale) fixent **librement leurs tar
 
 ## Mode — Crèche inter-entreprises
 
-| Composante                    | Souvent présente ? | Fixée par                            | Exemple chiffré                                 | Source type        |
-| ----------------------------- | ------------------ | ------------------------------------ | ----------------------------------------------- | ------------------ |
-| **Tarif salarié**             | Yes                | Barème CAF national (PSU)            | Même barème que municipal (CAF)【66†L268-L276】 | Service public CAF |
-| **Participation employeur**   | Yes (subvention)   | Politique d’entreprise, conventions  | Couvre le **reliquat** coût réel − PSU − part famille (pas une réduction du barème parent) | Convention / DR-08 |
-| **Coût pour famille (reste)** | Yes                | Barème CAF / QF                      | cf. barème CAF【66†L268-L276】                  | Service public CAF |
-| **Frais d’inscription**       | Parfois            | Gestionnaire                         | ex. dépôt adhésion (selon creche)               | Crèche/entreprise  |
-| **Repas & sorties**           | Oui (comme privé)  | Selon contrat entre parents/crèche   | Inclus dans le tarif (ex.)                      | Crèche interne     |
+| Composante                    | Souvent présente ? | Fixée par                           | Exemple chiffré                                                                            | Source type        |
+| ----------------------------- | ------------------ | ----------------------------------- | ------------------------------------------------------------------------------------------ | ------------------ |
+| **Tarif salarié**             | Yes                | Barème CAF national (PSU)           | Même barème que municipal (CAF)【66†L268-L276】                                            | Service public CAF |
+| **Participation employeur**   | Yes (subvention)   | Politique d’entreprise, conventions | Couvre le **reliquat** coût réel − PSU − part famille (pas une réduction du barème parent) | Convention / DR-08 |
+| **Coût pour famille (reste)** | Yes                | Barème CAF / QF                     | cf. barème CAF【66†L268-L276】                                                             | Service public CAF |
+| **Frais d’inscription**       | Parfois            | Gestionnaire                        | ex. dépôt adhésion (selon creche)                                                          | Crèche/entreprise  |
+| **Repas & sorties**           | Oui (comme privé)  | Selon contrat entre parents/crèche  | Inclus dans le tarif (ex.)                                                                 | Crèche interne     |
 
 Les crèches inter-entreprises (ou crèches d’entreprise ouvertes à plusieurs employeurs) fonctionnent comme des crèches privées subventionnées par l’employeur. **Le tarif appliqué aux parents suit en général le barème national (PSU) déterminé par la CAF**【66†L268-L276】, **sur le même principe** qu’une crèche municipale ou EAJE conventionnée PSU : la **participation familiale** dépend surtout de la **situation du foyer** (ressources, enfants, temps d’accueil), **pas** du gestionnaire. L’**employeur** finance en pratique l’**écart** entre le **coût réel** de la place, l’**aide publique** (PSU, etc.) et cette **part familiale** — ce n’est **pas** modélisé ici comme « % de réduction sur la facture parentale » (voir **DR-08**). Le partage employeur / structure relève de conventions internes ; l’**accès** à une place est souvent l’enjeu principal pour le salarié.
 
 **Inputs (parent)**
 
-- **Participation familiale** mensuelle réelle (résultat barème PSU / facture crèche), ou ressources + volume d’accueil si un outil externe calcule le barème (**monenfant.fr** *Simuler le coût en crèche* pour la part parent PSU — pas les seuls simulateurs **d’aides** caf.fr ; voir **DR-08**)
+- **Participation familiale** mensuelle réelle (résultat barème PSU / facture crèche), ou ressources + volume d’accueil si un outil externe calcule le barème (**monenfant.fr** _Simuler le coût en crèche_ pour la part parent PSU — pas les seuls simulateurs **d’aides** caf.fr ; voir **DR-08**)
 - Nombre d’heures ou jours d’accueil (pour comprendre le montant)
 
 **Defaults**: même logique barème PSU que crèche publique conventionnée (paramètres nationaux, actualisation CAF).  

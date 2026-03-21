@@ -1,6 +1,6 @@
 /**
- * Bundled entry for the Claude.ai skill (`scripts/simulate.mjs`).
- * Build: `bun run build:claude-skill-runner`
+ * Bundled entry for the harness skill (`scripts/simulate.mjs` in the packaged folder).
+ * Build: `bun run build:harness-skill-runner`
  */
 import { readFileSync } from "node:fs";
 import { calculateScenario, ScenarioValidationError } from "../harness/handle-calculate";

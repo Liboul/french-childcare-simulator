@@ -22,7 +22,7 @@ Le dépôt fournit des **scénarios reproductibles** (JSON alignés sur `Scenari
 
 **Out of scope**
 
-- Harness Claude / OpenAI (**GARDE-015**–**016**), PDF.
+- Harness Agent Skills / OpenAI (**GARDE-015**–**016**), PDF.
 
 ## Acceptance criteria
 

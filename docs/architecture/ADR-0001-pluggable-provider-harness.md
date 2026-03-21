@@ -7,7 +7,7 @@
 
 ## Contexte
 
-Le comparatif de modes de garde repose sur un **moteur de calcul déterministe** (TypeScript, tests, pack de règles). Le livrable « agent » peut prendre plusieurs formes selon le canal : **Claude** (Skills, MCP), **ChatGPT** (GPT + Actions / Apps), **Gemini** (Gems + function calling), ou **API directe** sans LLM. Les offres évoluent vite (noms, APIs dépréciées, review stores).
+Le comparatif de modes de garde repose sur un **moteur de calcul déterministe** (TypeScript, tests, pack de règles). Le livrable « agent » peut prendre plusieurs formes selon le canal : **Agent Skills** (format ouvert, ex. Anthropic / OpenAI Codex), **MCP**, **ChatGPT** (GPT + Actions / Apps), **Gemini** (Gems + function calling), ou **API directe** sans LLM. Les offres évoluent vite (noms, APIs dépréciées, review stores).
 
 Il faut séparer clairement :
 
@@ -23,11 +23,11 @@ Il faut séparer clairement :
    - sortie : `ScenarioResult` + optionnellement `buildScenarioExportBundle` (**GARDE-012**) ;
    - script CLI de démo : `bun run demo:scenario` (**GARDE-017**).
 
-3. **Cible MVP harness (recommandation DR-05)** : privilégier **OpenAI** pour un premier déploiement grand public (Custom GPT avec Actions et/ou App ChatGPT + schéma OpenAPI / function calling), compte tenu de la maturité documentaire et des flux de publication décrits dans DR-05. Cette cible **n’interdit pas** des harness secondaires (Claude Skill + MCP, Gemini function calling).
+3. **Cible MVP harness (recommandation DR-05)** : privilégier **OpenAI** pour un premier déploiement grand public (Custom GPT avec Actions et/ou App ChatGPT + schéma OpenAPI / function calling), compte tenu de la maturité documentaire et des flux de publication décrits dans DR-05. Cette cible **n’interdit pas** des harness secondaires (ZIP Agent Skills + MCP, Gemini function calling).
 
 4. **Pluralisme** : les harness sont **jetables / remplaçables** ; une évolution fournisseur ne doit pas imposer de fork du moteur. Les artefacts spécifiques (ZIP Skill, manifeste OAuth, etc.) vivent hors du cœur ou dans un dossier dédié futur (**GARDE-016**).
 
-5. **API HTTP : utile mais non obligatoire** : le serveur `POST /v1/calculate` (**GARDE-016**) n’est **pas** une condition du produit. Dès que l’agent dispose du **dépôt** et d’un runtime (**Bun**), il peut exécuter le moteur **directement** — par exemple `bun run demo:scenario`, appels à `computeScenarioSnapshot` depuis le code, ou tests. Ce mode convient à **Claude Code**, **Cursor**, **Cowork**, environnements type « agent avec workspace », etc. **L’API reste pertinente** lorsque le runtime conversationnel **ne peut pas** exécuter le repo (ex. **Custom GPT** avec **Actions** uniquement vers HTTPS, utilisateurs sans environnement de dev, intégrations distantes). En résumé : **cœur toujours dans le repo** ; **HTTP = une option de bridge**, pas l’unique façon de « harnesser » le moteur.
+5. **API HTTP : utile mais non obligatoire** : le serveur `POST /v1/calculate` (**GARDE-016**) n’est **pas** une condition du produit. Dès que l’agent dispose du **dépôt** et d’un runtime (**Bun**), il peut exécuter le moteur **directement** — par exemple `bun run demo:scenario`, appels à `computeScenarioSnapshot` depuis le code, ou tests. Ce mode convient aux **IDE agent avec clone** (**Cursor**, **Cowork**, environnements type « workspace », etc.). **L’API reste pertinente** lorsque le runtime conversationnel **ne peut pas** exécuter le repo (ex. **Custom GPT** avec **Actions** uniquement vers HTTPS, utilisateurs sans environnement de dev, intégrations distantes). En résumé : **cœur toujours dans le repo** ; **HTTP = une option de bridge**, pas l’unique façon de « harnesser » le moteur.
 
 ## Options considérées (synthèse)
 
@@ -48,5 +48,5 @@ Le détail des critères, sources et risques de renommage est dans **DR-05**.
 
 ## Suivi
 
-- **GARDE-016** : artefacts dans [`harness/`](../harness/README.md) (serveur `POST /v1/calculate`, `openapi.yaml`, instructions GPT, `claude/SKILL.md`). Poursuivre selon besoins (auth, déploiement, ZIP Skill).
+- **GARDE-016** : artefacts dans [`harness/`](../harness/README.md) (serveur `POST /v1/calculate`, `openapi.yaml`, instructions GPT, `skill/SKILL.md`). Poursuivre selon besoins (auth, déploiement, ZIP harness skill).
 - Réviser cet ADR si DR-05 est **supplanté** par une recherche plus récente ou si la cible MVP change.

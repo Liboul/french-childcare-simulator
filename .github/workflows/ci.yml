@@ -38,14 +38,14 @@ jobs:
 
       - name: Skill ZIP layout (GARDE-031 / GARDE-035)
         run: |
-          bun run package:claude-skill
+          bun run package:harness-skill
           unzip -l dist/comparatif-modes-garde-fr-2026-skill.zip | grep -q 'SKILL.md'
           unzip -l dist/comparatif-modes-garde-fr-2026-skill.zip | grep -q 'INTAKE.md'
           unzip -l dist/comparatif-modes-garde-fr-2026-skill.zip | grep -q 'scenario-input.schema.json'
           unzip -l dist/comparatif-modes-garde-fr-2026-skill.zip | grep -q 'examples/'
           unzip -l dist/comparatif-modes-garde-fr-2026-skill.zip | grep -q 'scripts/simulate.mjs'
           if unzip -l dist/comparatif-modes-garde-fr-2026-skill.zip | grep -q 'openapi.yaml'; then
-            echo 'Claude skill ZIP must not contain openapi.yaml (GARDE-035)'
+            echo 'Harness skill ZIP must not contain openapi.yaml (GARDE-035)'
             exit 1
           fi
           TMP=$(mktemp -d)

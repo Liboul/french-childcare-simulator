@@ -13,7 +13,7 @@ Un nouveau contributeur ou utilisateur avancé suit **une page courte** par envi
 
 **In scope**
 
-- Fichiers dédiés, ex. `docs/shipping/quickstart-claude-code.md`, `quickstart-claude-ai-skill.md`, `quickstart-openai-gpt.md`, `quickstart-gemini.md` (noms ajustables).
+- Fichiers dédiés, ex. `docs/shipping/quickstart-repo-workspace.md`, `quickstart-harness-skill-zip.md`, `quickstart-openai-gpt.md`, `quickstart-gemini.md` (noms ajustables).
 - Liens depuis `docs/shipping/README.md` ; mentions « vérifier la doc fournisseur » pour UI qui bouge.
 
 **Out of scope**

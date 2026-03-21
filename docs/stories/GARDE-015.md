@@ -7,7 +7,7 @@
 
 ## User / product value
 
-La décision **où brancher** le moteur (Claude Skills, ChatGPT, Gemini, API seule) est **documentée et versionnée** : pas d’ambiguïté entre « code métier » et « enveloppe » vendeur. Le spike s’appuie sur la recherche **DR-05** déjà consignée dans le dépôt.
+La décision **où brancher** le moteur (Agent Skills, ChatGPT, Gemini, API seule) est **documentée et versionnée** : pas d’ambiguïté entre « code métier » et « enveloppe » vendeur. Le spike s’appuie sur la recherche **DR-05** déjà consignée dans le dépôt.
 
 ## Scope
 

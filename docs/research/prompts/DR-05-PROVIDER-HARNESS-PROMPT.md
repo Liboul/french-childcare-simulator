@@ -1,4 +1,4 @@
-# DR-05 — Deep research prompt (harnais éditeurs — Claude Skills, OpenAI, Google Gemini)
+# DR-05 — Deep research prompt (harnais éditeurs — Agent Skills / Anthropic, OpenAI, Google Gemini)
 
 **Use this prompt as a single message** in OpenAI Deep Research, Gemini Deep Research, Anthropic, or equivalent. **This is product/platform research**, not French tax law. **Do not rely on Cursor alone** for up-to-date vendor docs (see [`SPRINT_PLAN.md`](../../SPRINT_PLAN.md)).
 
@@ -20,11 +20,11 @@ You are a **technical product researcher** specializing in **AI assistant platfo
 
 ## Research questions (must answer for each vendor)
 
-### A. Anthropic (Claude)
+### A. Anthropic (Agent Skills)
 
 1. **Skills** (or current equivalent): **file layout**, **manifest**, **SKILL.md** or successor, **limits** (size, number of files), **tool** / **code execution** attachment.
 2. **Distribution**: how does a user **install** or **enable** a skill (Developer Mode, subscription, API-only)?
-3. **Invocation**: Claude **apps** vs **API** vs **Workbench** — differences relevant to **calling local scripts** or **remote HTTP**.
+3. **Invocation**: **apps** vs **API** vs **Workbench** — differences relevant to **calling local scripts** or **remote HTTP**.
 4. **MCP** (Model Context Protocol): does Anthropic document **first-class** MCP usage alongside Skills? **When to prefer which?**
 
 ### B. OpenAI

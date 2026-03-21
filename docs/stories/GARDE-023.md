@@ -1,9 +1,9 @@
 # GARDE-023 — Playbook d’intake pour le harness
 
-| Field     | Value                                                                                                          |
-| --------- | -------------------------------------------------------------------------------------------------------------- |
-| **Epic**  | E4 — Packaging                                                                                                 |
-| **Links** | `harness/claude/SKILL.md`, `harness/claude/REFERENCE.md`, `harness/instructions/gpt-custom-instructions.fr.md` |
+| Field     | Value                                                                                                        |
+| --------- | ------------------------------------------------------------------------------------------------------------ |
+| **Epic**  | E4 — Packaging                                                                                               |
+| **Links** | `harness/skill/SKILL.md`, `harness/skill/REFERENCE.md`, `harness/instructions/gpt-custom-instructions.fr.md` |
 
 ## User / product value
 
@@ -15,7 +15,7 @@ Réduit la variance entre modèles : **ordre des questions**, champs obligatoire
 
 - Nouveau fichier **`harness/INTAKE.md`** (ou chemin équivalent) : sections par mode, cumul CMG, options fiscales optionnelles.
 - Mise à jour **SKILL.md**, **REFERENCE.md** (lien court), **instructions GPT** pour renvoyer vers ce playbook.
-- Script **`package:claude-skill`** inclut le fichier dans le ZIP si pertinent.
+- Script **`package:harness-skill`** inclut le fichier dans le ZIP si pertinent.
 
 **Out of scope**
 

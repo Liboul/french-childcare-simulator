@@ -1,14 +1,14 @@
 # Harness (GARDE-016)
 
-Enveloppe **hors moteur** : HTTP de dev, **OpenAPI** pour Actions GPT, instructions et ébauche **Claude Skill**.  
+Enveloppe **hors moteur** : HTTP de dev, **OpenAPI** pour Actions GPT, instructions et **skill harness** (format Agent Skills).  
 Décision d’architecture : [ADR-0001](../docs/architecture/ADR-0001-pluggable-provider-harness.md).
 
-**→ Livraison par fournisseur (Claude / ChatGPT / Gemini) :** [`docs/shipping/README.md`](../docs/shipping/README.md) (**GARDE-018**).  
-**ZIP skill Claude :** `bun run package:claude-skill` → `dist/comparatif-modes-garde-fr-2026-skill.zip` (inclut **`scripts/simulate.mjs`**, sans `openapi.yaml` dans l’archive — **GARDE-035**).
+**→ Livraison par fournisseur (Anthropic / OpenAI / Google, etc.) :** [`docs/shipping/README.md`](../docs/shipping/README.md) (**GARDE-018**).  
+**ZIP harness skill :** `bun run package:harness-skill` → `dist/comparatif-modes-garde-fr-2026-skill.zip` (inclut **`scripts/simulate.mjs`**, sans `openapi.yaml` dans l’archive — **GARDE-035**).
 
 ## Faut-il lancer l’API ?
 
-**Souvent non.** Si l’outil (Claude Code, Cursor, Cowork, etc.) a **le clone du dépôt** et **Bun**, le chemin recommandé est d’**exécuter le moteur dans le repo** : `bun run demo:scenario <fichier.json>`, imports depuis `src/`, ou `calculateScenario` via [`handle-calculate.ts`](./handle-calculate.ts) dans un script / test — **sans** `harness:serve`.
+**Souvent non.** Si l’outil (IDE agent avec clone — Cursor, Cowork, etc.) a **le clone du dépôt** et **Bun**, le chemin recommandé est d’**exécuter le moteur dans le repo** : `bun run demo:scenario <fichier.json>`, imports depuis `src/`, ou `calculateScenario` via [`handle-calculate.ts`](./handle-calculate.ts) dans un script / test — **sans** `harness:serve`.
 
 **Oui, ou équivalent hébergé**, quand le canal **ne peut pas** tourner le code localement : **Custom GPT** (Actions HTTPS), utilisateurs **sans** dev environment, ou tout client qui consomme uniquement une **API documentée** (`openapi.yaml`).
 
@@ -42,7 +42,7 @@ Fichier : [`openapi.yaml`](./openapi.yaml). Dans ChatGPT (Create GPT → Actions
 | [`server.ts`](./server.ts)                                                                   | `Bun.serve`                                             |
 | [`instructions/gpt-custom-instructions.fr.md`](./instructions/gpt-custom-instructions.fr.md) | Instructions système suggérées pour un GPT              |
 | [`prompts/example-user-messages.fr.md`](./prompts/example-user-messages.fr.md)               | Exemples utilisateur                                    |
-| [`claude/SKILL.md`](./claude/SKILL.md)                                                       | Skill Claude (instructions)                             |
-| [`claude/REFERENCE.md`](./claude/REFERENCE.md)                                               | Champs `ScenarioInput` + limites (embarqué dans le ZIP) |
+| [`skill/SKILL.md`](./skill/SKILL.md)                                                         | Skill harness — instructions (embarqué dans le ZIP)     |
+| [`skill/REFERENCE.md`](./skill/REFERENCE.md)                                                 | Champs `ScenarioInput` + limites (embarqué dans le ZIP) |
 | [`INTAKE.md`](./INTAKE.md)                                                                   | Playbook d’entretien (ordre des questions)              |
 | [`scenario-input.schema.json`](./scenario-input.schema.json)                                 | JSON Schema `ScenarioInput`                             |

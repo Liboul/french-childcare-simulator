@@ -1,5 +1,5 @@
 /**
- * Assemble a Claude Skill folder + ZIP for upload (claude.ai) or sharing.
+ * Assemble a harness Agent Skill folder + ZIP for upload (e.g. claude.ai, Codex) or sharing.
  * Builds `scripts/simulate.mjs` first (GARDE-035). See docs/shipping/README.md.
  */
 import { copyFile, mkdir, readdir, rm } from "node:fs/promises";
@@ -8,12 +8,12 @@ import { spawnSync } from "node:child_process";
 
 const root = join(import.meta.dir, "..");
 const skillName = "comparatif-modes-garde-fr-2026";
-const bundleRoot = join(root, "dist", "claude-skill");
+const bundleRoot = join(root, "dist", "harness-skill");
 const outDir = join(bundleRoot, skillName);
 
 const buildRunner = spawnSync(
   "bun",
-  ["run", join(root, "scripts", "build-claude-skill-runner.ts")],
+  ["run", join(root, "scripts", "build-harness-skill-runner.ts")],
   {
     cwd: root,
     stdio: "inherit",
@@ -28,8 +28,8 @@ await mkdir(join(outDir, "examples"), { recursive: true });
 await mkdir(join(outDir, "scripts"), { recursive: true });
 
 const fileCopies: [string, string][] = [
-  [join(root, "harness/claude/SKILL.md"), join(outDir, "SKILL.md")],
-  [join(root, "harness/claude/REFERENCE.md"), join(outDir, "REFERENCE.md")],
+  [join(root, "harness/skill/SKILL.md"), join(outDir, "SKILL.md")],
+  [join(root, "harness/skill/REFERENCE.md"), join(outDir, "REFERENCE.md")],
   [join(root, "harness/INTAKE.md"), join(outDir, "INTAKE.md")],
   [join(root, "harness/scenario-input.schema.json"), join(outDir, "scenario-input.schema.json")],
 ];
@@ -39,7 +39,7 @@ for (const [from, to] of fileCopies) {
 }
 
 await copyFile(
-  join(root, "dist", "claude-skill-runner", "simulate.mjs"),
+  join(root, "dist", "harness-skill-runner", "simulate.mjs"),
   join(outDir, "scripts", "simulate.mjs"),
 );
 
@@ -66,5 +66,5 @@ if (zip.status !== 0) {
   process.exit(zip.status ?? 1);
 }
 
-console.log(`Claude skill bundle: ${outDir}`);
-console.log(`ZIP (upload to claude.ai Skills): ${zipPath}`);
+console.log(`Harness skill bundle: ${outDir}`);
+console.log(`ZIP (Agent Skills–compatible hosts): ${zipPath}`);

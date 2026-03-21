@@ -1,13 +1,13 @@
 # GARDE-024 — Profils de packaging skill (repo vs ZIP + HTTP)
 
-| Field     | Value                                                                       |
-| --------- | --------------------------------------------------------------------------- |
-| **Epic**  | E4 — Packaging                                                              |
-| **Links** | **GARDE-018**, `scripts/package-claude-skill.ts`, `docs/shipping/README.md` |
+| Field     | Value                                                                        |
+| --------- | ---------------------------------------------------------------------------- |
+| **Epic**  | E4 — Packaging                                                               |
+| **Links** | **GARDE-018**, `scripts/package-harness-skill.ts`, `docs/shipping/README.md` |
 
 ## User / product value
 
-Deux publics distincts (développeur avec clone **vs** utilisateur claude.ai avec ZIP) ont des **instructions et artefacts** qui ne se mélangent pas.
+Deux publics distincts (développeur avec clone **vs** utilisateur avec ZIP sur hôte Agent Skills) ont des **instructions et artefacts** qui ne se mélangent pas.
 
 ## Scope
 
@@ -24,7 +24,7 @@ Deux publics distincts (développeur avec clone **vs** utilisateur claude.ai ave
 ## Acceptance criteria
 
 1. `docs/shipping/README.md` contient une sous-section **« Choisir son profil »** avec tableau décisionnel.
-2. `bun run package:claude-skill` reste fonctionnel ; si double artefact, script ou doc d’invocation claire.
+2. `bun run package:harness-skill` reste fonctionnel ; si double artefact, script ou doc d’invocation claire.
 3. `bun run ci` ; commit `GARDE-024` ; sprint log à la clôture.
 
 ## Deep research

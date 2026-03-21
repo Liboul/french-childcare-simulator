@@ -1,6 +1,6 @@
 # Livraison — harness par fournisseur
 
-Ce guide complète la **recherche marché** [`DR-05`](../research/DR-05-PROVIDER-HARNESS.md) par des **étapes concrètes pour ce dépôt**. L’**ADR** [`ADR-0001`](../architecture/ADR-0001-pluggable-provider-harness.md) rappelle que le **moteur** vit dans `src/` + `config/` ; le dossier [`harness/`](../../harness/README.md) fournit API de dev, OpenAPI et une ébauche de Skill.
+Ce guide complète la **recherche marché** [`DR-05`](../research/DR-05-PROVIDER-HARNESS.md) par des **étapes concrètes pour ce dépôt**. L’**ADR** [`ADR-0001`](../architecture/ADR-0001-pluggable-provider-harness.md) rappelle que le **moteur** vit dans `src/` + `config/` ; le dossier [`harness/`](../../harness/README.md) fournit API de dev, OpenAPI et le **skill harness** (format Agent Skills).
 
 **Important :** les portails évoluent (noms, review, URLs). Vérifier toujours la **documentation officielle** du fournisseur avant une mise en production.
 
@@ -8,69 +8,69 @@ Ce guide complète la **recherche marché** [`DR-05`](../research/DR-05-PROVIDER
 
 ## Synthèse
 
-| Fournisseur   | Usage typique _de ce repo_                                            | Besoin d’API HTTPS déployée ?                                      |
-| ------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| **Anthropic** | Skill ZIP + **`scripts/simulate.mjs`** ; ou Claude Code + clone + Bun | ZIP skill : pas d’API ; GPT / autres : voir `harness/openapi.yaml` |
-| **OpenAI**    | **Custom GPT** + **Action** OpenAPI                                   | **Oui** pour les utilisateurs sans clone du dépôt                  |
-| **Google**    | **Gem** + function calling vers ton backend                           | **Oui** (même contrat que l’OpenAPI du repo)                       |
+| Fournisseur   | Usage typique _de ce repo_                                          | Besoin d’API HTTPS déployée ?                                      |
+| ------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| **Anthropic** | Skill ZIP + **`scripts/simulate.mjs`** ; ou IDE agent + clone + Bun | ZIP skill : pas d’API ; GPT / autres : voir `harness/openapi.yaml` |
+| **OpenAI**    | **Custom GPT** + **Action** OpenAPI                                 | **Oui** pour les utilisateurs sans clone du dépôt                  |
+| **Google**    | **Gem** + function calling vers ton backend                         | **Oui** (même contrat que l’OpenAPI du repo)                       |
 
 ### Choisir son profil (GARDE-024)
 
-| Profil            | Condition                                                           | Quickstart                                                 |
-| ----------------- | ------------------------------------------------------------------- | ---------------------------------------------------------- |
-| **Dépôt + Bun**   | Tu développes ou tu utilises **Claude Code** / Cursor avec le clone | [`quickstart-claude-code.md`](./quickstart-claude-code.md) |
-| **ZIP claude.ai** | Utilisateur **sans** clone ; skill uploadé                          | [`quickstart-claude-ai.md`](./quickstart-claude-ai.md)     |
-| **Custom GPT**    | Action OpenAPI vers ton HTTPS                                       | [`quickstart-openai-gpt.md`](./quickstart-openai-gpt.md)   |
-| **Gemini**        | Gem + function calling                                              | [`quickstart-gemini.md`](./quickstart-gemini.md)           |
+| Profil          | Condition                                                             | Quickstart                                                             |
+| --------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| **Dépôt + Bun** | Tu développes avec le clone (Cursor, etc.)                            | [`quickstart-repo-workspace.md`](./quickstart-repo-workspace.md)       |
+| **ZIP skill**   | Utilisateur **sans** clone ; archive harness uploadée (ex. claude.ai) | [`quickstart-harness-skill-zip.md`](./quickstart-harness-skill-zip.md) |
+| **Custom GPT**  | Action OpenAPI vers ton HTTPS                                         | [`quickstart-openai-gpt.md`](./quickstart-openai-gpt.md)               |
+| **Gemini**      | Gem + function calling                                                | [`quickstart-gemini.md`](./quickstart-gemini.md)                       |
 
 Exploitation HTTPS : voir [`PRODUCTION-HARNESS.md`](./PRODUCTION-HARNESS.md) (auth, clé API, données personnelles).
 
 ---
 
-## Anthropic (Claude)
+## Anthropic (Agent Skills — ex. interface web, IDE agent)
 
-### Piste A — Claude Code / workspace avec le dépôt (**recommandée**)
+### Piste A — Workspace avec le dépôt (**recommandée**)
 
 1. Cloner ce repo, installer les deps (`bun install`).
-2. Lire [`harness/claude/SKILL.md`](../../harness/claude/SKILL.md) : il décrit l’exécution **dans le repo** (`bun run demo:scenario`, imports `src/`).
-3. **Installation locale type Skill** : placer une copie du dossier contenant `SKILL.md` là où Claude Code charge les skills (souvent `~/.claude/skills/<nom>/` — confirmer sur la doc Anthropic actuelle).
+2. Lire [`harness/skill/SKILL.md`](../../harness/skill/SKILL.md) : il décrit l’exécution **dans le repo** (`bun run demo:scenario`, imports `src/`).
+3. **Installation locale type Skill** : placer une copie du dossier contenant `SKILL.md` là où ton IDE agent charge les skills (ex. `~/.claude/skills/<nom>/` pour l’écosystème Anthropic — confirmer sur la doc du moment).
 4. Vérifier que **Bun** est disponible dans l’environnement où l’agent exécute les commandes.
 
-**Moteur dans le ZIP :** depuis **GARDE-035**, l’archive inclut **`scripts/simulate.mjs`** (Node) — même logique que `harness/handle-calculate.ts`. Il faut **activer l’exécution de code** côté claude.ai. Pas d’`openapi.yaml` dans ce ZIP (OpenAPI reste dans le repo pour GPT / HTTP).
+**Moteur dans le ZIP :** depuis **GARDE-035**, l’archive inclut **`scripts/simulate.mjs`** (Node) — même logique que `harness/handle-calculate.ts`. Sur les hôtes web Anthropic, **activer l’exécution de code**. Pas d’`openapi.yaml` dans ce ZIP (OpenAPI reste dans le repo pour GPT / HTTP).
 
 ### Packager l’archive (ZIP) depuis ce repo
 
 1. `bun install` (une fois).
-2. `bun run package:claude-skill`
-   - Dossier assemblé : `dist/claude-skill/comparatif-modes-garde-fr-2026/` (`SKILL.md`, `REFERENCE.md`, `INTAKE.md`, `scripts/simulate.mjs`, `scenario-input.schema.json`, `examples/*.json`).
+2. `bun run package:harness-skill`
+   - Dossier assemblé : `dist/harness-skill/comparatif-modes-garde-fr-2026/` (`SKILL.md`, `REFERENCE.md`, `INTAKE.md`, `scripts/simulate.mjs`, `scenario-input.schema.json`, `examples/*.json`).
    - Archive prête à l’upload : **`dist/comparatif-modes-garde-fr-2026-skill.zip`**.
 3. Nécessite la commande système **`zip`** (macOS / Linux : souvent déjà présente).
 
 ### Publier sur **claude.ai** (compte individuel)
 
-1. Ouvre [Claude](https://claude.ai) → **Settings** (paramètres du compte).
+1. Ouvre [claude.ai](https://claude.ai) → **Settings** (paramètres du compte).
 2. Section **Capabilities** : activer ce qui est requis pour ton usage (**Code execution** / outils si tu t’appuies sur du code ou HTTP — intitulés exacts selon la doc Anthropic du moment).
 3. **Skills** (ou équivalent) → **Upload** / ajouter un skill → choisir **`dist/comparatif-modes-garde-fr-2026-skill.zip`**.
-4. Après upload : le skill apparaît dans tes capacités ; invoque-le ou laisse Claude le proposer selon le sujet.
-5. **Simulation** : avec **GARDE-035**, le skill inclut **`scripts/simulate.mjs`** ; Claude doit l’exécuter (voir `SKILL.md`). L’API HTTP (`harness:serve`) reste optionnelle pour **d’autres** canaux (GPT, scripts), pas pour le ZIP Claude.
+4. Après upload : le skill apparaît dans tes capacités ; invoque-le ou laisse le modèle le proposer selon le sujet.
+5. **Simulation** : avec **GARDE-035**, le skill inclut **`scripts/simulate.mjs`** ; le modèle doit l’exécuter (voir `SKILL.md`). L’API HTTP (`harness:serve`) reste optionnelle pour **d’autres** canaux (GPT, scripts), pas pour ce ZIP.
 
-### Publier en **Claude Code** (dépôt sur la machine)
+### Publier en local (clone + symlink — IDE agent)
 
 1. Cloner ce repo, `bun install`.
-2. Enregistrer le skill là où Claude Code charge les skills (souvent `~/.claude/skills/<nom>/` — vérifier la [doc Anthropic](https://docs.anthropic.com) / l’aide produit pour le chemin exact).
+2. Enregistrer le skill là où ton outil charge les skills (ex. `~/.claude/skills/<nom>/` — vérifier la [doc Anthropic](https://docs.anthropic.com) / l’aide produit pour le chemin exact).
 3. **Lien symbolique** pratique (un seul `SKILL.md` à maintenir dans le repo) :
 
    ```bash
-   ln -sf /CHEMIN/VERS/CE/REPO/harness/claude ~/.claude/skills/comparatif-modes-garde-fr-2026
+   ln -sf /CHEMIN/VERS/CE/REPO/harness/skill ~/.claude/skills/comparatif-modes-garde-fr-2026
    ```
 
-4. Redémarrer ou recharger Claude Code si nécessaire ; travailler **dans le clone** pour que `bun run demo:scenario` et `src/` soient disponibles.
+4. Redémarrer ou recharger l’IDE agent si nécessaire ; travailler **dans le clone** pour que `bun run demo:scenario` et `src/` soient disponibles.
 
 ### Entreprise (workspace)
 
 Les admins peuvent **provisionner** un skill pour tous les utilisateurs du workspace (voir annonces / doc Anthropic **workspace skills**). Le livrable reste le même dossier ou ZIP ; la procédure passe par la console admin.
 
-### Piste B — API HTTPS (Custom GPT, intégrations distantes, **pas** le ZIP skill Claude)
+### Piste B — API HTTPS (Custom GPT, intégrations distantes, **pas** le ZIP harness skill)
 
 1. Déployer `POST /v1/calculate` (voir section OpenAI ci-dessous).
 2. Consommer via Actions GPT, clients HTTP, MCP, etc.

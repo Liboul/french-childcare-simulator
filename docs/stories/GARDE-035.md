@@ -1,23 +1,23 @@
-# GARDE-035 — Skill Claude : moteur embarqué (`simulate.mjs`), sans API dans le ZIP
+# GARDE-035 — Harness skill : moteur embarqué (`simulate.mjs`), sans API dans le ZIP
 
 | Field     | Value                                                                                                     |
 | --------- | --------------------------------------------------------------------------------------------------------- |
 | **Epic**  | E4 — Harness / livraison                                                                                  |
-| **Links** | **GARDE-016**, **GARDE-024**, **GARDE-031**, `scripts/package-claude-skill.ts`, `harness/claude/SKILL.md` |
+| **Links** | **GARDE-016**, **GARDE-024**, **GARDE-031**, `scripts/package-harness-skill.ts`, `harness/skill/SKILL.md` |
 
 ## User / product value
 
-Sur **claude.ai**, un skill uploadé en ZIP ne contenait **pas** le moteur : seules des instructions pointaient vers une API HTTP ou un clone du dépôt. Les utilisateurs sans backend ne pouvaient pas obtenir de simulation **déterministe** cohérente avec les tests du repo.
+Sur les **hôtes Agent Skills** (ex. interface web Anthropic), un skill uploadé en ZIP ne contenait **pas** le moteur : seules des instructions pointaient vers une API HTTP ou un clone du dépôt. Les utilisateurs sans backend ne pouvaient pas obtenir de simulation **déterministe** cohérente avec les tests du repo.
 
-Ce story livre un **bundle Node** (`scripts/simulate.mjs`) dans l’archive skill, aligné sur `calculateScenario` / `harness/handle-calculate.ts`, et renforce le prompt pour que Claude **exécute obligatoirement** ce script plutôt que d’inventer des montants. L’**OpenAPI** n’est plus embarquée dans le ZIP Claude (le fichier reste dans le repo pour **Custom GPT** et intégrations HTTP).
+Ce story livre un **bundle Node** (`scripts/simulate.mjs`) dans l’archive skill, aligné sur `calculateScenario` / `harness/handle-calculate.ts`, et renforce le prompt pour que le modèle **exécute obligatoirement** ce script plutôt que d’inventer des montants. L’**OpenAPI** n’est plus embarquée dans le ZIP harness (le fichier reste dans le repo pour **Custom GPT** et intégrations HTTP).
 
 ## Spécification technique
 
 ### Build
 
-- **Entrée** : `scripts/claude-skill-simulate-entry.ts` — lit un chemin fichier ou `-` (stdin), parse JSON, appelle `calculateScenario`, imprime le résultat ou `validation_failed` + `issues`.
-- **Commande** : `bun build … --target node --packages bundle` → `dist/claude-skill-runner/simulate.mjs` (zod + règles JSON inlined).
-- **Script** : `bun run build:claude-skill-runner` ; `package:claude-skill` **rebuild** le runner puis assemble le dossier skill.
+- **Entrée** : `scripts/harness-skill-simulate-entry.ts` — lit un chemin fichier ou `-` (stdin), parse JSON, appelle `calculateScenario`, imprime le résultat ou `validation_failed` + `issues`.
+- **Commande** : `bun build … --target node --packages bundle` → `dist/harness-skill-runner/simulate.mjs` (zod + règles JSON inlined).
+- **Script** : `bun run build:harness-skill-runner` ; `package:harness-skill` **rebuild** le runner puis assemble le dossier skill.
 
 ### Contenu du ZIP (delta)
 
@@ -26,7 +26,7 @@ Ce story livre un **bundle Node** (`scripts/simulate.mjs`) dans l’archive skil
 
 ### SKILL.md
 
-- `description` YAML **≤ 200 caractères** (contrainte claude.ai).
+- `description` YAML **≤ 200 caractères** (contrainte documentée côté hôtes Agent Skills, ex. Anthropic).
 - Sections explicites : **interdiction** de chiffrer sans exécuter `simulate.mjs` ; procédure **node scripts/simulate.mjs** ; comparaison multi-modes = **plusieurs** exécutions.
 
 ### Hors scope
@@ -36,9 +36,9 @@ Ce story livre un **bundle Node** (`scripts/simulate.mjs`) dans l’archive skil
 
 ## Acceptance criteria
 
-1. `bun run package:claude-skill` produit un ZIP contenant **`scripts/simulate.mjs`** et **pas** `openapi.yaml`.
+1. `bun run package:harness-skill` produit un ZIP contenant **`scripts/simulate.mjs`** et **pas** `openapi.yaml`.
 2. `node scripts/simulate.mjs <demo.json>` (extrait du ZIP) reproduit un calcul cohérent (smoke test CI).
-3. `SKILL.md` / `REFERENCE.md` / quickstarts **Anthropic** ne présentent plus l’API HTTP comme chemin principal pour le skill ZIP.
+3. `SKILL.md` / `REFERENCE.md` / quickstarts **ZIP harness** ne présentent plus l’API HTTP comme chemin principal pour l’archive skill.
 4. CI **GARDE-031** mise à jour : assert sur `simulate.mjs` au lieu d’`openapi.yaml` dans le ZIP.
 
 ## Deep research

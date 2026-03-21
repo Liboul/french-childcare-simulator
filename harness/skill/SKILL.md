@@ -31,8 +31,8 @@ Pour **comparer plusieurs modes**, construis **un JSON par mode** et exécute **
 
 ## Contexte d’exécution
 
-- **Skill ZIP (claude.ai)** : le bundle contient **`scripts/simulate.mjs`** (Node, dépendances incluses). Active **l’exécution de code** dans les paramètres du compte si requis. Pas d’API HTTP ni de serveur à lancer : **uniquement** ce script.
-- **Dépôt complet + Bun** (Claude Code, etc.) : tu peux aussi `bun run demo:scenario docs/demo-scenarios/<fichier>.json` ou importer `harness/handle-calculate.ts` — même logique que `simulate.mjs`.
+- **Skill ZIP** (hôtes Agent Skills, ex. [claude.ai](https://claude.ai), Codex) : le bundle contient **`scripts/simulate.mjs`** (Node, dépendances incluses). Active **l’exécution de code** dans les paramètres du compte si requis. Pas d’API HTTP ni de serveur à lancer : **uniquement** ce script.
+- **Dépôt complet + Bun** (Cursor, environnement agent avec clone, etc.) : tu peux aussi `bun run demo:scenario docs/demo-scenarios/<fichier>.json` ou importer `harness/handle-calculate.ts` — même logique que `simulate.mjs`.
 
 ## Ressources du skill
 
@@ -55,17 +55,17 @@ Pour **comparer plusieurs modes**, construis **un JSON par mode** et exécute **
 
 Structure **dans cet ordre** :
 
-1. **Vue d’ensemble (≈30 s)**  
-   - Mode : `snapshot.mode`  
-   - Brut : `snapshot.monthlyBrutEur` / `snapshot.annualBrutEur`  
-   - CMG : `snapshot.monthlyCmgEur`, statut `snapshot.cmgStatus`  
-   - Crédit d’impôt : `snapshot.annualTaxCreditEur`, type `snapshot.taxCreditKind`  
-   - Reste à charge foyer : `snapshot.netHouseholdBurdenMonthlyEur` / `netHouseholdBurdenAnnualEur`  
-   - Si renseigné : disponible après charge `snapshot.disposableIncomeMonthlyEur` ; IR / TMI `estimatedIncomeTaxGrossAnnualEur`, `marginalIncomeTaxRate` (voir `warnings` / `limitationHints`)  
-   - **Revenus du foyer** (tels que déclarés dans `incomeTax`, reprise dans le snapshot — ignorer les clés à `null`) :  
-     - **Salaire brut foyer** : `snapshot.householdGrossSalaryMonthlyEur` / `householdGrossSalaryAnnualEur` (saisie `incomeTax.annualGrossSalaryEur`).  
-     - **Salaire net (bulletins)** : `snapshot.householdNetSalaryMonthlyEur` / `householdNetSalaryAnnualEur` (`incomeTax.annualNetSalaryFromPayslipsEur` — après cotisations, **avant** IR ; **ne pas** confondre avec le revenu après IR).  
-     - **Revenu foyer après IR** (si saisi) : `snapshot.householdIncomeAfterIncomeTaxMonthlyEur` / `householdIncomeAfterIncomeTaxAnnualEur`.  
+1. **Vue d’ensemble (≈30 s)**
+   - Mode : `snapshot.mode`
+   - Brut : `snapshot.monthlyBrutEur` / `snapshot.annualBrutEur`
+   - CMG : `snapshot.monthlyCmgEur`, statut `snapshot.cmgStatus`
+   - Crédit d’impôt : `snapshot.annualTaxCreditEur`, type `snapshot.taxCreditKind`
+   - Reste à charge foyer : `snapshot.netHouseholdBurdenMonthlyEur` / `netHouseholdBurdenAnnualEur`
+   - Si renseigné : disponible après charge `snapshot.disposableIncomeMonthlyEur` ; IR / TMI `estimatedIncomeTaxGrossAnnualEur`, `marginalIncomeTaxRate` (voir `warnings` / `limitationHints`)
+   - **Revenus du foyer** (tels que déclarés dans `incomeTax`, reprise dans le snapshot — ignorer les clés à `null`) :
+     - **Salaire brut foyer** : `snapshot.householdGrossSalaryMonthlyEur` / `householdGrossSalaryAnnualEur` (saisie `incomeTax.annualGrossSalaryEur`).
+     - **Salaire net (bulletins)** : `snapshot.householdNetSalaryMonthlyEur` / `householdNetSalaryAnnualEur` (`incomeTax.annualNetSalaryFromPayslipsEur` — après cotisations, **avant** IR ; **ne pas** confondre avec le revenu après IR).
+     - **Revenu foyer après IR** (si saisi) : `snapshot.householdIncomeAfterIncomeTaxMonthlyEur` / `householdIncomeAfterIncomeTaxAnnualEur`.
    - **Alertes** : résumer `warnings`, `limitationHints`, `uncertainty` (et tout `cmgStatus` ≠ `ok`).
 
 2. **Brut / garde (saisie → moteur)**  
@@ -75,26 +75,26 @@ Structure **dans cet ordre** :
 3. **Employeur du foyer (berceau, même coût entreprise)**  
    Si `declaredEmployerChildcareSupportAnnualEur` / `referenceEmployerChildcareSupportAnnualEur` sont utilisés : expliquer l’effet sur la comparaison et citer `employerSupportDeltaAnnualEur`. Sinon une phrase : pas de variation employeur modélisée pour ce scénario.
 
-4. **Aides et préfinancements**  
-   - **CMG** : rappeler les paramètres `cmg` **pertinents** (sans tout recopier si le JSON est énorme) et le lien avec `monthlyCmgEur` / `cmgStatus`.  
-   - **CESU / chèques emploi service (préfinancé)** : si `taxCredit.prefundedCesuAnnualEur` (ou champs voisins du schéma) est renseigné, dire comment ça affecte le crédit d’impôt **selon la sortie moteur**, pas au jugé.  
+4. **Aides et préfinancements**
+   - **CMG** : rappeler les paramètres `cmg` **pertinents** (sans tout recopier si le JSON est énorme) et le lien avec `monthlyCmgEur` / `cmgStatus`.
+   - **CESU / chèques emploi service (préfinancé)** : si `taxCredit.prefundedCesuAnnualEur` (ou champs voisins du schéma) est renseigné, dire comment ça affecte le crédit d’impôt **selon la sortie moteur**, pas au jugé.
    - Ne confonds pas **CESU** avec la **CSG** (cotisation) ; si l’utilisateur dit « CSG » pour des chèques, clarifie poliment.
 
-5. **Crédit d’impôt (pédagogie + trace)**  
-   - Type `taxCreditKind`, montant `annualTaxCreditEur`.  
-   - Pour l’**emploi à domicile** : mentionner `annualBrutTaxCreditAssietteEur` quand utile.  
+5. **Crédit d’impôt (pédagogie + trace)**
+   - Type `taxCreditKind`, montant `annualTaxCreditEur`.
+   - Pour l’**emploi à domicile** : mentionner `annualBrutTaxCreditAssietteEur` quand utile.
    - Ajouter **1 à 3 étapes** issues de `trace.steps` dont le `segment` est parmi `tax_credits`, `taxation`, `family_allowances`, `employer_benefits` ou `childcare` (copier `label` + `formula`, et `narrative` si elle aide) — **pas** de formules improvisées hors trace.
 
-6. **Cohérence et audit**  
-   - Une phrase sur l’enchaînement tel que le moteur le présente (brut → CMG → CI → reste à charge, selon ce que la sortie reflète).  
-   - Rappeler : toute **nouvelle hypothèse** ⇒ **relancer** `simulate.mjs`.  
+6. **Cohérence et audit**
+   - Une phrase sur l’enchaînement tel que le moteur le présente (brut → CMG → CI → reste à charge, selon ce que la sortie reflète).
+   - Rappeler : toute **nouvelle hypothèse** ⇒ **relancer** `simulate.mjs`.
    - Citer **`meta.engineVersion`** et **`meta.rulePackVersion`**.
 
 ### Template B — réponse courte (sur demande utilisateur)
 
-- Une ligne **synthèse** avec `netHouseholdBurdenMonthlyEur`, `monthlyBrutEur`, `monthlyCmgEur` + `cmgStatus`, `annualTaxCreditEur` + `taxCreditKind`.  
-- Si non `null` : ajouter **brut / net foyer** (`householdGrossSalaryMonthlyEur`, `householdNetSalaryMonthlyEur`, `householdIncomeAfterIncomeTaxMonthlyEur`) avec intitulés clairs (net bulletin vs après IR).  
-- **À valider** : lister en 1 ligne les saisies sensibles (participation crèche, heures/salaire garde, revenus `incomeTax`, aide employeur, CESU).  
+- Une ligne **synthèse** avec `netHouseholdBurdenMonthlyEur`, `monthlyBrutEur`, `monthlyCmgEur` + `cmgStatus`, `annualTaxCreditEur` + `taxCreditKind`.
+- Si non `null` : ajouter **brut / net foyer** (`householdGrossSalaryMonthlyEur`, `householdNetSalaryMonthlyEur`, `householdIncomeAfterIncomeTaxMonthlyEur`) avec intitulés clairs (net bulletin vs après IR).
+- **À valider** : lister en 1 ligne les saisies sensibles (participation crèche, heures/salaire garde, revenus `incomeTax`, aide employeur, CESU).
 - **Limites** : puces tirées de `warnings` + `limitationHints` (et `meta` si pertinent).
 
 ### Plusieurs modes comparés
@@ -121,9 +121,9 @@ Voir aussi **`INTAKE.md`** § nounou.
 - **Part salarié / participation familiale (crèche conventionnée PSU)** — à proposer **en premier** si le montant est inconnu :
   - **monenfant.fr — Simuler le coût en crèche** (reste à charge mensuel parents, barème national Cnaf / PSU) : https://www.monenfant.fr/simuler-le-cout-en-creche — résultat **indicatif** ; lire les conditions sur la page (ex. plafond de ressources pris en charge par l’outil). Foyers **MSA** : le barème est le même principe national ; en cas de doute, **confirmer avec la MSA** ou le gestionnaire.
 - **Simulateurs d’aides** (utiles **en parallèle** ou pour d’autres modes, ex. **CMG** micro-crèche hors PSU) — **pas** substituts au lien **monenfant** pour la **part familiale PSU** :
-  - **Hub CAF — Estimer vos droits** : https://www.caf.fr/allocataires/mes-services-en-ligne/estimer-vos-droits  
-  - **Simulation « mode de garde » (CMG / PAJE)** : https://www.caf.fr/allocataires/aides-et-demarches/thematique-libre/votre-simulation-de-mode-de-garde  
-  - **Portail état** : https://www.mesdroitssociaux.gouv.fr/votre-simulateur/accueil  
+  - **Hub CAF — Estimer vos droits** : https://www.caf.fr/allocataires/mes-services-en-ligne/estimer-vos-droits
+  - **Simulation « mode de garde » (CMG / PAJE)** : https://www.caf.fr/allocataires/aides-et-demarches/thematique-libre/votre-simulation-de-mode-de-garde
+  - **Portail état** : https://www.mesdroitssociaux.gouv.fr/votre-simulateur/accueil
   - **MSA** : https://www.msa.fr/ — rubriques estimation / simulateurs **pour les aides** ; **insuffisants seuls** pour estimer la **part crèche PSU** (priorité **monenfant** ou barème / caisse).
 - Si l’utilisateur **ne veut pas** ouvrir **monenfant** : tu peux faire toi-même une **mini-estimation indicative** du **€/mois parent** en t’appuyant sur le **guide / barème PSU (participation familiale)** publié par la **Cnaf** (PDF et pages **caf.fr**), **service-public.gouv.fr**, et cohérence avec l’outil **monenfant** si tu y accèdes — **cite toujours l’URL et l’intitulé** ; précise que c’est **indicatif** et que font foi **facture, avis d’échéance** ou **calcul du gestionnaire** ; l’utilisateur doit **valider explicitement** le montant avant `simulate.mjs`. Cette étape ne remplace **pas** `simulate.mjs` : elle sert **uniquement** à remplir `monthlyParticipationEur`.
 - Si l’utilisateur **ne connaît pas** le montant : **explique** où le trouver (facture, espace allocataire, crèche). **Sans place encore** : pour un parcours **PSU**, oriente d’abord vers **monenfant.fr** (lien ci-dessus) ou **conseiller CAF / MSA / gestionnaire** ; à défaut, paragraphe **mini-estimation** ci-dessus. Tu peux lancer `simulate.mjs` **uniquement** si l’utilisateur **valide explicitement** le chiffre comme **hypothèse** (à rectifier à la première facture). Pour une **micro-crèche hors PSU**, le **prix salarié** = surtout **contrat / devis** structure (pas ce simulateur PSU) ; pour l’**aide CMG**, utiliser les **simulateurs d’aides** ci-dessus si besoin.

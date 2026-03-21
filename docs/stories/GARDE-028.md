@@ -1,9 +1,9 @@
 # GARDE-028 — CHANGELOG barème + artifacts harness
 
-| Field     | Value                                                        |
-| --------- | ------------------------------------------------------------ |
-| **Epic**  | E1 / E4                                                      |
-| **Links** | `config/rules.*.json`, **GARDE-026**, `package:claude-skill` |
+| Field     | Value                                                         |
+| --------- | ------------------------------------------------------------- |
+| **Epic**  | E1 / E4                                                       |
+| **Links** | `config/rules.*.json`, **GARDE-026**, `package:harness-skill` |
 
 ## User / product value
 

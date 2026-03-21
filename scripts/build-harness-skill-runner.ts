@@ -1,14 +1,14 @@
 /**
- * Produces a single Node-runnable bundle for the Claude skill (`scripts/simulate.mjs`).
+ * Produces a single Node-runnable bundle for the harness skill (`scripts/simulate.mjs` in the packaged folder).
  */
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 
 const root = join(import.meta.dir, "..");
-const outDir = join(root, "dist", "claude-skill-runner");
+const outDir = join(root, "dist", "harness-skill-runner");
 const outfile = join(outDir, "simulate.mjs");
-const entry = join(root, "scripts", "claude-skill-simulate-entry.ts");
+const entry = join(root, "scripts", "harness-skill-simulate-entry.ts");
 
 await mkdir(outDir, { recursive: true });
 
@@ -22,4 +22,4 @@ if (r.status !== 0) {
   process.exit(r.status ?? 1);
 }
 
-console.log(`Claude skill runner: ${outfile}`);
+console.log(`Harness skill runner: ${outfile}`);

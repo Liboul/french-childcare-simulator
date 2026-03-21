@@ -7,7 +7,7 @@
 
 ## User / product value
 
-Une **documentation de livraison** centralisée explique **comment publier ou utiliser** le comparatif selon le canal (Claude Code / Skill, ChatGPT Custom GPT, Gemini), avec **checklists**, liens vers les **artefacts du repo**, et **avertissements** (HTTPS, auth, limites d’un ZIP sans moteur). Réduit l’ambiguïté entre « recherche DR-05 » et « pas à pas pour ce dépôt ».
+Une **documentation de livraison** centralisée explique **comment publier ou utiliser** le comparatif selon le canal (dépôt + workspace agent, ZIP harness skill / Agent Skills, ChatGPT Custom GPT, Gemini), avec **checklists**, liens vers les **artefacts du repo**, et **avertissements** (HTTPS, auth, limites d’un ZIP sans moteur). Réduit l’ambiguïté entre « recherche DR-05 » et « pas à pas pour ce dépôt ».
 
 ## Scope
 

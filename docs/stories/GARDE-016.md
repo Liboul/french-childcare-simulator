@@ -1,4 +1,4 @@
-# GARDE-016 — Harness fournisseur (API + OpenAI + ébauche Claude)
+# GARDE-016 — Harness fournisseur (API + OpenAI + skill harness)
 
 | Field     | Value                                                                                                                                            |
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -7,7 +7,7 @@
 
 ## User / product value
 
-Un **harness** réutilisable permet de brancher le moteur sur des **Actions GPT** (OpenAPI) ou une **Skill Claude** : instructions, schéma d’outil, exemples de prompts, serveur HTTP de développement. Le **code métier** reste dans `src/` ; le dossier `harness/` ne contient que l’enveloppe.
+Un **harness** réutilisable permet de brancher le moteur sur des **Actions GPT** (OpenAPI) ou un **skill Agent Skills** : instructions, schéma d’outil, exemples de prompts, serveur HTTP de développement. Le **code métier** reste dans `src/` ; le dossier `harness/` ne contient que l’enveloppe.
 
 ## Scope
 
@@ -17,7 +17,7 @@ Un **harness** réutilisable permet de brancher le moteur sur des **Actions GPT*
 - `harness/server.ts` : `Bun.serve` — `GET /health`, `POST /v1/calculate` (JSON `ScenarioInput`), CORS simple pour essais locaux.
 - `harness/openapi.yaml` : contrat pour **Custom GPT / Action** (corps = `ScenarioInput`, réponse = résultat scénario).
 - `harness/instructions/gpt-custom-instructions.fr.md` + `harness/prompts/example-user-messages.fr.md`.
-- `harness/claude/SKILL.md` : skill minimal (instructions + lien OpenAPI / démo).
+- `harness/skill/SKILL.md` : skill minimal (instructions + lien OpenAPI / démo).
 - `harness/README.md` : démarrage, `bun run harness:serve`, avertissements sécurité (pas d’auth en dev).
 - Test unitaire sur `calculateScenario` (fixture démo).
 - `tsconfig` + `lint` + `package.json` script ; sprint log.

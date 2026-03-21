@@ -1,5 +1,5 @@
 name: Harness / API / skill
-description: OpenAPI, serveur Bun, ZIP Claude, Custom GPT, schéma JSON
+description: OpenAPI, serveur Bun, ZIP harness skill, Custom GPT, schéma JSON
 labels: ["harness"]
 body:
   - type: dropdown
@@ -9,7 +9,7 @@ body:
       options:
         - API locale (harness:serve)
         - Déploiement HTTPS
-        - Skill / ZIP Claude
+        - Skill / ZIP harness
         - Custom GPT / Action
         - Autre
     validations:
