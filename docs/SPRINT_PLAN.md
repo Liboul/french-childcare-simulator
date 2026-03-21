@@ -215,6 +215,12 @@ Use one prompt per major topic; attach outputs to `docs/research/` and reference
 
 **Summary:** Beyond salaire × heures + cotisations: **CP**, **arrêt maladie**, **soldes / indemnités de rupture**; **co-emploi**; matrix **poste × CMG × crédit d’impôt** with primary sources; software input recommendations. Save as e.g. [`docs/research/DR-06-EMPLOI-DOMICILE-COUTS-COMPLEMENTAIRES.md`](research/DR-06-EMPLOI-DOMICILE-COUTS-COMPLEMENTAIRES.md). Supports **GARDE-034**.
 
+#### DR-07 — IR : TMI, barème, quotient, disponible après impôt (lien GARDE-019)
+
+**Full prompt:** [`docs/research/prompts/DR-07-IR-TMI-DISPONIBLE-PROMPT.md`](research/prompts/DR-07-IR-TMI-DISPONIBLE-PROMPT.md)
+
+**Summary:** Définition **TMI**, **barème** et **parts**, imputation des **crédits d’impôt** (cohérence avec **DR-02**), **PAS** vs solde annuel, modèles **simplifiés** encodables vs `todoVerify`, unknowns **2026**. Save as [`docs/research/DR-07-IR-TMI-DISPONIBLE.md`](research/DR-07-IR-TMI-DISPONIBLE.md). Supports **GARDE-019**.
+
 ---
 
 ## Delivery model: engine vs provider harness
@@ -265,7 +271,7 @@ The product has **two layers**; only the second is provider-specific:
 | **GARDE-016** | Implement harness(es) per ADR: instructions, tool wiring, example prompts; **core stays portable**                                    | E4    | Depends on **GARDE-015**, stable JSON API (GARDE-012)                                       |
 | **GARDE-017** | Demo scenarios + “official sources” table in repo                                                                                     | E4    | For acceptance demos; can follow GARDE-016                                                  |
 | **GARDE-018** | **Shipping runbooks** : `docs/shipping/` (Claude / OpenAI / Gemini), checklists + liens repo + DR-05 ; dépend de **GARDE-016**        | E4    | Pas d’hébergement managé dans la story ; auth/TLS à la charge du déployeur                  |
-| **GARDE-019** | **IR / TMI** : impôt marginal ou modèle simplifié pour le « revenu disponible » (alignement INITIAL_SPEC)                             | E2    | **`[DEEP RESEARCH]`** ; dépend **GARDE-010** ; paramètres versionnés                        |
+| **GARDE-019** | **IR / TMI** : impôt marginal ou modèle simplifié pour le « revenu disponible » (alignement INITIAL_SPEC)                             | E2    | **`[DEEP RESEARCH]`** → **DR-07** ; dépend **GARDE-010** ; paramètres versionnés              |
 | **GARDE-020** | **Harness : validation `ScenarioInput`** — erreurs structurées (ex. `422`) pour guider l’agent / l’utilisateur                        | E4    | Dépend **GARDE-016** ; Zod ou équivalent ; OpenAPI mis à jour                               |
 | **GARDE-021** | **Schéma JSON `ScenarioInput`** — artefact versionné + endpoint ou fichier servi pour Actions / MCP                                   | E4    | Souvent après **GARDE-020** ; lien `openapi.yaml`                                           |
 | **GARDE-022** | **Chemins `unsupported` / `ineligible`** : codes stables + texte + liens doc pour le harness                                          | E2/E4 | Améliore transparence sans élargir le moteur à tous les modes                               |

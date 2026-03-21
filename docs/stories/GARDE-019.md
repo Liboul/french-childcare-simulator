@@ -28,7 +28,11 @@ Le résultat se rapproche de la promesse spec (**revenu disponible final**) au l
 
 ## Deep research
 
-**Oui** — barèmes IR, abattements pertinents, interaction avec crédits déjà modélisés ; déléguer au besoin via prompts research existants ou nouveau prompt ciblé.
+**Oui** — barèmes IR, TMI / quotient, interaction avec crédits déjà modélisés (**DR-02**).
+
+**Prompt à exécuter dans un outil de deep research externe :** [`docs/research/prompts/DR-07-IR-TMI-DISPONIBLE-PROMPT.md`](../research/prompts/DR-07-IR-TMI-DISPONIBLE-PROMPT.md)
+
+**Livrable attendu :** `docs/research/DR-07-IR-TMI-DISPONIBLE.md` (pack structuré selon les titres H2 du prompt).
 
 ## Done checklist
 
