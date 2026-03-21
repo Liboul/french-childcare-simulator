@@ -146,6 +146,7 @@ const scenarioIncomeTaxSchema = z
     householdTaxParts: z.number().positive().optional(),
     filing: z.enum(["individual", "joint"]).optional(),
     annualHouseholdIncomeAfterIncomeTaxEur: z.number().optional(),
+    annualNetSalaryFromPayslipsEur: z.number().optional(),
     monthlyResourcesAlreadyAccountForIncomeTax: z.boolean().optional(),
   })
   .strict();
@@ -168,6 +169,7 @@ export const scenarioInputSchema = z
     const hasNet = it.annualNetTaxableIncomeEur != null;
     const hasGross = it.annualGrossSalaryEur != null;
     const hasAfter = it.annualHouseholdIncomeAfterIncomeTaxEur != null;
+    const hasPayslipNet = it.annualNetSalaryFromPayslipsEur != null;
     if (hasNet && hasGross) {
       ctx.addIssue({
         code: "custom",
@@ -192,11 +194,11 @@ export const scenarioInputSchema = z
           path: ["incomeTax", "filing"],
         });
       }
-    } else if (!hasAfter) {
+    } else if (!hasAfter && !hasPayslipNet) {
       ctx.addIssue({
         code: "custom",
         message:
-          "incomeTax: renseigner annualHouseholdIncomeAfterIncomeTaxEur ou une assiette (net / brut) + parts + filing",
+          "incomeTax: renseigner annualHouseholdIncomeAfterIncomeTaxEur, annualNetSalaryFromPayslipsEur, ou une assiette (net / brut) + parts + filing",
         path: ["incomeTax"],
       });
     }

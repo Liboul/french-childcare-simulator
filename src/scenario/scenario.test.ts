@@ -250,6 +250,9 @@ describe("computeScenarioSnapshot", () => {
     });
     expect(r.snapshot.estimatedIncomeTaxGrossAnnualEur).toBeNull();
     expect(r.snapshot.marginalIncomeTaxRate).toBeNull();
+    expect(r.snapshot.householdGrossSalaryAnnualEur).toBeNull();
+    expect(r.snapshot.householdNetSalaryAnnualEur).toBeNull();
+    expect(r.snapshot.householdIncomeAfterIncomeTaxAnnualEur).toBeNull();
   });
 
   it("incomeTax (RNI) : snapshot IR + limitation QF", () => {
@@ -300,9 +303,43 @@ describe("computeScenarioSnapshot", () => {
       incomeTax: { annualHouseholdIncomeAfterIncomeTaxEur: 48_000 },
     });
     expect(r.snapshot.estimatedIncomeTaxGrossAnnualEur).toBeNull();
+    expect(r.snapshot.householdGrossSalaryAnnualEur).toBeNull();
+    expect(r.snapshot.householdNetSalaryAnnualEur).toBeNull();
+    expect(r.snapshot.householdIncomeAfterIncomeTaxAnnualEur).toBe(48_000);
+    expect(r.snapshot.householdIncomeAfterIncomeTaxMonthlyEur).toBe(4000);
     expect(r.snapshot.disposableIncomeMonthlyEur).toBe(
       Math.round((4000 - r.snapshot.netHouseholdBurdenMonthlyEur) * 100) / 100,
     );
+  });
+
+  it("incomeTax brut + net bulletin : snapshot reprend les montants foyer (÷12)", () => {
+    const r = computeScenarioSnapshot(pack, {
+      household: household2026,
+      brutInput: {
+        mode: "nounou_domicile",
+        hourlyGrossEur: 12,
+        hoursPerMonth: 80,
+        employerShareOfGross: 0.42,
+      },
+      cmg: {
+        cumul: {},
+        monthlyReferenceIncomeEur: 4000,
+        householdEffortRank: 1,
+        hourlyDeclaredGrossEur: 12,
+        heuresParMois: 80,
+      },
+      incomeTax: {
+        annualGrossSalaryEur: 60_000,
+        annualNetSalaryFromPayslipsEur: 45_000,
+        householdTaxParts: 2,
+        filing: "joint",
+      },
+    });
+    expect(r.snapshot.householdGrossSalaryAnnualEur).toBe(60_000);
+    expect(r.snapshot.householdGrossSalaryMonthlyEur).toBe(5000);
+    expect(r.snapshot.householdNetSalaryAnnualEur).toBe(45_000);
+    expect(r.snapshot.householdNetSalaryMonthlyEur).toBe(3750);
+    expect(r.snapshot.householdIncomeAfterIncomeTaxAnnualEur).toBeNull();
   });
 
   it("baseline + incomeTax : IR mensuel estimé déduit (warning PAS)", () => {

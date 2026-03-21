@@ -75,6 +75,12 @@ export function exportScenarioBundleToHtml(bundle: ScenarioExportBundle): string
       <tr><td>Reste à charge équivalent annuel (€)</td><td>${escapeHtml(String(snap.netHouseholdBurdenAnnualEur))}</td></tr>
       <tr><td>Reste à charge équivalent mensuel (€)</td><td>${escapeHtml(String(snap.netHouseholdBurdenMonthlyEur))}</td></tr>
       <tr><td>Disponible mensuel (€)</td><td>${snap.disposableIncomeMonthlyEur == null ? "—" : escapeHtml(String(snap.disposableIncomeMonthlyEur))}</td></tr>
+      <tr><td>Salaire brut foyer déclaré annuel (€)</td><td>${snap.householdGrossSalaryAnnualEur == null ? "—" : escapeHtml(String(snap.householdGrossSalaryAnnualEur))}</td></tr>
+      <tr><td>Salaire brut foyer déclaré mensuel (€)</td><td>${snap.householdGrossSalaryMonthlyEur == null ? "—" : escapeHtml(String(snap.householdGrossSalaryMonthlyEur))}</td></tr>
+      <tr><td>Salaire net bulletins annuel (€)</td><td>${snap.householdNetSalaryAnnualEur == null ? "—" : escapeHtml(String(snap.householdNetSalaryAnnualEur))}</td></tr>
+      <tr><td>Salaire net bulletins mensuel (€)</td><td>${snap.householdNetSalaryMonthlyEur == null ? "—" : escapeHtml(String(snap.householdNetSalaryMonthlyEur))}</td></tr>
+      <tr><td>Revenu foyer après IR déclaré annuel (€)</td><td>${snap.householdIncomeAfterIncomeTaxAnnualEur == null ? "—" : escapeHtml(String(snap.householdIncomeAfterIncomeTaxAnnualEur))}</td></tr>
+      <tr><td>Revenu foyer après IR déclaré mensuel (€)</td><td>${snap.householdIncomeAfterIncomeTaxMonthlyEur == null ? "—" : escapeHtml(String(snap.householdIncomeAfterIncomeTaxMonthlyEur))}</td></tr>
       <tr><td>Δ soutien employeur / ref. (€/an)</td><td>${snap.employerSupportDeltaAnnualEur == null ? "—" : escapeHtml(String(snap.employerSupportDeltaAnnualEur))}</td></tr>
     </tbody>
   </table>

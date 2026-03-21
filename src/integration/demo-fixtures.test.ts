@@ -14,6 +14,7 @@ const pack = packResult.data;
 
 const DEMO_FIXTURES = [
   "docs/demo-scenarios/nounou-domicile-couple-2026.json",
+  "docs/demo-scenarios/nounou-domicile-revenus-foyer-2026.json",
   "docs/demo-scenarios/nounou-domicile-partage-50-2026.json",
   "docs/demo-scenarios/nounou-domicile-complementary-dr06-2026.json",
   "docs/demo-scenarios/micro-creche-bas-revenus-2026.json",

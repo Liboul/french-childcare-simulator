@@ -123,6 +123,79 @@ export function exportScenarioBundleToCsv(bundle: ScenarioExportBundle): string 
       "",
     ]),
   );
+  const opt = (v: number | null) => (v == null ? "" : String(v));
+  rows.push(
+    line([
+      "metric",
+      "snapshot.householdGrossSalaryAnnualEur",
+      opt(s.householdGrossSalaryAnnualEur),
+      "",
+      "",
+      "",
+      "",
+      "",
+    ]),
+  );
+  rows.push(
+    line([
+      "metric",
+      "snapshot.householdGrossSalaryMonthlyEur",
+      opt(s.householdGrossSalaryMonthlyEur),
+      "",
+      "",
+      "",
+      "",
+      "",
+    ]),
+  );
+  rows.push(
+    line([
+      "metric",
+      "snapshot.householdNetSalaryAnnualEur",
+      opt(s.householdNetSalaryAnnualEur),
+      "",
+      "",
+      "",
+      "",
+      "",
+    ]),
+  );
+  rows.push(
+    line([
+      "metric",
+      "snapshot.householdNetSalaryMonthlyEur",
+      opt(s.householdNetSalaryMonthlyEur),
+      "",
+      "",
+      "",
+      "",
+      "",
+    ]),
+  );
+  rows.push(
+    line([
+      "metric",
+      "snapshot.householdIncomeAfterIncomeTaxAnnualEur",
+      opt(s.householdIncomeAfterIncomeTaxAnnualEur),
+      "",
+      "",
+      "",
+      "",
+      "",
+    ]),
+  );
+  rows.push(
+    line([
+      "metric",
+      "snapshot.householdIncomeAfterIncomeTaxMonthlyEur",
+      opt(s.householdIncomeAfterIncomeTaxMonthlyEur),
+      "",
+      "",
+      "",
+      "",
+      "",
+    ]),
+  );
   rows.push(
     line([
       "metric",

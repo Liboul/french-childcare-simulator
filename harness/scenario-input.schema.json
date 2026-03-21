@@ -362,6 +362,10 @@
         "annualHouseholdIncomeAfterIncomeTaxEur": {
           "type": "number"
         },
+        "annualNetSalaryFromPayslipsEur": {
+          "type": "number",
+          "description": "Salaires nets annuels foyer (bulletins, après cotisations, avant IR) — reporting ; n'alimente pas le barème IR."
+        },
         "monthlyResourcesAlreadyAccountForIncomeTax": {
           "type": "boolean"
         }

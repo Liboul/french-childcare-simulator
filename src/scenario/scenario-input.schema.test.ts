@@ -33,6 +33,23 @@ describe("safeParseScenarioInput", () => {
     expect(r.ok).toBe(false);
   });
 
+  it("accepte incomeTax avec seulement annualNetSalaryFromPayslipsEur", () => {
+    const r = safeParseScenarioInput({
+      household: { taxYear: 2026 },
+      brutInput: { mode: "creche_privee", monthlyParticipationEur: 500 },
+      cmg: {
+        cumul: {},
+        annualReferenceIncomeN2Eur: 20_000,
+        structureDependentChildren: 1,
+        childAgeBand: "under3",
+        monthlyStructureExpenseEur: 500,
+        hourlyCrecheFeeEur: 9,
+      },
+      incomeTax: { annualNetSalaryFromPayslipsEur: 36_000 },
+    });
+    expect(r.ok).toBe(true);
+  });
+
   it("accepte incomeTax avec seulement annualHouseholdIncomeAfterIncomeTaxEur", () => {
     const r = safeParseScenarioInput({
       household: { taxYear: 2026 },

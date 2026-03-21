@@ -30,6 +30,10 @@ export type ScenarioIncomeTaxInput = {
    */
   annualHouseholdIncomeAfterIncomeTaxEur?: number;
   /**
+   * Salaires nets annuels foyer déclarés (bulletins, après cotisations sociales, avant IR) — pour reporting ; n’alimente pas le barème IR.
+   */
+  annualNetSalaryFromPayslipsEur?: number;
+  /**
    * Si true avec `baselineDisposableIncomeMonthlyEur` : la base est déjà nette d’IR (ex. alignée sur le PAS) ;
    * ne pas soustraire l’estimation IR annuelle au disponible.
    */
@@ -79,6 +83,15 @@ export type ScenarioSnapshot = {
   netHouseholdBurdenMonthlyEur: number;
   disposableIncomeMonthlyEur: number | null;
   employerSupportDeltaAnnualEur: number | null;
+  /** Écho `incomeTax.annualGrossSalaryEur` + mensuel ÷12 ; null si non saisi. */
+  householdGrossSalaryAnnualEur: number | null;
+  householdGrossSalaryMonthlyEur: number | null;
+  /** Écho `incomeTax.annualNetSalaryFromPayslipsEur` + mensuel ; null si non saisi (≠ revenu après IR). */
+  householdNetSalaryAnnualEur: number | null;
+  householdNetSalaryMonthlyEur: number | null;
+  /** Écho `incomeTax.annualHouseholdIncomeAfterIncomeTaxEur` + mensuel ; null si non saisi. */
+  householdIncomeAfterIncomeTaxAnnualEur: number | null;
+  householdIncomeAfterIncomeTaxMonthlyEur: number | null;
   /** Présent si `incomeTax` fourni — hors plafonnement QF et hors autres crédits / réductions. */
   estimatedIncomeTaxGrossAnnualEur: number | null;
   estimatedIncomeTaxNetAfterDecoteAnnualEur: number | null;

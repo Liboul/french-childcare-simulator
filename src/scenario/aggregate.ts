@@ -215,6 +215,22 @@ export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): S
     }
   }
 
+  const householdGrossSalaryAnnualEur = it?.annualGrossSalaryEur ?? null;
+  const householdGrossSalaryMonthlyEur =
+    householdGrossSalaryAnnualEur != null
+      ? round2(householdGrossSalaryAnnualEur / MONTHS_PER_TAX_YEAR)
+      : null;
+  const householdNetSalaryAnnualEur = it?.annualNetSalaryFromPayslipsEur ?? null;
+  const householdNetSalaryMonthlyEur =
+    householdNetSalaryAnnualEur != null
+      ? round2(householdNetSalaryAnnualEur / MONTHS_PER_TAX_YEAR)
+      : null;
+  const householdIncomeAfterIncomeTaxAnnualEur = it?.annualHouseholdIncomeAfterIncomeTaxEur ?? null;
+  const householdIncomeAfterIncomeTaxMonthlyEur =
+    householdIncomeAfterIncomeTaxAnnualEur != null
+      ? round2(householdIncomeAfterIncomeTaxAnnualEur / MONTHS_PER_TAX_YEAR)
+      : null;
+
   let disposableIncomeMonthlyEur: number | null = null;
   const afterIrAnnual = it?.annualHouseholdIncomeAfterIncomeTaxEur;
   if (afterIrAnnual != null) {
@@ -264,6 +280,12 @@ export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): S
     netHouseholdBurdenMonthlyEur,
     disposableIncomeMonthlyEur,
     employerSupportDeltaAnnualEur,
+    householdGrossSalaryAnnualEur,
+    householdGrossSalaryMonthlyEur,
+    householdNetSalaryAnnualEur,
+    householdNetSalaryMonthlyEur,
+    householdIncomeAfterIncomeTaxAnnualEur,
+    householdIncomeAfterIncomeTaxMonthlyEur,
     estimatedIncomeTaxGrossAnnualEur: incomeTaxEstimate?.incomeTaxGrossAnnualEur ?? null,
     estimatedIncomeTaxNetAfterDecoteAnnualEur:
       incomeTaxEstimate?.incomeTaxNetAfterDecoteAnnualEur ?? null,

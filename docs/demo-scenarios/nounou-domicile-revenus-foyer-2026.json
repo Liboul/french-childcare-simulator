@@ -1,0 +1,22 @@
+{
+  "household": { "taxYear": 2026 },
+  "brutInput": {
+    "mode": "nounou_domicile",
+    "hourlyGrossEur": 12,
+    "hoursPerMonth": 80,
+    "employerShareOfGross": 0.42
+  },
+  "cmg": {
+    "cumul": {},
+    "monthlyReferenceIncomeEur": 4000,
+    "householdEffortRank": 1,
+    "hourlyDeclaredGrossEur": 12,
+    "heuresParMois": 80
+  },
+  "incomeTax": {
+    "annualGrossSalaryEur": 72000,
+    "annualNetSalaryFromPayslipsEur": 54000,
+    "householdTaxParts": 2,
+    "filing": "joint"
+  }
+}

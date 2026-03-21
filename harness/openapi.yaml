@@ -7,8 +7,9 @@ info:
     Réponses **200** : `ScenarioResult` avec `snapshot`, `trace`, `warnings`, `uncertainty`, **`meta`**, **`limitationHints`** (GARDE-026 / GARDE-022).
     Option **`incomeTax`** sur le corps : estimation IR / TMI (barème versionné, GARDE-019) ; voir schéma JSON.
     Schéma JSON : `GET /v1/scenario/schema` ou fichier `harness/scenario-input.schema.json` (GARDE-021).
+    Le **`snapshot`** inclut les échos revenus foyer (`householdGrossSalary*`, `householdNetSalary*`, `householdIncomeAfterIncomeTax*`) lorsque `incomeTax` est renseigné.
     Si le serveur est configuré avec **`HARNESS_API_KEY`**, envoyer **`X-Api-Key`** ou **`Authorization: Bearer`** (GARDE-025).
-  version: 1.2.0
+  version: 1.3.0
 servers:
   - url: http://127.0.0.1:8787
     description: Serveur de développement (`bun run harness:serve`)
@@ -71,8 +72,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                additionalProperties: true
+                $ref: "#/components/schemas/ScenarioResult"
         "400":
           description: Corps invalide ou JSON mal formé
           content:
@@ -120,6 +120,94 @@ paths:
                   error:
                     type: string
 components:
+  schemas:
+    ScenarioSnapshot:
+      type: object
+      description: Agrégat financier principal (brut garde, aides, crédit d’impôt, RAC, revenus foyer déclarés).
+      required:
+        - mode
+        - monthlyBrutEur
+        - annualBrutEur
+        - monthlyBrutTaxCreditAssietteEur
+        - annualBrutTaxCreditAssietteEur
+        - monthlyCmgEur
+        - annualCmgEur
+        - cmgStatus
+        - annualTaxCreditEur
+        - taxCreditKind
+        - netHouseholdBurdenAnnualEur
+        - netHouseholdBurdenMonthlyEur
+        - disposableIncomeMonthlyEur
+        - employerSupportDeltaAnnualEur
+        - householdGrossSalaryAnnualEur
+        - householdGrossSalaryMonthlyEur
+        - householdNetSalaryAnnualEur
+        - householdNetSalaryMonthlyEur
+        - householdIncomeAfterIncomeTaxAnnualEur
+        - householdIncomeAfterIncomeTaxMonthlyEur
+        - estimatedIncomeTaxGrossAnnualEur
+        - estimatedIncomeTaxNetAfterDecoteAnnualEur
+        - marginalIncomeTaxRate
+        - incomeTaxQuotientEur
+      properties:
+        mode:
+          type: string
+          enum:
+            - nounou_domicile
+            - nounou_partagee
+            - assistante_maternelle
+            - mam
+            - creche_publique
+            - creche_privee
+            - creche_inter_entreprises
+        monthlyBrutEur: { type: number }
+        annualBrutEur: { type: number }
+        monthlyBrutTaxCreditAssietteEur: { type: number }
+        annualBrutTaxCreditAssietteEur: { type: number }
+        monthlyCmgEur: { type: number }
+        annualCmgEur: { type: number }
+        cmgStatus:
+          type: string
+          enum: [ok, ineligible, unsupported]
+        annualTaxCreditEur: { type: number }
+        taxCreditKind:
+          type: string
+          enum: [garde_hors_domicile, emploi_domicile]
+        netHouseholdBurdenAnnualEur: { type: number }
+        netHouseholdBurdenMonthlyEur: { type: number }
+        disposableIncomeMonthlyEur: { type: number, nullable: true }
+        employerSupportDeltaAnnualEur: { type: number, nullable: true }
+        householdGrossSalaryAnnualEur: { type: number, nullable: true }
+        householdGrossSalaryMonthlyEur: { type: number, nullable: true }
+        householdNetSalaryAnnualEur: { type: number, nullable: true }
+        householdNetSalaryMonthlyEur: { type: number, nullable: true }
+        householdIncomeAfterIncomeTaxAnnualEur: { type: number, nullable: true }
+        householdIncomeAfterIncomeTaxMonthlyEur: { type: number, nullable: true }
+        estimatedIncomeTaxGrossAnnualEur: { type: number, nullable: true }
+        estimatedIncomeTaxNetAfterDecoteAnnualEur: { type: number, nullable: true }
+        marginalIncomeTaxRate: { type: number, nullable: true }
+        incomeTaxQuotientEur: { type: number, nullable: true }
+    ScenarioResult:
+      type: object
+      required: [snapshot, trace, warnings, uncertainty, meta, limitationHints]
+      properties:
+        snapshot:
+          $ref: "#/components/schemas/ScenarioSnapshot"
+        trace:
+          type: object
+          additionalProperties: true
+        warnings:
+          type: array
+          items: { type: string }
+        uncertainty:
+          type: object
+          additionalProperties: true
+        meta:
+          type: object
+          additionalProperties: true
+        limitationHints:
+          type: array
+          items: { type: object, additionalProperties: true }
   responses:
     Unauthorized:
       description: Clé API requise mais absente ou incorrecte
