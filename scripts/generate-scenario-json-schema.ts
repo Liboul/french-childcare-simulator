@@ -11,7 +11,7 @@ const root = join(import.meta.dir, "..");
 const outPath = join(root, "harness", "scenario-input.schema.json");
 
 const schema = z.toJSONSchema(scenarioInputSchema) as Record<string, unknown>;
-schema.$id = "https://agent-comparatif-modes-de-garde.local/schemas/scenario-input.json";
+schema.$id = "https://french-childcare-costs.local/schemas/scenario-input.json";
 schema.title = "ScenarioInput";
 
 writeFileSync(outPath, `${JSON.stringify(schema, null, 2)}\n`, "utf8");

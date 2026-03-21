@@ -375,6 +375,6 @@
   },
   "required": ["household", "brutInput", "cmg"],
   "additionalProperties": false,
-  "$id": "https://agent-comparatif-modes-de-garde.local/schemas/scenario-input.json",
+  "$id": "https://french-childcare-costs.local/schemas/scenario-input.json",
   "title": "ScenarioInput"
 }

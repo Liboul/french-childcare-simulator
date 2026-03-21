@@ -16,7 +16,7 @@ Il faut séparer clairement :
 
 ## Décision
 
-1. **Source de vérité du calcul** : le dépôt `agent-comparatif-modes-de-garde` (dossier `src/`, `config/rules.*.json`, tests). Aucune logique fiscale « critique » résidant uniquement dans un prompt propriétaire sans équivalent testé ici.
+1. **Source de vérité du calcul** : le dépôt `french-childcare-costs` (dossier `src/`, `config/rules.*.json`, tests). Aucune logique fiscale « critique » résidant uniquement dans un prompt propriétaire sans équivalent testé ici.
 
 2. **Surface d’intégration** : exposer le moteur via des **contrats stables** déjà alignés sur les livrables repo :
    - entrée : `ScenarioInput` (cf. `src/scenario/types.ts`) ;

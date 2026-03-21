@@ -1,5 +1,5 @@
 {
-  "name": "agent-comparatif-modes-de-garde",
+  "name": "french-childcare-costs",
   "module": "src/index.ts",
   "type": "module",
   "private": true,

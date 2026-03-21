@@ -1,4 +1,4 @@
-export const projectName = "agent-comparatif-modes-de-garde";
+export const projectName = "french-childcare-costs";
 
 export * from "./childcare/index";
 export * from "./config/index";

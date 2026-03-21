@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "agent-comparatif-modes-de-garde",
+      "name": "french-childcare-costs",
       "dependencies": {
         "zod": "^4.3.6",
       },
