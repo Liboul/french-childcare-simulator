@@ -76,6 +76,7 @@ This section is the **sprint-level audit trail**: what shipped, whether executio
 | Story ID      | Completed (date) | Outcome & notes                                                                                                                                                                                                      |
 | ------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **GARDE-001** | 2026-03-21       | Done. Bun + strict TS + Vitest + ESLint + Prettier + EditorConfig + `config/` + GitHub Actions CI (`bun run ci`). Minimal `src/` placeholder; README. Prettier also applied to existing `docs/*.md` on first format. |
+| **GARDE-002** | 2026-03-21       | Done. `src/trace/`: `SourceRef`, blocks A–G + labels, `CalculationStep`, `CalculationTrace`, `emptyTrace` / `appendStep`. Barrel export from `src/index.ts`.                                                         |
 
 ---
 
