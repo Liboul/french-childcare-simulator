@@ -1,0 +1,17 @@
+{
+  "household": { "taxYear": 2026 },
+  "brutInput": {
+    "mode": "creche_privee",
+    "monthlyParticipationEur": 1000
+  },
+  "cmg": {
+    "cumul": {},
+    "annualReferenceIncomeN2Eur": 20000,
+    "structureDependentChildren": 1,
+    "isSingleParentHousehold": false,
+    "childAgeBand": "under3",
+    "monthlyStructureExpenseEur": 1000,
+    "territory": "metropole",
+    "hourlyCrecheFeeEur": 9.5
+  }
+}
