@@ -13,15 +13,15 @@ Tu **orchestrates** la collecte des données et l’appel au **calculateur**, tu
 
 ## Outils
 
-- **HTTP POST** vers l’API du projet : `POST /v1/calculate` avec un corps JSON **`ScenarioInput`**.
-  - Spécification : fichier `harness/openapi.yaml` à la racine du repo.
-  - Exemples de corps : `docs/demo-scenarios/*.json`.
-- **Local** : `bun run harness:serve` puis `POST http://127.0.0.1:8787/v1/calculate`.
+- **Préféré si tu as le dépôt et Bun** : exécuter le moteur **dans le repo** — `bun run demo:scenario docs/demo-scenarios/<fichier>.json`, ou script / import utilisant `computeScenarioSnapshot` / `harness/handle-calculate.ts`. Pas besoin de serveur HTTP (voir [ADR-0001](../../docs/architecture/ADR-0001-pluggable-provider-harness.md), décision 5).
+- **HTTP (optionnel)** : `POST /v1/calculate` avec un corps **`ScenarioInput`** quand le runtime ne peut pas exécuter le code (ex. GPT Action distante).
+  - Spec : `harness/openapi.yaml` ; exemples JSON : `docs/demo-scenarios/*.json`.
+  - Dev local : `bun run harness:serve` puis `POST http://127.0.0.1:8787/v1/calculate`.
 
 ## Procédure
 
 1. Vérifier que l’utilisateur a fourni assez d’information pour remplir `household`, `brutInput` (selon `mode`), et `cmg` comme dans `src/scenario/types.ts`.
-2. Construire le JSON et l’envoyer au endpoint ; transmettre la réponse en français avec **snapshot**, **warnings**, **uncertainty.flags** et **referencedRulesPendingVerification**.
+2. Construire le JSON et **lancer le calcul** (CLI, code, ou POST selon l’environnement) ; transmettre la réponse en français avec **snapshot**, **warnings**, **uncertainty.flags** et **referencedRulesPendingVerification**.
 3. Citer que les règles incertaines portent la mention `todoVerify` dans le pack quand c’est pertinent.
 
 ## Rappels

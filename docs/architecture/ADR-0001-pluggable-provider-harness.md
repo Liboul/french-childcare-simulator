@@ -27,6 +27,8 @@ Il faut séparer clairement :
 
 4. **Pluralisme** : les harness sont **jetables / remplaçables** ; une évolution fournisseur ne doit pas imposer de fork du moteur. Les artefacts spécifiques (ZIP Skill, manifeste OAuth, etc.) vivent hors du cœur ou dans un dossier dédié futur (**GARDE-016**).
 
+5. **API HTTP : utile mais non obligatoire** : le serveur `POST /v1/calculate` (**GARDE-016**) n’est **pas** une condition du produit. Dès que l’agent dispose du **dépôt** et d’un runtime (**Bun**), il peut exécuter le moteur **directement** — par exemple `bun run demo:scenario`, appels à `computeScenarioSnapshot` depuis le code, ou tests. Ce mode convient à **Claude Code**, **Cursor**, **Cowork**, environnements type « agent avec workspace », etc. **L’API reste pertinente** lorsque le runtime conversationnel **ne peut pas** exécuter le repo (ex. **Custom GPT** avec **Actions** uniquement vers HTTPS, utilisateurs sans environnement de dev, intégrations distantes). En résumé : **cœur toujours dans le repo** ; **HTTP = une option de bridge**, pas l’unique façon de « harnesser » le moteur.
+
 ## Options considérées (synthèse)
 
 | Option                      | Intérêt                           | Limite                                      |
@@ -40,7 +42,7 @@ Le détail des critères, sources et risques de renommage est dans **DR-05**.
 
 ## Conséquences
 
-- **Positives** : audits possibles sur JSON + trace ; même moteur pour démo CLI, exports et futur GPT/Skill.
+- **Positives** : audits possibles sur JSON + trace ; même moteur pour démo CLI, exports, exécution **in-repo** par l’agent **ou** GPT/Skill derrière API selon le canal.
 - **Négatives** : chaque canal nécessite un **effort d’implémentation harness** (GARDE-016) et du suivi des dépréciations annoncées (ex. Assistants API OpenAI, cf. DR-05).
 - **Risque atténué** : dépendance fournisseur confinée au harness, pas aux formules CMG / crédits / plafonds.
 

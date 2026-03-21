@@ -3,6 +3,14 @@
 Enveloppe **hors moteur** : HTTP de dev, **OpenAPI** pour Actions GPT, instructions et ébauche **Claude Skill**.  
 Décision d’architecture : [ADR-0001](../docs/architecture/ADR-0001-pluggable-provider-harness.md).
 
+## Faut-il lancer l’API ?
+
+**Souvent non.** Si l’outil (Claude Code, Cursor, Cowork, etc.) a **le clone du dépôt** et **Bun**, le chemin recommandé est d’**exécuter le moteur dans le repo** : `bun run demo:scenario <fichier.json>`, imports depuis `src/`, ou `calculateScenario` via [`handle-calculate.ts`](./handle-calculate.ts) dans un script / test — **sans** `harness:serve`.
+
+**Oui, ou équivalent hébergé**, quand le canal **ne peut pas** tourner le code localement : **Custom GPT** (Actions HTTPS), utilisateurs **sans** dev environment, ou tout client qui consomme uniquement une **API documentée** (`openapi.yaml`).
+
+Le détail (décision 5) est dans l’[ADR-0001 § Décision](../docs/architecture/ADR-0001-pluggable-provider-harness.md).
+
 ## Démarrage API locale
 
 ```bash
