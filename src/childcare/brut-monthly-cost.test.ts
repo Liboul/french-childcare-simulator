@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import rulesFr2026 from "../../../config/rules.fr-2026.json" with { type: "json" };
-import { parseRulePack } from "../../config/parse";
-import { computeBrutMonthlyCost, readSmicHourlyMetropoleEur } from "./brut-cost";
+import rulesFr2026 from "../../config/rules.fr-2026.json" with { type: "json" };
+import { parseRulePack } from "../config/parse";
+import { computeBrutMonthlyCost, readSmicHourlyMetropoleEur } from "./brut-monthly-cost";
 
 const packResult = parseRulePack(rulesFr2026);
 if (!packResult.ok) {

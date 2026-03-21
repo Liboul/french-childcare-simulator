@@ -27,6 +27,10 @@ This document defines **sprint goals**, **story backlog**, **working agreements*
 - **Definition of Done** (see below) applies to every story unless the story is explicitly a Spike with a different exit criterion.
 - **Sprint plan** (`SPRINT_PLAN.md`) is the living record of **progress and outcomes**; it must be updated when a story closes (see [Story completion log](#story-completion-log)).
 
+### Code layout vs INITIAL_SPEC “blocs”
+
+[`INITIAL_SPEC.md`](./INITIAL_SPEC.md) uses **letters A–G** as a reader-friendly breakdown of the full calculation. **Application code does not mirror those letters** in package or type names: modules follow **domain boundaries** (e.g. `household/`, `childcare/`, future `taxation/`). Traces use **semantic segment ids** (`TraceSegment`: `household`, `childcare`, `tax_credits`, …) with French labels aligned to the spec. If a deliverable must show “bloc A” style wording to stakeholders, that mapping belongs in **exporters / presenters**, not in core module structure.
+
 ---
 
 ## Tech stack
@@ -73,14 +77,14 @@ This section is the **sprint-level audit trail**: what shipped, whether executio
 
 **Where:** append a row to the table below. If the backlog order or story list changes, update the [Backlog](#backlog-stories) section in the same edit so the plan stays coherent.
 
-| Story ID      | Completed (date) | Outcome & notes                                                                                                                                                                                                       |
-| ------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **GARDE-001** | 2026-03-21       | Done. Bun + strict TS + Vitest + ESLint + Prettier + EditorConfig + `config/` + GitHub Actions CI (`bun run ci`). Minimal `src/` placeholder; README. Prettier also applied to existing `docs/*.md` on first format.  |
-| **GARDE-002** | 2026-03-21       | Done. `src/trace/`: `SourceRef`, blocks A–G + labels, `CalculationStep`, `CalculationTrace`, `emptyTrace` / `appendStep`. Barrel export from `src/index.ts`.                                                          |
-| **GARDE-003** | 2026-03-21       | Done. Zod `rulePackSchema` + `parseRulePack`, categories, `todoVerify` OR sources per rule. `config/rules.example.json`. Dependency `zod`.                                                                            |
-| **GARDE-004** | 2026-03-21       | Done. Deep research outputs committed: `docs/research/DR-01-CMG-CAF.md` … `DR-05-PROVIDER-HARNESS.md`; prompts live under `docs/research/prompts/*-PROMPT.md`.                                                        |
-| **GARDE-005** | 2026-03-21       | Done. `config/rules.fr-2026.json` (DR-01–04 parameters + Service-Public/Légifrance refs, `todoVerify` où requis), `findRule`, tests sur le pack ; pas d’extension Zod (paramètres restent `Record<string, unknown>`). |
-| **GARDE-006** | 2026-03-21       | Done. `src/blocks/ab/` : types foyer/mode, `computeBrutMonthlyCost` + lecture SMIC/majoration garde partagée depuis le pack ; cotisation patronale **uniquement** si taux explicite côté appelant.                    |
+| Story ID      | Completed (date) | Outcome & notes                                                                                                                                                                                                                                |
+| ------------- | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **GARDE-001** | 2026-03-21       | Done. Bun + strict TS + Vitest + ESLint + Prettier + EditorConfig + `config/` + GitHub Actions CI (`bun run ci`). Minimal `src/` placeholder; README. Prettier also applied to existing `docs/*.md` on first format.                           |
+| **GARDE-002** | 2026-03-21       | Done. `src/trace/`: `SourceRef`, `TraceSegment` + labels FR, `CalculationStep`, `CalculationTrace`, `emptyTrace` / `appendStep`. Barrel export from `src/index.ts`. (Segment ids = domain language ; INITIAL_SPEC A–G = doc alignment only.)   |
+| **GARDE-003** | 2026-03-21       | Done. Zod `rulePackSchema` + `parseRulePack`, categories, `todoVerify` OR sources per rule. `config/rules.example.json`. Dependency `zod`.                                                                                                     |
+| **GARDE-004** | 2026-03-21       | Done. Deep research outputs committed: `docs/research/DR-01-CMG-CAF.md` … `DR-05-PROVIDER-HARNESS.md`; prompts live under `docs/research/prompts/*-PROMPT.md`.                                                                                 |
+| **GARDE-005** | 2026-03-21       | Done. `config/rules.fr-2026.json` (DR-01–04 parameters + Service-Public/Légifrance refs, `todoVerify` où requis), `findRule`, tests sur le pack ; pas d’extension Zod (paramètres restent `Record<string, unknown>`).                          |
+| **GARDE-006** | 2026-03-21       | Done. `src/household/` + `src/childcare/` : profil foyer, modes et `computeBrutMonthlyCost` (SMIC / majoration depuis le pack) ; cotisation patronale **uniquement** si taux explicite. Refactor post-livraison : plus de dossier `blocks/ab`. |
 
 ---
 
@@ -117,7 +121,7 @@ Fast iteration with AI assistance needs explicit limits:
 1. **No silent fiscal rules**: every coefficient, ceiling, and exclusion is either (a) in config with a source URL/id, or (b) marked `TODO-VERIFY` with no default pretending to be law.
 2. **Single source of truth for numbers**: barèmes/plafonds live in versioned config; code reads config, does not hardcode except tests/fixtures.
 3. **Traceability first**: any calculation path must be able to emit **steps** (formula, rule id, source ref) before UI polish.
-4. **Tests before merge**: minimum — unit tests for money math and cumul; integration test for at least one full scenario per major block (A–G).
+4. **Tests before merge**: minimum — unit tests for money math and cumul; integration test for at least one full scenario per major **trace segment** (same coverage as INITIAL_SPEC § blocs, without naming packages after letters).
 5. **Small commits**: one story per logical PR/commit series; message includes `GARDE-###`.
 6. **Review checklist**: story spec reviewed against `INITIAL_SPEC.md` § Transparency and § Contraintes fortes.
 7. **No scope creep**: refactors only when required by the current story.
@@ -198,7 +202,7 @@ The product has **two layers**; only the second is provider-specific:
 | --------------------- | ----------------------------------------------------------------------------------------- |
 | **E0 — Foundation**   | Repo (**TypeScript**, **Bun**, **Vitest**, lint/format, CI), config strategy, trace model |
 | **E1 — Rules & data** | Official rules encoded as data + research packs                                           |
-| **E2 — Engine**       | Blocks A–G, cumul, employer cost constant                                                 |
+| **E2 — Engine**       | Full calculation pipeline (trace segments), cumul, employer cost constant                 |
 | **E3 — Outputs**      | CSV, HTML, JSON (+ optional PDF)                                                          |
 | **E4 — Packaging**    | Provider harness research (DR-05), skill/GPT/Gem artifacts, docs, demo scenarios          |
 
@@ -215,15 +219,15 @@ The product has **two layers**; only the second is provider-specific:
 | **GARDE-003** | Config schema for barèmes/plafonds + validation                                                                                       | E0    | Pairs with GARDE-002                                                                        |
 | **GARDE-004** | `[DEEP RESEARCH]` Research packs DR-01–DR-04 consolidated in `docs/research/`                                                         | E1    | **Delegate** if agent cannot primary-source                                                 |
 | **GARDE-005** | Import official parameters into config (versioned, dated)                                                                             | E1    | Depends on GARDE-003, GARDE-004                                                             |
-| **GARDE-006** | Block A–B: household + mode inputs; **brut** cost per mode                                                                            | E2    | Municipal tariffs = params                                                                  |
-| **GARDE-007** | Block D: CAF/CMG application + cumul rules                                                                                            | E2    | **`[DEEP RESEARCH]`** edge cases → DR-01                                                    |
-| **GARDE-008** | Block C: employer benefits (CESU, berceau, etc.)                                                                                      | E2    | **`[DEEP RESEARCH]`** → DR-03                                                               |
-| **GARDE-009** | Block E–F: crédits d’impôt + fiscal effects on household                                                                              | E2    | **`[DEEP RESEARCH]`** → DR-02                                                               |
-| **GARDE-010** | Block G: final aggregation; reste à charge; revenu disponible; **employer cost constant** across scenarios                            | E2    | Integration-heavy                                                                           |
+| **GARDE-006** | Household + childcare mode inputs; **gross** monthly cost per mode                                                                    | E2    | Municipal tariffs = params                                                                  |
+| **GARDE-007** | CAF/CMG application + cumul rules                                                                                                     | E2    | **`[DEEP RESEARCH]`** edge cases → DR-01                                                    |
+| **GARDE-008** | Employer benefits (CESU, berceau, etc.)                                                                                               | E2    | **`[DEEP RESEARCH]`** → DR-03                                                               |
+| **GARDE-009** | Tax credits + household fiscal effects                                                                                                | E2    | **`[DEEP RESEARCH]`** → DR-02                                                               |
+| **GARDE-010** | Final aggregation; reste à charge; disposable income; **employer cost constant** across scenarios                                     | E2    | Integration-heavy                                                                           |
 | **GARDE-011** | Uncertainty handling: flags, parametrizable variants, no silent defaults                                                              | E2    | Per INITIAL_SPEC § Gestion de l’incertitude                                                 |
 | **GARDE-012** | Exporters: JSON + HTML + CSV (hypothèses, calculs, sources)                                                                           | E3    |                                                                                             |
 | **GARDE-013** | Optional PDF export                                                                                                                   | E3    | Spike if library choice blocks                                                              |
-| **GARDE-014** | Test matrix: plafonds, CMG, cumul, CESU consumed, negative RAC guard, ineligible mode                                                 | E0/E2 | Can split per block; must complete before “1.0”                                             |
+| **GARDE-014** | Test matrix: plafonds, CMG, cumul, CESU consumed, negative RAC guard, ineligible mode                                                 | E0/E2 | Can split per engine stage; must complete before “1.0”                                      |
 | **GARDE-015** | `[SPIKE]` **`[DEEP RESEARCH]`** Provider harness & distribution: DR-05 + ADR (`docs/architecture/` or `docs/research/`)               | E4    | **Clarifies Claude Skills vs OpenAI vs Gemini**; defines what “ship” means before GARDE-016 |
 | **GARDE-016** | Implement harness(es) per ADR: instructions, tool wiring, example prompts; **core stays portable**                                    | E4    | Depends on **GARDE-015**, stable JSON API (GARDE-012)                                       |
 | **GARDE-017** | Demo scenarios + “official sources” table in repo                                                                                     | E4    | For acceptance demos; can follow GARDE-016                                                  |

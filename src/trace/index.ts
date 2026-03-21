@@ -1,8 +1,4 @@
 export type { SourceRef } from "./source-ref";
-export {
-  CALCULATION_BLOCKS,
-  CALCULATION_BLOCK_LABEL,
-  type CalculationBlock,
-} from "./calculation-block";
+export { TRACE_SEGMENTS, TRACE_SEGMENT_LABEL_FR, type TraceSegment } from "./trace-segment";
 export type { CalculationStep } from "./calculation-step";
 export { appendStep, emptyTrace, type CalculationTrace } from "./trace";

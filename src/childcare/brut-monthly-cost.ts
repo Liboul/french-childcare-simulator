@@ -1,6 +1,7 @@
-import { findRule } from "../../config/find-rule";
-import type { RulePack } from "../../config/schema";
-import type { BrutCostInput, BrutCostLine, BrutCostResult, HouseholdProfile } from "./types";
+import type { HouseholdProfile } from "../household/types";
+import { findRule } from "../config/find-rule";
+import type { RulePack } from "../config/schema";
+import type { BrutCostInput, BrutCostLine, BrutCostResult } from "./model";
 
 export function readSmicHourlyMetropoleEur(pack: RulePack): number {
   const rule = findRule(pack, "tarif-smic-horaire-metropole-2026");
@@ -29,8 +30,8 @@ function roundMoney2(n: number): number {
 }
 
 /**
- * Coût brut mensuel pour le mode de garde (Bloc B), hors aides publiques et impôts.
- * `household` est accepté pour traçabilité future ; non utilisé dans GARDE-006.
+ * Coût brut mensuel pour le mode de garde, hors aides publiques et impôts.
+ * `household` est réservé à la traçabilité / validations futures ; non utilisé pour l’instant.
  */
 export function computeBrutMonthlyCost(
   pack: RulePack,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CALCULATION_BLOCK_LABEL } from "./calculation-block";
+import { TRACE_SEGMENT_LABEL_FR } from "./trace-segment";
 import { appendStep, emptyTrace } from "./trace";
 import type { CalculationStep } from "./calculation-step";
 import type { SourceRef } from "./source-ref";
@@ -14,7 +14,7 @@ describe("CalculationTrace", () => {
   it("builds an ordered trace with sources", () => {
     const step1: CalculationStep = {
       id: "brut-creche",
-      block: "B",
+      segment: "childcare",
       order: 1,
       label: "Coût brut mensuel crèche",
       formula: "heures * tarif_horaire",
@@ -24,7 +24,7 @@ describe("CalculationTrace", () => {
 
     const step2: CalculationStep = {
       id: "credit-garde",
-      block: "E",
+      segment: "tax_credits",
       order: 2,
       label: "Crédit d'impôt garde",
       formula: "min(0.5 * base_eligible, plafond)",
@@ -37,8 +37,8 @@ describe("CalculationTrace", () => {
     trace = appendStep(trace, step2);
 
     expect(trace.steps).toHaveLength(2);
-    expect(trace.steps[0]?.block).toBe("B");
+    expect(trace.steps[0]?.segment).toBe("childcare");
     expect(trace.steps[1]?.sources[0]?.url).toContain("service-public.fr");
-    expect(CALCULATION_BLOCK_LABEL["G"]).toBe("Résultat final");
+    expect(TRACE_SEGMENT_LABEL_FR.summary).toBe("Résultat final");
   });
 });

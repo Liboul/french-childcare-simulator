@@ -1,11 +1,3 @@
-/**
- * Bloc A — profil foyer (minimal pour GARDE-006 ; enrichissement ultérieur au fil des stories moteur).
- */
-export type HouseholdProfile = {
-  /** Année civile d’imposition / de simulation (ex. 2026). */
-  taxYear: number;
-};
-
 export const CHILDCARE_MODES = [
   "nounou_domicile",
   "nounou_partagee",
@@ -19,7 +11,7 @@ export const CHILDCARE_MODES = [
 export type ChildcareMode = (typeof CHILDCARE_MODES)[number];
 
 /**
- * Bloc B — paramètres de coût brut par mode (hors aides / impôts).
+ * Paramètres de coût brut par mode (hors aides publiques et impôts).
  * `employerShareOfGross` : part des cotisations patronales **exprimée en fraction du salaire brut**
  * (ex. 0,25 pour 25 %). Aucune valeur imposée par le moteur — voir `cotisations-pajemploi-taux-indicatifs-dr03-dr04`.
  */

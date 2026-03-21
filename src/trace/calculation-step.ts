@@ -1,4 +1,4 @@
-import type { CalculationBlock } from "./calculation-block";
+import type { TraceSegment } from "./trace-segment";
 import type { SourceRef } from "./source-ref";
 
 /**
@@ -6,7 +6,7 @@ import type { SourceRef } from "./source-ref";
  */
 export type CalculationStep = {
   readonly id: string;
-  readonly block: CalculationBlock;
+  readonly segment: TraceSegment;
   /** Position in the full trace (1-based). */
   readonly order: number;
   readonly label: string;

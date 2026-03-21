@@ -1,26 +1,26 @@
-# GARDE-006 — Blocs A–B : foyer + mode ; coût brut par mode
+# GARDE-006 — Household + childcare mode ; gross monthly cost per mode
 
-| Field     | Value                                                                                                                                                   |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Epic**  | E2 — Engine                                                                                                                                             |
-| **Links** | [`INITIAL_SPEC.md`](../INITIAL_SPEC.md) (blocs A–B, coût brut), **GARDE-005** (`config/rules.fr-2026.json`), [`DR-04`](../research/DR-04-COUT-MODES.md) |
+| Field     | Value                                                                                                                                                        |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Epic**  | E2 — Engine                                                                                                                                                  |
+| **Links** | [`INITIAL_SPEC.md`](../INITIAL_SPEC.md) (coût brut, modes de garde), **GARDE-005** (`config/rules.fr-2026.json`), [`DR-04`](../research/DR-04-COUT-MODES.md) |
 
 ## User / product value
 
-Le moteur peut agréger les **entrées foyer / mode** et produire un **coût brut mensuel** par scénario, en s’appuyant sur les paramètres versionnés (SMIC, majorations garde partagée) sans implémenter encore CMG, crédits ou blocs C–G.
+Le moteur peut agréger les **entrées foyer / mode de garde** et produire un **coût brut mensuel** par scénario, en s’appuyant sur les paramètres versionnés (SMIC, majorations garde partagée) sans implémenter encore aides CAF, crédits d’impôt ni agrégation finale.
 
 ## Scope
 
 **In scope**
 
-- Types **Bloc A** (profil fiscal minimal : année d’imposition, effectifs indicatifs) et **Bloc B** (mode de garde + paramètres de coût).
-- Fonction `computeBrutMonthlyCost(rulePack, input)` : brut mensuel + lignes élémentaires (salaire, indemnités, cotisations patronales indicatives, participation structure).
+- Modules `src/household/` (profil fiscal minimal : année d’imposition) et `src/childcare/` (modes + paramètres de coût brut).
+- Fonction `computeBrutMonthlyCost(rulePack, household, input)` : brut mensuel + lignes élémentaires (salaire, indemnités, cotisations patronales indicatives, participation structure).
 - Lecture de règles du pack : SMIC métropole, majoration garde partagée (`garde-partagee-majoration-simultanes-dr04`).
 - **Aucun taux de cotisation patronale par défaut** issu de DR-03 vs DR-04 : le **callsite fournit** `employerShareOfGross` pour les modes emploi direct (garde rail GARDE-005 / `cotisations-pajemploi-taux-indicatifs-dr03-dr04`).
 
 **Out of scope**
 
-- Blocs C–G, trace `CalculationStep` détaillée, PAJE/CMG, plafonds fiscaux.
+- Employeur, aides familiales, crédits d’impôt, fiscalité agrégée, résultat final ; trace `CalculationStep` détaillée pour ce calcul.
 
 ## Acceptance criteria
 

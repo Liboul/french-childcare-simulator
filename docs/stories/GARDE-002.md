@@ -11,14 +11,14 @@ Every future euro calculation can attach to **steps**, **formulas**, and **offic
 
 ## Scope
 
-**In scope:** TypeScript types and small helpers for `SourceRef`, calculation blocks **A–G**, `CalculationStep`, `CalculationTrace`; unit tests; exports from `src/`.
+**In scope:** TypeScript types and small helpers for `SourceRef`, **trace segments** (`TraceSegment`: stable domain ids such as `household`, `childcare`, `tax_credits`, …) with French labels aligned to INITIAL_SPEC section titles, `CalculationStep`, `CalculationTrace`; unit tests; exports from `src/`.
 
 **Out of scope:** Config barèmes (GARDE-003), numeric engine, JSON/HTML exporters.
 
 ## Acceptance criteria
 
-1. Blocks **A–G** match the spec labels (foyer, mode, employeur, CAF/CMG, crédits, fiscalité, résultat).
-2. Each step carries: id, block, order, label, formula string, optional rule id, **sources** (≥0 refs with title + URL).
+1. Segment ids and labels cover the same **stages** as INITIAL_SPEC (foyer, mode de garde, employeur, CAF/CMG, crédits, fiscalité, résultat) without using **A–G** as code identifiers.
+2. Each step carries: id, **segment**, order, label, formula string, optional rule id, **sources** (≥0 refs with title + URL).
 3. A trace is an ordered list of steps; helpers allow immutable append.
 4. Tests cover a minimal multi-step trace and source attachment.
 
@@ -33,7 +33,7 @@ No.
 
 ## Test plan
 
-- Build trace with two steps, different blocks, assert order and source URLs.
+- Build trace with two steps, different segments, assert order and source URLs.
 
 ## Risks & mitigations
 
