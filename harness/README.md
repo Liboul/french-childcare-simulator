@@ -32,10 +32,12 @@ Fichier : [`openapi.yaml`](./openapi.yaml). Dans ChatGPT (Create GPT → Actions
 
 ## Fichiers utiles
 
-| Fichier                                                                                      | Rôle                                       |
-| -------------------------------------------------------------------------------------------- | ------------------------------------------ |
-| [`handle-calculate.ts`](./handle-calculate.ts)                                               | Logique partagée HTTP / tests              |
-| [`server.ts`](./server.ts)                                                                   | `Bun.serve`                                |
-| [`instructions/gpt-custom-instructions.fr.md`](./instructions/gpt-custom-instructions.fr.md) | Instructions système suggérées pour un GPT |
-| [`prompts/example-user-messages.fr.md`](./prompts/example-user-messages.fr.md)               | Exemples utilisateur                       |
-| [`claude/SKILL.md`](./claude/SKILL.md)                                                       | Skill minimal Claude                       |
+| Fichier                                                                                      | Rôle                                                                                                                 |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| [`handle-calculate.ts`](./handle-calculate.ts)                                               | Logique partagée HTTP / tests                                                                                        |
+| [`server.ts`](./server.ts)                                                                   | `Bun.serve`                                                                                                          |
+| [`instructions/gpt-custom-instructions.fr.md`](./instructions/gpt-custom-instructions.fr.md) | Instructions système suggérées pour un GPT                                                                           |
+| [`prompts/example-user-messages.fr.md`](./prompts/example-user-messages.fr.md)               | Exemples utilisateur                                                                                                 |
+| [`claude/SKILL.md`](./claude/SKILL.md)                                                       | Skill Claude (frontmatter + procédure)                                                                               |
+| [`claude/reference.md`](./claude/reference.md)                                               | Intake `ScenarioInput` pour ZIP / sans repo                                                                          |
+| **ZIP pour upload**                                                                          | `bun run skill:zip` → `dist/…-skill.zip` ; guide [`docs/shipping/CLAUDE-SKILL.md`](../docs/shipping/CLAUDE-SKILL.md) |

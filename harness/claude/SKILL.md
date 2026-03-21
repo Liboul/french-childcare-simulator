@@ -18,9 +18,13 @@ Tu **orchestrates** la collecte des données et l’appel au **calculateur**, tu
   - Spec : `harness/openapi.yaml` ; exemples JSON : `docs/demo-scenarios/*.json`.
   - Dev local : `bun run harness:serve` puis `POST http://127.0.0.1:8787/v1/calculate`.
 
+## Référence intake (sans parcourir le repo)
+
+Si le workspace ne contient pas `src/`, t’appuier sur **`reference.md`** (dans ce dossier skill) pour les champs `ScenarioInput` et un exemple JSON.
+
 ## Procédure
 
-1. Vérifier que l’utilisateur a fourni assez d’information pour remplir `household`, `brutInput` (selon `mode`), et `cmg` comme dans `src/scenario/types.ts`.
+1. Vérifier que l’utilisateur a fourni assez d’information pour remplir `household`, `brutInput` (selon `mode`), et `cmg` comme dans `src/scenario/types.ts` (ou `reference.md`).
 2. Construire le JSON et **lancer le calcul** (CLI, code, ou POST selon l’environnement) ; transmettre la réponse en français avec **snapshot**, **warnings**, **uncertainty.flags** et **referencedRulesPendingVerification**.
 3. Citer que les règles incertaines portent la mention `todoVerify` dans le pack quand c’est pertinent.
 

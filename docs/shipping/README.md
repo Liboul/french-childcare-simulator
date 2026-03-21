@@ -18,6 +18,8 @@ Ce guide complète la **recherche marché** [`DR-05`](../research/DR-05-PROVIDER
 
 ## Anthropic (Claude)
 
+**Guide pas-à-pas (ZIP, Claude Code, MCP) :** [`CLAUDE-SKILL.md`](./CLAUDE-SKILL.md).
+
 ### Piste A — Claude Code / workspace avec le dépôt (**recommandée**)
 
 1. Cloner ce repo, installer les deps (`bun install`).
