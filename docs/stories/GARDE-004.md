@@ -7,9 +7,15 @@
 
 ## What you need to do
 
-1. Open [`SPRINT_PLAN.md`](../SPRINT_PLAN.md) and run the delegated prompts **DR-01**, **DR-02**, **DR-03**, **DR-04** (copy-paste sections) in **OpenAI Deep Research**, **Gemini Deep Research**, **Anthropic**, or equivalent—not in Cursor alone.
-2. Save outputs under `docs/research/` (e.g. `docs/research/DR-01-cmg-caf.md`, …).
-3. Tell the agent (or reopen the task) when files are in place so **GARDE-005** can import official parameters into `config/` without inventing law.
+1. Run each **full prompt** below in **OpenAI Deep Research**, **Gemini Deep Research**, **Anthropic**, or equivalent—not in Cursor alone.
+   - [DR-01 — CMG / CAF](../research/prompts/DR-01-CMG-CAF.md)
+   - [DR-02 — Crédit d’impôt](../research/prompts/DR-02-CREDIT-IMPOT.md)
+   - [DR-03 — CESU & employeur](../research/prompts/DR-03-CESU-EMPLOYEUR.md)
+   - [DR-04 — Coût par mode](../research/prompts/DR-04-COUT-MODES.md)
+2. Save outputs under `docs/research/` (e.g. `DR-01-results.md`, …).
+3. Tell the implementer when files are in place so **GARDE-005** can import official parameters into `config/` without inventing law.
+
+**Note:** [DR-05 — Provider harness](../research/prompts/DR-05-PROVIDER-HARNESS.md) supports **GARDE-015** (packaging); run it when you start the **E4** spike, not necessarily with DR-01–04.
 
 ## Acceptance criteria (from sprint plan)
 

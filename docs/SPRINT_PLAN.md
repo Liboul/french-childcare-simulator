@@ -146,28 +146,33 @@ Use one prompt per major topic; attach outputs to `docs/research/` and reference
 
 #### DR-01 — CMG & prestations CAF (modes de garde)
 
-**Full prompt (expansive, copy-paste):** [`docs/research/prompts/DR-01-CMG-CAF.md`](research/prompts/DR-01-CMG-CAF.md)
+**Full prompt:** [`docs/research/prompts/DR-01-CMG-CAF.md`](research/prompts/DR-01-CMG-CAF.md)
 
-**Summary:** Official CMG and closely related CAF benefits per mode (garde à domicile, assistante maternelle, MAM, EAJE/crèche, etc.), barèmes and **non-cumul**, **2026** or latest published with unknowns; output must include verbatim URLs and tables. Save the research output under `docs/research/` (e.g. `DR-01-results.md`).
+**Summary:** Official CMG and closely related CAF benefits per mode, barèmes, **non-cumul**, **2026** or latest with unknowns; verbatim URLs and tables. Save output under `docs/research/` (e.g. `DR-01-results.md`).
 
-#### DR-05 — Provider harnesses: Claude Skills vs OpenAI vs Gemini (how to ship)
+#### DR-02 — Crédit d’impôt (garde d’enfants, emploi à domicile)
 
-The codebase will expose a **portable calculation core** (JSON in/out, trace, tests). **Distribution** to end users depends on each vendor’s **agent harness** (instructions, tools, file layout, limits). This is **not** interchangeable with fiscal research — it is **product/platform research**.
+**Full prompt:** [`docs/research/prompts/DR-02-CREDIT-IMPOT.md`](research/prompts/DR-02-CREDIT-IMPOT.md)
 
-Research and compare **current official documentation** (as of your run date) for:
+**Summary:** CGI / BOFiP / Service-Public / impots.gouv: **base**, **taux**, **plafonds**, interactions with CESU / PAJE / CMG and **ordering** of credits; loi de finances **2026** where published. Save as e.g. `DR-02-results.md`.
 
-1. **Anthropic Claude**: “Skills” (or successor) — packaging format, `SKILL.md` / project layout, how tools/scripts attach, size limits, invocation in Claude apps vs API.
-2. **OpenAI**: Custom GPTs, ChatGPT **Apps** / developer surfaces relevant to shipping a domain skill — what is allowed, how tools and knowledge files work, review constraints.
-3. **Google Gemini**: Gems, extensions, or API-side patterns for comparable “instruction + tools” packaging.
+#### DR-03 — CESU, titres-services, chèques emploi associatif, avantages employeur (berceau)
 
-For **each** platform, deliver:
+**Full prompt:** [`docs/research/prompts/DR-03-CESU-EMPLOYEUR.md`](research/prompts/DR-03-CESU-EMPLOYEUR.md)
 
-- **What the user actually installs** (file zip, store listing, API-only, etc.)
-- **How the harness calls our logic** (e.g. hosted HTTP tool vs local script vs prompt-only).
-- **Parity gaps** (e.g. one provider has no code execution; another allows MCP).
-- **Recommendation**: one **primary** target for MVP + what stays **provider-agnostic** in-repo.
+**Summary:** URSSAF + fiscal: social and tax treatment, plafonds, participation employeur / crèche d’entreprise; interaction matrices with fiscal and benefit rules. Save as e.g. `DR-03-results.md`.
 
-Output: decision-ready summary + URLs to primary docs. Flag anything that changed name recently (rename risk).
+#### DR-04 — Modèle de coût par mode (composantes & paramètres)
+
+**Full prompt:** [`docs/research/prompts/DR-04-COUT-MODES.md`](research/prompts/DR-04-COUT-MODES.md)
+
+**Summary:** For each product mode (nounou, MAM, crèches, inter-entreprises…), **line items**, national vs local vs user inputs; optional **Paris** public-crèche example with municipal URL. Save as e.g. `DR-04-results.md`.
+
+#### DR-05 — Provider harnesses (Claude Skills, OpenAI, Gemini — how to ship)
+
+**Full prompt:** [`docs/research/prompts/DR-05-PROVIDER-HARNESS.md`](research/prompts/DR-05-PROVIDER-HARNESS.md)
+
+**Summary:** **Product/platform** research (not fiscal): packaging, distribution, tools/APIs, comparison table, MVP vendor recommendation, rename risks. Save as e.g. `DR-05-results.md`.
 
 ---
 
@@ -181,18 +186,6 @@ The product has **two layers**; only the second is provider-specific:
 | **Harness** | Instructions, tool wiring, optional wrappers so an agent _uses_ the core inside Claude / ChatGPT / Gemini | **Per-vendor** artifacts + docs           |
 
 **Implication:** “Shipping the skill” means shipping **(core + harness)**. Anthropic, OpenAI, and Google each supply the **runtime** that loads instructions and may call tools; this sprint plan treats **research on those mechanisms** as mandatory (**DR-05**, story **GARDE-015**) before locking **GARDE-016** implementation choices.
-
-#### DR-02 — Crédit d’impôt pour frais de garde (et garde à domicile)
-
-For French **impôt sur le revenu**, document **crédit d’impôt** rules for childcare and home employment where relevant: **base**, **rate**, **caps**, interaction with **CESU** / **PAJE** / **CMG**, and ordering of deductions. Cite impots.gouv.fr and Service-Public.fr. Note 2026 finance law if applicable.
-
-#### DR-03 — CESU, titres-services, chèques emploi associatif, dispositifs employeur (berceau inter-entreprises)
-
-Explain **tax and social treatment** for employee and employer, **limits**, and how they affect **net cost** and **taxable income**. URSSAF + official employer/employee guidance. List **uncertainties** for inter-company nurseries (tarification, fiscalité).
-
-#### DR-04 — Modèle de coût par mode (nounou partagée, MAM, crèche privée/publique)
-
-For each mode in the spec, list **typical cost components** (hourly, monthly, registration, meals) and **which parameters** must be user-provided vs configurable defaults. Distinguish **national rules** vs **local tariffs** (e.g. ville de Paris). Cite official or municipal sources where the spec requires municipal pricing.
 
 ---
 
