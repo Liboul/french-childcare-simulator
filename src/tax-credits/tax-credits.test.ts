@@ -70,6 +70,17 @@ describe("estimateEmploiDomicileTaxCreditAnnual", () => {
     expect(r.cappedBaseEur).toBe(13500);
     expect(r.creditEur).toBe(6750);
     expect(r.ruleIds).toContain("credit-impot-emploi-domicile-plafonds");
+    expect(r.ruleIds).toContain("cesu-prefinance-plafond-aide-financiere-employeur");
+  });
+
+  it("préfinancé supérieur au plafond légal employeur (2540 €) → avertissement", () => {
+    const r = estimateEmploiDomicileTaxCreditAnnual(pack, {
+      annualQualifyingExpensesEur: 20000,
+      taxUnitDependentChildrenCount: 1,
+      prefundedCesuAnnualEur: 3000,
+      sharedCustodyHalvedIncrements: false,
+    });
+    expect(r.warnings).toContain("cesu_prefunded_exceeds_employer_aid_annual_cap");
   });
 
   it("aligne le préfinancé avec describeEmployerPrefundedCesuAnnual", () => {

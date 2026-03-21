@@ -1,5 +1,6 @@
 node_modules
 dist
+tmp
 
 # Cursor — skill projet (lien local vers dist/ après setup:cursor-harness-skill)
 .cursor/skills/

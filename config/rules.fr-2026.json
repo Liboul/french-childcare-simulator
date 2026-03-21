@@ -427,6 +427,29 @@
       }
     },
     {
+      "id": "cesu-prefinance-plafond-aide-financiere-employeur",
+      "label": "CESU préfinancé — plafond annuel de l'aide employeur / CSE (L.7233-4, revalorisation 2025)",
+      "category": "avantage_employeur",
+      "sources": [
+        {
+          "id": "sap-cesu-prefinance-plafond-2025",
+          "title": "Services à la personne — Revalorisation du plafond du Cesu préfinancé (2025)",
+          "url": "https://www.servicesalapersonne.gouv.fr/actualites/beneficier-des-sap/cesu/revalorisation-du-plafond-du-cesu-prefinance-titre-special-de-paiement-de-services-la-personne-et-de-garde-d"
+        },
+        {
+          "id": "jorf-arrete-2024-12-26-plafond-cesu-prefinance",
+          "title": "JORF — Arrêté du 26 décembre 2024 (revalorisation aide L.7233-4)",
+          "url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000051106294"
+        }
+      ],
+      "parameters": {
+        "effectiveFrom": "2025-01-01",
+        "maxAnnualAidPerBeneficiaryEur": 2540,
+        "previousMaxAnnualAidPerBeneficiaryEurUntil2024": 2421
+      },
+      "notes": "Plafond de l'aide financière versable en CESU préfinancé titre spécial (exonération cotisations employeur / non-imposition salarié dans la limite) — distinct des plafonds du crédit d'impôt emploi à domicile."
+    },
+    {
       "id": "cotisations-pajemploi-taux-indicatifs-dr03-dr04",
       "label": "Cotisations Pajemploi / particulier employeur — taux indicatifs contradictoires (DR-03 vs DR-04)",
       "category": "cotisation",

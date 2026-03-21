@@ -1,5 +1,6 @@
 import { findRule } from "../config/find-rule";
 import type { RulePack } from "../config/schema";
+import { cesuPrefundedAmountWarnings } from "../employer-benefits/prefunded-cesu";
 import type { EmploiDomicileTaxCreditInput, EmploiDomicileTaxCreditResult } from "./types";
 
 function round2(n: number): number {
@@ -15,12 +16,16 @@ export function estimateEmploiDomicileTaxCreditAnnual(
   input: EmploiDomicileTaxCreditInput,
 ): EmploiDomicileTaxCreditResult {
   const rule = findRule(pack, "credit-impot-emploi-domicile-plafonds");
-  const ruleIds = rule ? ["credit-impot-emploi-domicile-plafonds"] : [];
+  let ruleIds = rule ? ["credit-impot-emploi-domicile-plafonds"] : [];
   const warnings: string[] = [];
 
   if (!rule) {
     warnings.push("credit_emploi_domicile_rule_missing_in_pack");
   }
+
+  const capCheck = cesuPrefundedAmountWarnings(pack, input.prefundedCesuAnnualEur);
+  warnings.push(...capCheck.warnings);
+  ruleIds = [...new Set([...ruleIds, ...capCheck.ruleIds])];
 
   const p = rule?.parameters ?? {};
   const rate = typeof p.rate === "number" ? p.rate : 0.5;

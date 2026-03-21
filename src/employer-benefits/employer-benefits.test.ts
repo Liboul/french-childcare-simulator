@@ -52,5 +52,11 @@ describe("describeEmployerPrefundedCesuAnnual", () => {
     expect(r.annualAmountEur).toBe(1200);
     expect(r.reducesEmploymentTaxCreditBase).toBe(true);
     expect(r.ruleIds).toContain("cesu-cmg-non-cumul");
+    expect(r.ruleIds).toContain("cesu-prefinance-plafond-aide-financiere-employeur");
+  });
+
+  it("montant au-dessus du plafond pack → avertissement", () => {
+    const r = describeEmployerPrefundedCesuAnnual(pack, 3000);
+    expect(r.warnings).toContain("cesu_prefunded_exceeds_employer_aid_annual_cap");
   });
 });

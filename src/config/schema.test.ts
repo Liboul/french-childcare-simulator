@@ -90,5 +90,11 @@ describe("rulePackSchema", () => {
       hourlyReferenceCostEur: 10.5,
       maxHourlySalaryCountedEur: 15.18,
     });
+
+    const cesuPrefinanceCap = findRule(data, "cesu-prefinance-plafond-aide-financiere-employeur");
+    expect(cesuPrefinanceCap?.parameters).toMatchObject({
+      maxAnnualAidPerBeneficiaryEur: 2540,
+      previousMaxAnnualAidPerBeneficiaryEurUntil2024: 2421,
+    });
   });
 });
