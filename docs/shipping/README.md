@@ -18,8 +18,6 @@ Ce guide complète la **recherche marché** [`DR-05`](../research/DR-05-PROVIDER
 
 ## Anthropic (Claude)
 
-**Guide pas-à-pas (ZIP, Claude Code, MCP) :** [`CLAUDE-SKILL.md`](./CLAUDE-SKILL.md).
-
 ### Piste A — Claude Code / workspace avec le dépôt (**recommandée**)
 
 1. Cloner ce repo, installer les deps (`bun install`).
@@ -28,6 +26,38 @@ Ce guide complète la **recherche marché** [`DR-05`](../research/DR-05-PROVIDER
 4. Vérifier que **Bun** est disponible dans l’environnement où l’agent exécute les commandes.
 
 **Limite :** un **ZIP Skill** uploadé sur **claude.ai** sans le reste du dépôt ne contient **pas** le moteur TypeScript : tu n’auras que des instructions, sauf si tu relies une **API** ou du **code exécutable** inclus dans le skill selon les capacités du produit (voir DR-05).
+
+### Packager l’archive (ZIP) depuis ce repo
+
+1. `bun install` (une fois).
+2. `bun run package:claude-skill`
+   - Dossier assemblé : `dist/claude-skill/comparatif-modes-garde-fr-2026/` (`SKILL.md`, `REFERENCE.md`, `openapi.yaml`, `examples/*.json`).
+   - Archive prête à l’upload : **`dist/comparatif-modes-garde-fr-2026-skill.zip`**.
+3. Nécessite la commande système **`zip`** (macOS / Linux : souvent déjà présente).
+
+### Publier sur **claude.ai** (compte individuel)
+
+1. Ouvre [Claude](https://claude.ai) → **Settings** (paramètres du compte).
+2. Section **Capabilities** : activer ce qui est requis pour ton usage (**Code execution** / outils si tu t’appuies sur du code ou HTTP — intitulés exacts selon la doc Anthropic du moment).
+3. **Skills** (ou équivalent) → **Upload** / ajouter un skill → choisir **`dist/comparatif-modes-garde-fr-2026-skill.zip`**.
+4. Après upload : le skill apparaît dans tes capacités ; invoque-le ou laisse Claude le proposer selon le sujet.
+5. **Sans API** : le skill guide l’entretien et le JSON, mais **ne calcule pas** tout seul — prévoir **Piste B** ou un utilisateur qui exécute le repo en local.
+
+### Publier en **Claude Code** (dépôt sur la machine)
+
+1. Cloner ce repo, `bun install`.
+2. Enregistrer le skill là où Claude Code charge les skills (souvent `~/.claude/skills/<nom>/` — vérifier la [doc Anthropic](https://docs.anthropic.com) / l’aide produit pour le chemin exact).
+3. **Lien symbolique** pratique (un seul `SKILL.md` à maintenir dans le repo) :
+
+   ```bash
+   ln -sf /CHEMIN/VERS/CE/REPO/harness/claude ~/.claude/skills/comparatif-modes-garde-fr-2026
+   ```
+
+4. Redémarrer ou recharger Claude Code si nécessaire ; travailler **dans le clone** pour que `bun run demo:scenario` et `src/` soient disponibles.
+
+### Entreprise (workspace)
+
+Les admins peuvent **provisionner** un skill pour tous les utilisateurs du workspace (voir annonces / doc Anthropic **workspace skills**). Le livrable reste le même dossier ou ZIP ; la procédure passe par la console admin.
 
 ### Piste B — API + MCP / outil HTTP
 

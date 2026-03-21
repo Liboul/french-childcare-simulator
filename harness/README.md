@@ -3,7 +3,8 @@
 Enveloppe **hors moteur** : HTTP de dev, **OpenAPI** pour Actions GPT, instructions et ébauche **Claude Skill**.  
 Décision d’architecture : [ADR-0001](../docs/architecture/ADR-0001-pluggable-provider-harness.md).
 
-**→ Livraison par fournisseur (Claude / ChatGPT / Gemini) :** [`docs/shipping/README.md`](../docs/shipping/README.md) (**GARDE-018**).
+**→ Livraison par fournisseur (Claude / ChatGPT / Gemini) :** [`docs/shipping/README.md`](../docs/shipping/README.md) (**GARDE-018**).  
+**ZIP skill Claude :** `bun run package:claude-skill` → `dist/comparatif-modes-garde-fr-2026-skill.zip`.
 
 ## Faut-il lancer l’API ?
 
@@ -32,12 +33,11 @@ Fichier : [`openapi.yaml`](./openapi.yaml). Dans ChatGPT (Create GPT → Actions
 
 ## Fichiers utiles
 
-| Fichier                                                                                      | Rôle                                                                                                                 |
-| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| [`handle-calculate.ts`](./handle-calculate.ts)                                               | Logique partagée HTTP / tests                                                                                        |
-| [`server.ts`](./server.ts)                                                                   | `Bun.serve`                                                                                                          |
-| [`instructions/gpt-custom-instructions.fr.md`](./instructions/gpt-custom-instructions.fr.md) | Instructions système suggérées pour un GPT                                                                           |
-| [`prompts/example-user-messages.fr.md`](./prompts/example-user-messages.fr.md)               | Exemples utilisateur                                                                                                 |
-| [`claude/SKILL.md`](./claude/SKILL.md)                                                       | Skill Claude (frontmatter + procédure)                                                                               |
-| [`claude/reference.md`](./claude/reference.md)                                               | Intake `ScenarioInput` pour ZIP / sans repo                                                                          |
-| **ZIP pour upload**                                                                          | `bun run skill:zip` → `dist/…-skill.zip` ; guide [`docs/shipping/CLAUDE-SKILL.md`](../docs/shipping/CLAUDE-SKILL.md) |
+| Fichier                                                                                      | Rôle                                                    |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| [`handle-calculate.ts`](./handle-calculate.ts)                                               | Logique partagée HTTP / tests                           |
+| [`server.ts`](./server.ts)                                                                   | `Bun.serve`                                             |
+| [`instructions/gpt-custom-instructions.fr.md`](./instructions/gpt-custom-instructions.fr.md) | Instructions système suggérées pour un GPT              |
+| [`prompts/example-user-messages.fr.md`](./prompts/example-user-messages.fr.md)               | Exemples utilisateur                                    |
+| [`claude/SKILL.md`](./claude/SKILL.md)                                                       | Skill Claude (instructions)                             |
+| [`claude/REFERENCE.md`](./claude/REFERENCE.md)                                               | Champs `ScenarioInput` + limites (embarqué dans le ZIP) |
