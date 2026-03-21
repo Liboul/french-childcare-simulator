@@ -27,6 +27,26 @@ Exploitation HTTPS : voir [`PRODUCTION-HARNESS.md`](./PRODUCTION-HARNESS.md) (au
 
 ---
 
+## Cursor (IDE) — skill projet
+
+Le dépôt fournit une commande qui exécute **`package:harness-skill`** puis crée un **lien symbolique** du dossier assemblé (`dist/harness-skill/comparatif-modes-garde-fr-2026/`) vers **`.cursor/skills/comparatif-modes-garde-fr-2026/`**. Cursor charge les skills projet depuis `.cursor/skills/<nom>/SKILL.md`.
+
+Le répertoire **`.cursor/skills/`** est listé dans **`.gitignore`** : chaque développeur régénère le lien **localement** après clone.
+
+```bash
+bun run setup:cursor-harness-skill
+```
+
+Redémarrer ou recharger Cursor si le skill n’apparaît pas. Après une suppression de **`dist/`**, relancer cette commande.
+
+Le `SKILL.md` du bundle indique `node scripts/simulate.mjs` en supposant le **cwd** à la racine du skill. Depuis la **racine du workspace**, tu peux par exemple :
+
+`node .cursor/skills/comparatif-modes-garde-fr-2026/scripts/simulate.mjs chemin/vers/scenario.json`
+
+Pour le flux « moteur dans le dépôt », préférer aussi **`bun run demo:scenario`** (voir [`quickstart-repo-workspace.md`](./quickstart-repo-workspace.md)).
+
+---
+
 ## Anthropic (Agent Skills — ex. interface web, IDE agent)
 
 ### Piste A — Workspace avec le dépôt (**recommandée**)

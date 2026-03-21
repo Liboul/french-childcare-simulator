@@ -16,6 +16,7 @@
     "harness:serve": "bun run harness/server.ts",
     "build:harness-skill-runner": "bun run scripts/build-harness-skill-runner.ts",
     "package:harness-skill": "bun run scripts/package-harness-skill.ts",
+    "setup:cursor-harness-skill": "bun run scripts/setup-cursor-harness-skill.ts",
     "schema:scenario": "bun run scripts/generate-scenario-json-schema.ts"
   },
   "devDependencies": {

@@ -1,5 +1,8 @@
 node_modules
 dist
+
+# Cursor — skill projet (lien local vers dist/ après setup:cursor-harness-skill)
+.cursor/skills/
 coverage
 .DS_Store
 *.log

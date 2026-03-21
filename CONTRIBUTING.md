@@ -28,6 +28,7 @@ bun run ci
 ## Schéma API / harness
 
 - Après modification de `src/scenario/scenario-input.schema.ts`, régénérer : **`bun run schema:scenario`** et committer `harness/scenario-input.schema.json`.
+- **Cursor** : skill harness en local (non versionné) — **`bun run setup:cursor-harness-skill`** ; détail dans [`docs/shipping/README.md`](docs/shipping/README.md) § Cursor.
 
 ## Documentation produit
 

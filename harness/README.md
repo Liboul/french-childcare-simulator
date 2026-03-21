@@ -4,7 +4,8 @@ Enveloppe **hors moteur** : HTTP de dev, **OpenAPI** pour Actions GPT, instructi
 Décision d’architecture : [ADR-0001](../docs/architecture/ADR-0001-pluggable-provider-harness.md).
 
 **→ Livraison par fournisseur (Anthropic / OpenAI / Google, etc.) :** [`docs/shipping/README.md`](../docs/shipping/README.md) (**GARDE-018**).  
-**ZIP harness skill :** `bun run package:harness-skill` → `dist/comparatif-modes-garde-fr-2026-skill.zip` (inclut **`scripts/simulate.mjs`**, sans `openapi.yaml` dans l’archive — **GARDE-035**).
+**ZIP harness skill :** `bun run package:harness-skill` → `dist/comparatif-modes-garde-fr-2026-skill.zip` (inclut **`scripts/simulate.mjs`**, sans `openapi.yaml` dans l’archive — **GARDE-035**).  
+**Cursor (skill projet) :** `bun run setup:cursor-harness-skill` — voir [`docs/shipping/README.md`](../docs/shipping/README.md) § Cursor.
 
 ## Faut-il lancer l’API ?
 
