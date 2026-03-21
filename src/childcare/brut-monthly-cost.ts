@@ -177,7 +177,11 @@ export function computeBrutMonthlyCost(
     case "creche_privee":
     case "creche_inter_entreprises": {
       const fee = roundMoney2(input.monthlyParticipationEur);
-      lines.push({ label: "Participation mensuelle (tarif local / contrat)", amountEur: fee });
+      const label =
+        input.mode === "creche_privee"
+          ? "Participation mensuelle (contrat / micro-crèche — saisie foyer, DR-08)"
+          : "Participation familiale mensuelle (barème PSU / facture — saisie foyer, DR-08)";
+      lines.push({ label, amountEur: fee });
       return { monthlyBrutEur: fee, lines, monthlyTaxCreditAssietteEur: fee };
     }
     default: {

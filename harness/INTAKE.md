@@ -46,7 +46,13 @@ Demander le mode parmi :
 
 ### Crèches (`creche_*`)
 
-1. **Participation mensuelle** facturée au foyer (`monthlyParticipationEur`)
+**À poser systématiquement** (comme le transport pour la nounou) — sans ce montant, le JSON est **invalide** ou le résultat est **sans sens** :
+
+1. **Participation mensuelle payée par le parent** (`monthlyParticipationEur`, en €) : demander **explicitement** « combien payez-vous **vous** par mois pour la place ? » (facture, prélèvement, avis d’échéance, espace CAF, attestation de la crèche). **Ne pas** supposer 0 € ni un montant indicatif **sans** que l’utilisateur l’ait dit ou validé comme hypothèse. Le moteur **ne calcule pas** le barème PSU : tu ne **fabriques** pas ce chiffre.
+   - **Pas encore de place** : si le projet est une crèche **PSU** (souvent publique ou inter-entreprises), expliquer qu’un **ordre de grandeur** est possible (barème national selon ressources et volume d’accueil prévu) via **simulateur ou conseiller CAF/MSA** ; l’utilisateur peut alors donner un montant **estimatif** qu’il **assume** comme hypothèse jusqu’au contrat / premier avis. Si **micro-crèche hors PSU** : demander **devis** ou fourchette de structures, ou une hypothèse explicite.
+   - **`creche_publique`** / **`creche_inter_entreprises`** (souvent **PSU**) : la part facturée au parent suit en principe le **barème national** (comme une autre EAJE conventionnée) ; la prise en charge **employeur** finance le reliquat pour la structure et **ne remplace pas** ce que le parent doit payer au titre de la participation familiale.
+   - **`creche_privee`** : demander aussi si la structure est **PSU** ou **micro-crèche / PAJE hors PSU** (tarif plus libre ; CMG structure possible si éligible — voir démo micro-crèche et pack CMG).
+   - Contexte détaillé (hors archive skill ZIP) : `docs/research/DR-08-PSU-CRECHE-PART-FAMILLE.md` dans le dépôt.
 
 ## 3. Bloc `cmg` (sans champ `mode` — repris de `brutInput`)
 

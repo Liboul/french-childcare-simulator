@@ -212,7 +212,8 @@
               "const": "creche_publique"
             },
             "monthlyParticipationEur": {
-              "type": "number"
+              "type": "number",
+              "description": "Participation familiale mensuelle réelle (barème PSU / facture). Le moteur ne calcule pas le barème — DR-08."
             }
           },
           "required": ["mode", "monthlyParticipationEur"],
@@ -226,7 +227,8 @@
               "const": "creche_privee"
             },
             "monthlyParticipationEur": {
-              "type": "number"
+              "type": "number",
+              "description": "Participation mensuelle au contrat. Micro-crèche hors PSU : tarif libre (CMG structure si éligible, DR-01). Si PSU : même logique barème que publique — DR-08."
             }
           },
           "required": ["mode", "monthlyParticipationEur"],
@@ -240,7 +242,8 @@
               "const": "creche_inter_entreprises"
             },
             "monthlyParticipationEur": {
-              "type": "number"
+              "type": "number",
+              "description": "Participation familiale facturée au parent (barème PSU, identique en principe à une crèche publique conventionnée). DR-08."
             }
           },
           "required": ["mode", "monthlyParticipationEur"],

@@ -2,7 +2,7 @@
 
 This report breaks down the typical cost components of each childcare mode in France. For each mode, we list recurring fees (salary, cotisations, meals, etc.), who sets them (national law/convention, local authority, or private contract) and give representative examples from official sources. We also distinguish which costs are mandated (e.g. social charges by URSSAF) versus flexible (e.g. negotiated salary, local tariffs). For example, municipally-run crèches use a _quotient familial_ formula (Paris cites €2.62–149.90 per month depending on family income【42†L755-L764】【42†L765-L774】), while private micro-crèches set an hourly rate (capped at €10/h for eligibility to CAF aid【47†L269-L272】【68†L235-L243】). National frameworks (collective agreements, CAF barèmes) give high-level caps (e.g. SMIC €12.02/h【6†L89-L94】; crèche PSU €5.26/h【39†L63-L71】), but many items (e.g. local fees, partages in garde partagée) vary by location or contract. The structured tables below and input lists will feed the software’s scenario logic (block G) for calculating _reste à charge_ after state aid (handled in other DRs).
 
-|Note: All salary figures are gross. Caf/impôt aids (CMG, crédit impôt) are treated separately (see DR-01/DR-02). Examples are from official or municipal sources when possible; otherwise marked indicative.|
+|Note: All salary figures are gross. Caf/impôt aids (CMG, crédit impôt) are treated separately (see DR-01/DR-02). Examples are from official or municipal sources when possible; otherwise marked indicative. For **PSU** crèches (including **inter-entreprises**), the parent’s billed share follows the **national PSU barème**; employer funding typically covers the **residual cost to the structure**, not a discount on that parental share — **DR-08**.|
 
 ## Mode — Nounou à domicile
 
@@ -148,21 +148,20 @@ Les crèches privées (associatives ou commerciale) fixent **librement leurs tar
 | Composante                    | Souvent présente ? | Fixée par                            | Exemple chiffré                                 | Source type        |
 | ----------------------------- | ------------------ | ------------------------------------ | ----------------------------------------------- | ------------------ |
 | **Tarif salarié**             | Yes                | Barème CAF national (PSU)            | Même barème que municipal (CAF)【66†L268-L276】 | Service public CAF |
-| **Participation employeur**   | Yes (subvention)   | Politique d’entreprise, négociations | Variable (p.ex. 50–75% du coût)                 | Convention interne |
+| **Participation employeur**   | Yes (subvention)   | Politique d’entreprise, conventions  | Couvre le **reliquat** coût réel − PSU − part famille (pas une réduction du barème parent) | Convention / DR-08 |
 | **Coût pour famille (reste)** | Yes                | Barème CAF / QF                      | cf. barème CAF【66†L268-L276】                  | Service public CAF |
 | **Frais d’inscription**       | Parfois            | Gestionnaire                         | ex. dépôt adhésion (selon creche)               | Crèche/entreprise  |
 | **Repas & sorties**           | Oui (comme privé)  | Selon contrat entre parents/crèche   | Inclus dans le tarif (ex.)                      | Crèche interne     |
 
-Les crèches inter-entreprises (ou crèches d’entreprise ouvertes à plusieurs employeurs) fonctionnent comme des crèches privées subventionnées par l’employeur. **Le tarif horaire appliqué aux parents suit en général le barème national (PSU) déterminé par la CAF**【66†L268-L276】, identique à celui des crèches municipales. Autrement dit, la part famille est calculée selon quotient familial comme ci-dessus. L’entreprise (ou groupement) finance le reste du coût (via aides fiscales, CIF etc.); la participation patronale dépend de la politique interne (souvent 50–75 % du coût total). Le gestionnaire de la crèche fixe le tarif de base (par ex. coût réel de la place), puis, par convention CAF, une partie est versée à la crèche (PSU) et le solde est couvert par l’employeur. Aucun texte précis ne normalise ce partage ; il est établi par accord employeur/gestionnaire. Les familles paient donc en pratique un tarif “municipalisé” (calcul CAF) ou un forfait horaire défini, diminué du financement patronal.
+Les crèches inter-entreprises (ou crèches d’entreprise ouvertes à plusieurs employeurs) fonctionnent comme des crèches privées subventionnées par l’employeur. **Le tarif appliqué aux parents suit en général le barème national (PSU) déterminé par la CAF**【66†L268-L276】, **sur le même principe** qu’une crèche municipale ou EAJE conventionnée PSU : la **participation familiale** dépend surtout de la **situation du foyer** (ressources, enfants, temps d’accueil), **pas** du gestionnaire. L’**employeur** finance en pratique l’**écart** entre le **coût réel** de la place, l’**aide publique** (PSU, etc.) et cette **part familiale** — ce n’est **pas** modélisé ici comme « % de réduction sur la facture parentale » (voir **DR-08**). Le partage employeur / structure relève de conventions internes ; l’**accès** à une place est souvent l’enjeu principal pour le salarié.
 
 **Inputs (parent)**
 
-- Nombre d’heures d’accueil (h/mois) par enfant
-- Quotient familial ou ressources (pour barème CAF)
-- Taux de prise en charge employeur (%)
+- **Participation familiale** mensuelle réelle (résultat barème PSU / facture crèche), ou ressources + volume d’accueil si un outil externe (CAF) calcule le barème
+- Nombre d’heures ou jours d’accueil (pour comprendre le montant)
 
-**Defaults**: barème CAF (quotient), employeur = 50%.  
-**Derived**: `tarif_par_famille = barème_CAF(QF) × heures`; `reste_à_charge = tarif_par_famille × (1 - taux_patrimonial_employeur)`.
+**Defaults**: même logique barème PSU que crèche publique conventionnée (paramètres nationaux, actualisation CAF).  
+**Derived**: `part_famille = barème_PSU(ressources, enfants, volume_accueil)` (hors moteur) ; `reste_à_charge_parent ≈ part_famille` (hors repas / frais annexes selon contrat). La part employeur **ne soustrait pas** ce montant dans le modèle économique standard PSU décrit en DR-08.
 
 ## Cross-cutting: cotisations & déclarations
 
@@ -175,7 +174,7 @@ Les crèches inter-entreprises (ou crèches d’entreprise ouvertes à plusieurs
 - **Local tariffs and barèmes**: Municipales (quotient familial) varient par commune/CAF ; les seuils QF et tarifs (horizon 2026) sont paramétrables.
 - **Salaire négocié**: Le logiciel ne fixe pas le salaire, il doit être fourni (≥ SMIC). Les conventions collectives évoluent chaque année (SMIC, minima CCN).
 - **Nombre de familles/partage**: Pour garde partagée, le mode de partage (50/50 ou prorata) est libre ; l’appli doit demander la répartition choisie.
-- **Participation employeur crèche**: Pour crèches entreprise, l’employeur peut couvrir une partie variable du coût ; c’est un paramètre projet (noté en DR-03).
+- **Participation employeur crèche**: En PSU, l’employeur couvre typiquement le **reliquat** après PSU et **participation familiale** (DR-08), pas un pourcentage appliqué à la facture parentale ; reste conventionnel au cas par cas.
 - **Repas/transport**: Certains frais (repas supplémentaires, sorties, fournitures) dépendent du contrat/famille ; on ne peut présumer leur montant.
 - **Niveau d’accueil**: Horaires pratiques (demi-journées, jours fériés) relèvent de chaque contrat/établissement, pas codés.
 - **Tarifs privés indicatifs**: Les montants de crèches privées ou nounous du marché peuvent varier largement : les plages communiquées doivent être considérées comme indicatives (pas de valeur légale).

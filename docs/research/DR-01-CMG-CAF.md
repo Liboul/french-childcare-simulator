@@ -17,6 +17,8 @@ La simulation du coût net repose sur une correspondance stricte entre les modes
 | **Micro-crèche privée**   | Établissement (EAJE) hors PSU          | CMG Structure (Barème Tranches)   |
 | **Crèche publique / PSU** | Établissement conventionné PSU         | PSU (Tarification directe)        |
 
+Participation familiale en crèche **PSU** (publique, **inter-entreprises**, etc.) : logique barémée côté parent, employeur sur le reliquat structure — voir **DR-08**.
+
 _Notes : En 2026, le métier de garde à domicile est officiellement désigné sous le terme « assistant parental » dans la convention collective._
 
 ## 3. CMG — Garde à domicile

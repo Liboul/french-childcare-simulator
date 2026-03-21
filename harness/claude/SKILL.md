@@ -43,7 +43,7 @@ Pour **comparer plusieurs modes**, construis **un JSON par mode** et exécute **
 
 ## Procédure
 
-1. Suis **`INTAKE.md`** puis **`REFERENCE.md`** pour les champs par `mode` ; pose des questions **progressives**.
+1. Suis **`INTAKE.md`** puis **`REFERENCE.md`** pour les champs par `mode` ; pose des questions **progressives** (crèches : participation parentale **obligatoire**, voir section dédiée ci-dessous).
 2. Écris le JSON dans un fichier (ou pipe stdin), puis exécute **`node scripts/simulate.mjs …`**. En cas de **`validation_failed`**, relis `issues[]` et corrige.
 3. Présente **snapshot**, **warnings**, **limitationHints**, **uncertainty**, **`meta`** (versions) ; rappelle les limites (TMI / IR optionnels via `incomeTax`, crèche publique / PSU, etc.).
 
@@ -55,6 +55,17 @@ Pour **comparer plusieurs modes**, construis **un JSON par mode** et exécute **
 - **Oui** : clarifie le **type de titre** : **Navigo mois plein**, **demi-tarif** (tarif réduit / solidarité selon les fiches IDFM), **forfait zones limitées**, ou **autre**. **Consulte le prix en vigueur** sur le site officiel **Île-de-France Mobilités** — fiche « Forfait Navigo Mois » : https://www.iledefrance-mobilites.fr/titres-et-tarifs/detail/forfait-navigo-mois — ou https://www.navigo.fr/ ; **ne pas** inventer un € sans source à jour. Saisis le **coût mensuel réellement supporté par ce foyer** dans `fraisTransportMensuelEur` (remboursement du titre ou part convenue, selon la déclaration utilisateur) et `fraisTransportBase` parmi `navigo_mois_plein` | `navigo_demi_tarif` | `navigo_zones_limitees` | `autre`.
 
 Voir aussi **`INTAKE.md`** § nounou.
+
+## Participation parentale en crèche (`creche_publique`, `creche_privee`, `creche_inter_entreprises`)
+
+**Question obligatoire** avant `simulate.mjs` : quel montant le **parent paie chaque mois** pour la place (participation familiale / facture crèche) ?
+
+- Tu **demandes explicitement** ce montant en €/mois à l’utilisateur (facture, avis d’échéance, relevé bancaire, espace CAF, courrier de la structure). Tu le mets dans **`brutInput.monthlyParticipationEur`**.
+- **Interdit** : lancer une simulation avec `monthlyParticipationEur` **omis** ; **interdit** d’utiliser `0` ou un montant **plausible** sans accord de l’utilisateur (le moteur **ne calcule pas** le barème PSU).
+- Si l’utilisateur **ne connaît pas** le montant : **explique** où le trouver (facture, espace CAF). **Sans place encore** : pour un parcours **PSU**, oriente vers **simulateur ou contact CAF/MSA** (ressources + volume d’accueil prévu) pour un **ordre de grandeur** ; tu peux lancer une simulation **uniquement** si l’utilisateur **valide explicitement** ce chiffre comme **hypothèse** (à rectifier à la première facture). Pour une **micro-crèche hors PSU**, privilégie **devis** ou hypothèse utilisateur assumée.
+- **Rappel** : en crèche **PSU** (souvent publique ou inter-entreprises), la part employeur ne remplace **pas** ce barème côté parent — la question porte bien sur ce que **le salarié paie**, pas sur ce que l’entreprise finance pour la structure.
+
+Voir **`INTAKE.md`** § Crèches.
 
 ## Analyse comparative et nounou à domicile
 

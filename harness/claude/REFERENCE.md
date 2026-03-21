@@ -56,6 +56,10 @@ Sur `nounou_domicile` et `nounou_partagee`, objet optionnel **`domicileComplemen
 
 Le snapshot expose **`monthlyBrutTaxCreditAssietteEur`** / **`annualBrutTaxCreditAssietteEur`** (assiette CI) en plus du brut total. Documentation : `docs/research/DR-06-EMPLOI-DOMICILE-COUTS-COMPLEMENTAIRES.md`.
 
+### Crèches — participation familiale (**question obligatoire**)
+
+Pour **`creche_publique`**, **`creche_privee`**, **`creche_inter_entreprises`** : l’agent doit **toujours** demander à l’utilisateur le montant **mensuel réellement payé par le parent** et le saisir dans **`monthlyParticipationEur`**. Sans réponse utilisateur, **ne pas** inventer le montant ni utiliser 0 par défaut. Le moteur n’intègre **pas** de simulateur de barème PSU : la saisie est la seule source du brut crèche.
+
 ## Champs `brutInput` par `mode`
 
 | `mode`                                                           | Champs principaux (en plus de `mode`)                                                                                                                    |
@@ -64,7 +68,7 @@ Le snapshot expose **`monthlyBrutTaxCreditAssietteEur`** / **`annualBrutTaxCredi
 | `nounou_partagee`                                                | `hourlyGrossEur`, `hoursPerMonth`, `simultaneousChildrenCount`, `householdShareOfSalary`, `employerShareOfGross`, optionnel `domicileComplementaryCosts` |
 | `assistante_maternelle`                                          | `hourlyGrossEur`, `hoursPerMonth`, `careDaysPerMonth`, `indemniteEntretienEurPerDay`, `employerShareOfGross`                                             |
 | `mam`                                                            | id. + `structureParticipationEurPerMonth`                                                                                                                |
-| `creche_publique` / `creche_privee` / `creche_inter_entreprises` | `monthlyParticipationEur`                                                                                                                                |
+| `creche_publique` / `creche_privee` / `creche_inter_entreprises` | `monthlyParticipationEur` (part familiale facturée ; PSU vs micro-crèche : **DR-08**, **DR-04**)                                                         |
 
 ## `cmg.cumul` (booléens optionnels)
 

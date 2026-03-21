@@ -96,6 +96,11 @@ export type BrutCostInput =
     }
   | {
       mode: "creche_publique" | "creche_privee" | "creche_inter_entreprises";
+      /**
+       * Part payée par le foyer (facture réelle). En **PSU** (publique, inter-entreprises, privée conventionnée),
+       * c’est la *participation familiale* barémée (le moteur ne calcule pas le barème — `docs/research/DR-08-PSU-CRECHE-PART-FAMILLE.md`).
+       * Micro-crèche **hors PSU** : montant contractuel (CMG structure si éligible, voir DR-01).
+       */
       monthlyParticipationEur: number;
     };
 
