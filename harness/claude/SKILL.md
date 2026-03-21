@@ -1,6 +1,6 @@
 ---
 name: comparatif-modes-garde-fr-2026
-description: Garde enfants FR 2026 — exécute toujours node scripts/simulate.mjs sur un JSON ScenarioInput ; brut, CMG, crédit impôt, reste à charge.
+description: Garde enfants FR 2026 — simulate.mjs obligatoire ; après chaque run, fiche transparence (entrées ↔ snapshot, trace CI, employeur, aides).
 ---
 
 # Comparatif modes de garde (France, 2026)
@@ -45,7 +45,57 @@ Pour **comparer plusieurs modes**, construis **un JSON par mode** et exécute **
 
 1. Suis **`INTAKE.md`** puis **`REFERENCE.md`** pour les champs par `mode` ; pose des questions **progressives** (crèches : participation parentale **obligatoire**, voir section dédiée ci-dessous).
 2. Écris le JSON dans un fichier (ou pipe stdin), puis exécute **`node scripts/simulate.mjs …`**. En cas de **`validation_failed`**, relis `issues[]` et corrige.
-3. Présente **snapshot**, **warnings**, **limitationHints**, **uncertainty**, **`meta`** (versions) ; rappelle les limites (TMI / IR optionnels via `incomeTax`, crèche publique / PSU, etc.).
+3. Réponds avec la **fiche transparence** (section suivante) dès qu’il y a une sortie moteur exploitable — **sauf** si l’utilisateur demande explicitement une réponse **ultra-courte** (alors template B seulement).
+
+## Fiche transparence (obligatoire après `simulate.mjs`)
+
+**But** : donner une vue d’ensemble et permettre de **vérifier** chaque poste sans refaire les calculs à la main. Tous les **€** viennent des champs **`snapshot`** (et éventuellement du contexte saisi) ; tu **cites** les clés JSON, tu ne **réinventes** pas les formules.
+
+### Template A — réponse standard
+
+Structure **dans cet ordre** :
+
+1. **Vue d’ensemble (≈30 s)**  
+   - Mode : `snapshot.mode`  
+   - Brut : `snapshot.monthlyBrutEur` / `snapshot.annualBrutEur`  
+   - CMG : `snapshot.monthlyCmgEur`, statut `snapshot.cmgStatus`  
+   - Crédit d’impôt : `snapshot.annualTaxCreditEur`, type `snapshot.taxCreditKind`  
+   - Reste à charge foyer : `snapshot.netHouseholdBurdenMonthlyEur` / `netHouseholdBurdenAnnualEur`  
+   - Si renseigné : disponible après charge `snapshot.disposableIncomeMonthlyEur` ; IR / TMI `estimatedIncomeTaxGrossAnnualEur`, `marginalIncomeTaxRate` (voir `warnings` / `limitationHints`)  
+   - **Alertes** : résumer `warnings`, `limitationHints`, `uncertainty` (et tout `cmgStatus` ≠ `ok`).
+
+2. **Brut / garde (saisie → moteur)**  
+   Tableau ou liste : pour chaque poste important, **colonne saisie** (`brutInput` : mode, heures, salaire, `monthlyParticipationEur`, `employerShareOfGross`, `domicileComplementaryCosts`, part foyer `householdShareOfEmploymentCost`, etc.) → **colonne résultat** (`monthlyBrutEur`, `annualBrutEur`).  
+   Si emploi à domicile avec coûts complémentaires : si `monthlyBrutTaxCreditAssietteEur` ≠ `monthlyBrutEur`, **l’expliquer** et citer les deux champs (assiette CI vs brut affiché).
+
+3. **Employeur du foyer (berceau, même coût entreprise)**  
+   Si `declaredEmployerChildcareSupportAnnualEur` / `referenceEmployerChildcareSupportAnnualEur` sont utilisés : expliquer l’effet sur la comparaison et citer `employerSupportDeltaAnnualEur`. Sinon une phrase : pas de variation employeur modélisée pour ce scénario.
+
+4. **Aides et préfinancements**  
+   - **CMG** : rappeler les paramètres `cmg` **pertinents** (sans tout recopier si le JSON est énorme) et le lien avec `monthlyCmgEur` / `cmgStatus`.  
+   - **CESU / chèques emploi service (préfinancé)** : si `taxCredit.prefundedCesuAnnualEur` (ou champs voisins du schéma) est renseigné, dire comment ça affecte le crédit d’impôt **selon la sortie moteur**, pas au jugé.  
+   - Ne confonds pas **CESU** avec la **CSG** (cotisation) ; si l’utilisateur dit « CSG » pour des chèques, clarifie poliment.
+
+5. **Crédit d’impôt (pédagogie + trace)**  
+   - Type `taxCreditKind`, montant `annualTaxCreditEur`.  
+   - Pour l’**emploi à domicile** : mentionner `annualBrutTaxCreditAssietteEur` quand utile.  
+   - Ajouter **1 à 3 étapes** issues de `trace.steps` dont le `segment` est parmi `tax_credits`, `taxation`, `family_allowances`, `employer_benefits` ou `childcare` (copier `label` + `formula`, et `narrative` si elle aide) — **pas** de formules improvisées hors trace.
+
+6. **Cohérence et audit**  
+   - Une phrase sur l’enchaînement tel que le moteur le présente (brut → CMG → CI → reste à charge, selon ce que la sortie reflète).  
+   - Rappeler : toute **nouvelle hypothèse** ⇒ **relancer** `simulate.mjs`.  
+   - Citer **`meta.engineVersion`** et **`meta.rulePackVersion`**.
+
+### Template B — réponse courte (sur demande utilisateur)
+
+- Une ligne **synthèse** avec `netHouseholdBurdenMonthlyEur`, `monthlyBrutEur`, `monthlyCmgEur` + `cmgStatus`, `annualTaxCreditEur` + `taxCreditKind`.  
+- **À valider** : lister en 1 ligne les saisies sensibles (participation crèche, heures/salaire, aide employeur, CESU).  
+- **Limites** : puces tirées de `warnings` + `limitationHints` (et `meta` si pertinent).
+
+### Plusieurs modes comparés
+
+Après **un run par mode**, ajouter un **tableau** : colonnes Mode | `monthlyBrutEur` | `monthlyCmgEur` | `annualTaxCreditEur` | `netHouseholdBurdenAnnualEur` | `employerSupportDeltaAnnualEur` (si non null).  
+Puis **un court paragraphe** sur ce qui explique les écarts (même enfant, mêmes hypothèses employeur si applicable).
 
 ## Transport de la nounou (`nounou_domicile`, `nounou_partagee`)
 
