@@ -139,6 +139,9 @@
       ],
       "parameters": {
         "effectiveFrom": "2026-04-01",
+        "incomeFloorMonthlyEur": 814.62,
+        "incomeCeilingMonthlyEur": 8500,
+        "incomeBoundsNote": "Même plancher/plafond revenu que garde à domicile (DR-01 §3) — confirmer au barème officiel assmat si divergence.",
         "hourlyReferenceCostEur": 4.85,
         "maxHourlySalaryCountedEur": 8,
         "smicHourlyForCapEur": 12.02,
