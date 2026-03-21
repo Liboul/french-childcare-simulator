@@ -17,7 +17,9 @@ await mkdir(join(outDir, "examples"), { recursive: true });
 const fileCopies: [string, string][] = [
   [join(root, "harness/claude/SKILL.md"), join(outDir, "SKILL.md")],
   [join(root, "harness/claude/REFERENCE.md"), join(outDir, "REFERENCE.md")],
+  [join(root, "harness/INTAKE.md"), join(outDir, "INTAKE.md")],
   [join(root, "harness/openapi.yaml"), join(outDir, "openapi.yaml")],
+  [join(root, "harness/scenario-input.schema.json"), join(outDir, "scenario-input.schema.json")],
 ];
 
 for (const [from, to] of fileCopies) {

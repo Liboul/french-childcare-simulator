@@ -21,7 +21,10 @@ bun run harness:serve
 ```
 
 - Santé : `GET http://127.0.0.1:8787/health`
-- Calcul : `POST http://127.0.0.1:8787/v1/calculate` avec un JSON **`ScenarioInput`** (voir `docs/demo-scenarios/*.json`).
+- Schéma JSON : `GET http://127.0.0.1:8787/v1/scenario/schema`
+- Calcul : `POST http://127.0.0.1:8787/v1/calculate` avec un JSON **`ScenarioInput`** (voir `docs/demo-scenarios/*.json`). Corps invalide → **422** `validation_failed` + `issues`.
+
+Si **`HARNESS_API_KEY`** est défini, envoyer **`X-Api-Key`** ou **`Authorization: Bearer`**. Voir [`docs/shipping/PRODUCTION-HARNESS.md`](../docs/shipping/PRODUCTION-HARNESS.md).
 
 Variable optionnelle : `HARNESS_PORT` (défaut `8787`).
 
@@ -29,7 +32,7 @@ Variable optionnelle : `HARNESS_PORT` (défaut `8787`).
 
 Fichier : [`openapi.yaml`](./openapi.yaml). Dans ChatGPT (Create GPT → Actions), importer ce schéma ou coller l’URL une fois le serveur exposé publiquement (tunnel ngrok, etc.).
 
-**Sécurité :** le serveur ci-dessus **n’a pas d’authentification** ; ne l’exposez pas sur Internet sans reverse-proxy + clé API ou équivalent.
+**Sécurité :** sans **`HARNESS_API_KEY`**, pas d’authentification ; avec la variable, voir [`PRODUCTION-HARNESS.md`](../docs/shipping/PRODUCTION-HARNESS.md). Toujours TLS devant le service en production.
 
 ## Fichiers utiles
 
@@ -41,3 +44,5 @@ Fichier : [`openapi.yaml`](./openapi.yaml). Dans ChatGPT (Create GPT → Actions
 | [`prompts/example-user-messages.fr.md`](./prompts/example-user-messages.fr.md)               | Exemples utilisateur                                    |
 | [`claude/SKILL.md`](./claude/SKILL.md)                                                       | Skill Claude (instructions)                             |
 | [`claude/REFERENCE.md`](./claude/REFERENCE.md)                                               | Champs `ScenarioInput` + limites (embarqué dans le ZIP) |
+| [`INTAKE.md`](./INTAKE.md)                                                                   | Playbook d’entretien (ordre des questions)              |
+| [`scenario-input.schema.json`](./scenario-input.schema.json)                                 | JSON Schema `ScenarioInput`                             |

@@ -1,0 +1,45 @@
+name: Bug calcul / moteur
+description: Le moteur ou le harness produit un résultat incohérent ou inattendu
+labels: ["bug", "moteur"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de joindre **au moins une source officielle** (Service-Public, CAF, Légifrance, impots.gouv, URSSAF) pour le comportement attendu.
+        Ce dépôt ne remplace pas un conseil personnalisé.
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportement attendu
+      description: Ce que vous pensiez obtenir (montants, statut CMG, etc.)
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Comportement observé
+      description: Sortie réelle (extrait JSON ou champs clés)
+    validations:
+      required: true
+  - type: textarea
+    id: input
+    attributes:
+      label: ScenarioInput (JSON)
+      description: Corps envoyé à POST /v1/calculate ou fichier demo-scenarios
+      render: json
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: meta.engineVersion / rulePackVersion (si disponibles)
+      placeholder: ex. 0.1.0 / 2026.1.0
+    validations:
+      required: false
+  - type: input
+    id: source
+    attributes:
+      label: Lien source officielle
+      placeholder: https://www.service-public.fr/...
+    validations:
+      required: true

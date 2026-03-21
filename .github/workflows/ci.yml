@@ -30,3 +30,16 @@ jobs:
 
       - name: Test
         run: bun run test
+
+      - name: JSON Schema drift (GARDE-021 / GARDE-029)
+        run: |
+          bun run schema:scenario
+          git diff --exit-code harness/scenario-input.schema.json
+
+      - name: Skill ZIP layout (GARDE-031)
+        run: |
+          bun run package:claude-skill
+          unzip -l dist/comparatif-modes-garde-fr-2026-skill.zip | grep -q 'SKILL.md'
+          unzip -l dist/comparatif-modes-garde-fr-2026-skill.zip | grep -q 'INTAKE.md'
+          unzip -l dist/comparatif-modes-garde-fr-2026-skill.zip | grep -q 'scenario-input.schema.json'
+          unzip -l dist/comparatif-modes-garde-fr-2026-skill.zip | grep -q 'examples/'

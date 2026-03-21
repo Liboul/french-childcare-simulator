@@ -1,0 +1,347 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "household": {
+      "type": "object",
+      "properties": {
+        "taxYear": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": ["taxYear"],
+      "additionalProperties": false
+    },
+    "brutInput": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "const": "nounou_domicile"
+            },
+            "hourlyGrossEur": {
+              "type": "number"
+            },
+            "hoursPerMonth": {
+              "type": "number"
+            },
+            "employerShareOfGross": {
+              "type": "number"
+            },
+            "householdShareOfEmploymentCost": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            "domicileComplementaryCosts": {
+              "type": "object",
+              "properties": {
+                "fraisTransportMensuelEur": {
+                  "type": "number"
+                },
+                "fraisTransportBase": {
+                  "type": "string",
+                  "enum": [
+                    "non",
+                    "navigo_mois_plein",
+                    "navigo_demi_tarif",
+                    "navigo_zones_limitees",
+                    "autre"
+                  ]
+                },
+                "provisionCongesPayesMensuelEur": {
+                  "type": "number"
+                },
+                "depensesCotisablesLisseesMensuelEur": {
+                  "type": "number"
+                },
+                "depensesHorsCreditImpotLisseesMensuelEur": {
+                  "type": "number"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": ["mode", "hourlyGrossEur", "hoursPerMonth", "employerShareOfGross"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "const": "nounou_partagee"
+            },
+            "hourlyGrossEur": {
+              "type": "number"
+            },
+            "hoursPerMonth": {
+              "type": "number"
+            },
+            "simultaneousChildrenCount": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "householdShareOfSalary": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "employerShareOfGross": {
+              "type": "number"
+            },
+            "domicileComplementaryCosts": {
+              "type": "object",
+              "properties": {
+                "fraisTransportMensuelEur": {
+                  "type": "number"
+                },
+                "fraisTransportBase": {
+                  "type": "string",
+                  "enum": [
+                    "non",
+                    "navigo_mois_plein",
+                    "navigo_demi_tarif",
+                    "navigo_zones_limitees",
+                    "autre"
+                  ]
+                },
+                "provisionCongesPayesMensuelEur": {
+                  "type": "number"
+                },
+                "depensesCotisablesLisseesMensuelEur": {
+                  "type": "number"
+                },
+                "depensesHorsCreditImpotLisseesMensuelEur": {
+                  "type": "number"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "mode",
+            "hourlyGrossEur",
+            "hoursPerMonth",
+            "simultaneousChildrenCount",
+            "householdShareOfSalary",
+            "employerShareOfGross"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "const": "assistante_maternelle"
+            },
+            "hourlyGrossEur": {
+              "type": "number"
+            },
+            "hoursPerMonth": {
+              "type": "number"
+            },
+            "careDaysPerMonth": {
+              "type": "number"
+            },
+            "indemniteEntretienEurPerDay": {
+              "type": "number"
+            },
+            "employerShareOfGross": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "mode",
+            "hourlyGrossEur",
+            "hoursPerMonth",
+            "careDaysPerMonth",
+            "indemniteEntretienEurPerDay",
+            "employerShareOfGross"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "const": "mam"
+            },
+            "hourlyGrossEur": {
+              "type": "number"
+            },
+            "hoursPerMonth": {
+              "type": "number"
+            },
+            "careDaysPerMonth": {
+              "type": "number"
+            },
+            "indemniteEntretienEurPerDay": {
+              "type": "number"
+            },
+            "structureParticipationEurPerMonth": {
+              "type": "number"
+            },
+            "employerShareOfGross": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "mode",
+            "hourlyGrossEur",
+            "hoursPerMonth",
+            "careDaysPerMonth",
+            "indemniteEntretienEurPerDay",
+            "structureParticipationEurPerMonth",
+            "employerShareOfGross"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "const": "creche_publique"
+            },
+            "monthlyParticipationEur": {
+              "type": "number"
+            }
+          },
+          "required": ["mode", "monthlyParticipationEur"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "const": "creche_privee"
+            },
+            "monthlyParticipationEur": {
+              "type": "number"
+            }
+          },
+          "required": ["mode", "monthlyParticipationEur"],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "const": "creche_inter_entreprises"
+            },
+            "monthlyParticipationEur": {
+              "type": "number"
+            }
+          },
+          "required": ["mode", "monthlyParticipationEur"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "cmg": {
+      "type": "object",
+      "properties": {
+        "cumul": {
+          "default": {},
+          "type": "object",
+          "properties": {
+            "receivesPrepareFull": {
+              "type": "boolean"
+            },
+            "receivesPreparePartial": {
+              "type": "boolean"
+            },
+            "receivesAahOrAeeh": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        "monthlyReferenceIncomeEur": {
+          "type": "number"
+        },
+        "householdEffortRank": {
+          "type": "number"
+        },
+        "hourlyDeclaredGrossEur": {
+          "type": "number"
+        },
+        "heuresParMois": {
+          "type": "number"
+        },
+        "annualReferenceIncomeN2Eur": {
+          "type": "number"
+        },
+        "structureDependentChildren": {
+          "type": "number"
+        },
+        "isSingleParentHousehold": {
+          "type": "boolean"
+        },
+        "childAgeBand": {
+          "type": "string",
+          "enum": ["under3", "age3to6"]
+        },
+        "monthlyStructureExpenseEur": {
+          "type": "number"
+        },
+        "territory": {
+          "type": "string",
+          "enum": ["metropole", "mayotte"]
+        },
+        "hourlyCrecheFeeEur": {
+          "type": "number"
+        }
+      },
+      "required": ["cumul"],
+      "additionalProperties": false
+    },
+    "taxCredit": {
+      "type": "object",
+      "properties": {
+        "childQualifiesForHorsDomicileCredit": {
+          "type": "boolean"
+        },
+        "sharedCustodyHalvedOutsideHomeCeiling": {
+          "type": "boolean"
+        },
+        "outsideHomeAnnualEmployerAidDeductibleEur": {
+          "type": "number"
+        },
+        "taxUnitDependentChildrenForEmploymentCeiling": {
+          "type": "number"
+        },
+        "prefundedCesuAnnualEur": {
+          "type": "number"
+        },
+        "sharedCustodyHalvedEmploymentIncrements": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "baselineDisposableIncomeMonthlyEur": {
+      "type": "number"
+    },
+    "declaredEmployerChildcareSupportAnnualEur": {
+      "type": "number"
+    },
+    "referenceEmployerChildcareSupportAnnualEur": {
+      "type": "number"
+    }
+  },
+  "required": ["household", "brutInput", "cmg"],
+  "additionalProperties": false,
+  "$id": "https://agent-comparatif-modes-de-garde.local/schemas/scenario-input.json",
+  "title": "ScenarioInput"
+}

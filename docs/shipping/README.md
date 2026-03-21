@@ -14,6 +14,17 @@ Ce guide complète la **recherche marché** [`DR-05`](../research/DR-05-PROVIDER
 | **OpenAI**    | **Custom GPT** + **Action** OpenAPI         | **Oui** pour les utilisateurs sans clone du dépôt    |
 | **Google**    | **Gem** + function calling vers ton backend | **Oui** (même contrat que l’OpenAPI du repo)         |
 
+### Choisir son profil (GARDE-024)
+
+| Profil            | Condition                                                           | Quickstart                                                 |
+| ----------------- | ------------------------------------------------------------------- | ---------------------------------------------------------- |
+| **Dépôt + Bun**   | Tu développes ou tu utilises **Claude Code** / Cursor avec le clone | [`quickstart-claude-code.md`](./quickstart-claude-code.md) |
+| **ZIP claude.ai** | Utilisateur **sans** clone ; skill uploadé                          | [`quickstart-claude-ai.md`](./quickstart-claude-ai.md)     |
+| **Custom GPT**    | Action OpenAPI vers ton HTTPS                                       | [`quickstart-openai-gpt.md`](./quickstart-openai-gpt.md)   |
+| **Gemini**        | Gem + function calling                                              | [`quickstart-gemini.md`](./quickstart-gemini.md)           |
+
+Exploitation HTTPS : voir [`PRODUCTION-HARNESS.md`](./PRODUCTION-HARNESS.md) (auth, clé API, données personnelles).
+
 ---
 
 ## Anthropic (Claude)
@@ -31,7 +42,7 @@ Ce guide complète la **recherche marché** [`DR-05`](../research/DR-05-PROVIDER
 
 1. `bun install` (une fois).
 2. `bun run package:claude-skill`
-   - Dossier assemblé : `dist/claude-skill/comparatif-modes-garde-fr-2026/` (`SKILL.md`, `REFERENCE.md`, `openapi.yaml`, `examples/*.json`).
+   - Dossier assemblé : `dist/claude-skill/comparatif-modes-garde-fr-2026/` (`SKILL.md`, `REFERENCE.md`, `INTAKE.md`, `openapi.yaml`, `scenario-input.schema.json`, `examples/*.json`).
    - Archive prête à l’upload : **`dist/comparatif-modes-garde-fr-2026-skill.zip`**.
 3. Nécessite la commande système **`zip`** (macOS / Linux : souvent déjà présente).
 

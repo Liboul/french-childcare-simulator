@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import rulesFr2026 from "../config/rules.fr-2026.json" with { type: "json" };
 import { parseRulePack } from "../src/config/parse";
 import { computeScenarioSnapshot } from "../src/scenario/aggregate";
+import { safeParseScenarioInput } from "../src/scenario/scenario-input.schema";
 import type { ScenarioInput } from "../src/scenario/types";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -14,7 +15,13 @@ if (!scenarioArg) {
 }
 
 const scenarioPath = scenarioArg.startsWith("/") ? scenarioArg : join(root, scenarioArg);
-const input = JSON.parse(readFileSync(scenarioPath, "utf8")) as ScenarioInput;
+const raw = JSON.parse(readFileSync(scenarioPath, "utf8"));
+const parsed = safeParseScenarioInput(raw);
+if (!parsed.ok) {
+  console.error(JSON.stringify({ error: "validation_failed", issues: parsed.issues }, null, 2));
+  process.exit(1);
+}
+const input: ScenarioInput = parsed.data;
 
 const packResult = parseRulePack(rulesFr2026);
 if (!packResult.ok) {

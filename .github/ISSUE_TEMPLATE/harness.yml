@@ -1,0 +1,29 @@
+name: Harness / API / skill
+description: OpenAPI, serveur Bun, ZIP Claude, Custom GPT, schéma JSON
+labels: ["harness"]
+body:
+  - type: dropdown
+    id: channel
+    attributes:
+      label: Canal
+      options:
+        - API locale (harness:serve)
+        - Déploiement HTTPS
+        - Skill / ZIP Claude
+        - Custom GPT / Action
+        - Autre
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problème ou besoin
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction (commandes, URL, extrait OpenAPI)
+      render: shell
+    validations:
+      required: false

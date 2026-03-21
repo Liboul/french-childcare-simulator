@@ -5,6 +5,13 @@ import type { UncertaintyReport } from "../uncertainty/types";
 import type { CalculationTrace } from "../trace/trace";
 import type { TaxCreditKind } from "../tax-credits/types";
 
+/** Identité de build pour audit et support (GARDE-026). */
+export type ScenarioMeta = {
+  engineVersion: string;
+  rulePackVersion: string;
+  rulePackEffectiveFrom: string;
+};
+
 /** Champs CMG sans `mode` : le mode est toujours `brutInput.mode`. */
 export type ScenarioCmgInput = Omit<CmgEstimateRequest, "mode">;
 
@@ -36,6 +43,9 @@ export type ScenarioSnapshot = {
   mode: ChildcareMode;
   monthlyBrutEur: number;
   annualBrutEur: number;
+  /** Assiette mensuelle ×12 pour le crédit d’impôt emploi à domicile (peut différer du brut si DR-06). */
+  monthlyBrutTaxCreditAssietteEur: number;
+  annualBrutTaxCreditAssietteEur: number;
   monthlyCmgEur: number;
   annualCmgEur: number;
   cmgStatus: CmgEstimateStatus;
@@ -48,9 +58,18 @@ export type ScenarioSnapshot = {
   employerSupportDeltaAnnualEur: number | null;
 };
 
+/** @see `buildLimitationHints` — GARDE-022 */
+export type LimitationHint = {
+  code: string;
+  messageFr: string;
+  docUrl?: string;
+};
+
 export type ScenarioResult = {
   snapshot: ScenarioSnapshot;
   trace: CalculationTrace;
   warnings: string[];
   uncertainty: UncertaintyReport;
+  meta: ScenarioMeta;
+  limitationHints: LimitationHint[];
 };

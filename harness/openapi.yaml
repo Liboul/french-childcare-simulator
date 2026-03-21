@@ -3,9 +3,11 @@ info:
   title: Comparatif modes de garde — calculate
   description: |
     API harness pour brancher le moteur TypeScript (GARDE-016) sur une **Custom GPT Action**
-    ou tout client HTTP. Le corps de requête est un objet **ScenarioInput** (voir `src/scenario/types.ts`
-    et exemples `docs/demo-scenarios/*.json`).
-  version: 1.0.0
+    ou tout client HTTP. Le corps de requête est un objet **ScenarioInput** validé par Zod (GARDE-020).
+    Réponses **200** : `ScenarioResult` avec `snapshot`, `trace`, `warnings`, `uncertainty`, **`meta`**, **`limitationHints`** (GARDE-026 / GARDE-022).
+    Schéma JSON : `GET /v1/scenario/schema` ou fichier `harness/scenario-input.schema.json` (GARDE-021).
+    Si le serveur est configuré avec **`HARNESS_API_KEY`**, envoyer **`X-Api-Key`** ou **`Authorization: Bearer`** (GARDE-025).
+  version: 1.1.0
 servers:
   - url: http://127.0.0.1:8787
     description: Serveur de développement (`bun run harness:serve`)
@@ -26,6 +28,26 @@ paths:
                     type: boolean
                   service:
                     type: string
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /v1/scenario/schema:
+    get:
+      operationId: getScenarioInputSchema
+      summary: JSON Schema du corps `ScenarioInput` (draft 2020-12)
+      responses:
+        "200":
+          description: Schéma JSON
+          content:
+            application/schema+json:
+              schema:
+                type: object
+                additionalProperties: true
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /v1/calculate:
     post:
       operationId: calculateScenario
@@ -44,7 +66,7 @@ paths:
                 $ref: "#/components/examples/nounouDomicile"
       responses:
         "200":
-          description: Résultat `ScenarioResult` (snapshot, trace, warnings, uncertainty)
+          description: Résultat `ScenarioResult`
           content:
             application/json:
               schema:
@@ -59,6 +81,34 @@ paths:
                 properties:
                   error:
                     type: string
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          description: JSON objet mais `ScenarioInput` invalide (Zod)
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error, issues]
+                properties:
+                  error:
+                    type: string
+                    example: validation_failed
+                  issues:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        path:
+                          type: array
+                          items:
+                            oneOf:
+                              - type: string
+                              - type: integer
+                        code:
+                          type: string
+                        message:
+                          type: string
         "500":
           description: Erreur interne
           content:
@@ -69,6 +119,17 @@ paths:
                   error:
                     type: string
 components:
+  responses:
+    Unauthorized:
+      description: Clé API requise mais absente ou incorrecte
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: unauthorized
   examples:
     nounouDomicile:
       summary: Nounou à domicile (couple)

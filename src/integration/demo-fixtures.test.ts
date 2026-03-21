@@ -14,6 +14,8 @@ const pack = packResult.data;
 
 const DEMO_FIXTURES = [
   "docs/demo-scenarios/nounou-domicile-couple-2026.json",
+  "docs/demo-scenarios/nounou-domicile-partage-50-2026.json",
+  "docs/demo-scenarios/nounou-domicile-complementary-dr06-2026.json",
   "docs/demo-scenarios/micro-creche-bas-revenus-2026.json",
   "docs/demo-scenarios/assistante-maternelle-2026.json",
 ] as const;
@@ -25,5 +27,8 @@ describe("docs/demo-scenarios fixtures", () => {
     const r = computeScenarioSnapshot(pack, input);
     expect(r.snapshot.netHouseholdBurdenAnnualEur).toBeGreaterThanOrEqual(0);
     expect(r.snapshot.mode).toBe(input.brutInput.mode);
+    expect(r.meta.rulePackVersion).toBe(pack.version);
+    expect(r.meta.engineVersion).toMatch(/^\d+\.\d+\.\d+/u);
+    expect(Array.isArray(r.limitationHints)).toBe(true);
   });
 });
