@@ -29,6 +29,21 @@ This document defines **sprint goals**, **story backlog**, **working agreements*
 
 ---
 
+## Tech stack
+
+| Choice | Decision |
+|--------|----------|
+| **Language** | **TypeScript** is the main (and default) language for application code, tests, and tooling scripts unless a story explicitly needs something else. |
+| **Runtime & package manager** | **[Bun](https://bun.sh)** for installs, scripts, and running the project (`bun run`, lockfile, etc.). |
+| **Tests** | **[Vitest](https://vitest.dev)** for unit and integration tests. |
+| **Linting** | **ESLint** with a TypeScript-aware config (and shared rules for consistency). |
+| **Formatting** | **Prettier** (or equivalent) so style is automatic and diffs stay small. |
+| **Types** | **Strict TypeScript** (`strict` / `noImplicitAny` as appropriate); typecheck in CI. |
+
+**GARDE-001** should establish the repo with the above: `package.json` / `bunfig` as needed, ESLint + Prettier wired for editor and CI, Vitest configured, and scripts such as `test`, `lint`, `format` / `typecheck`. Add other **nice-to-have** tooling in the same story when low-cost (e.g. editorconfig, CI workflow running lint + tests on push).
+
+---
+
 ## Definition of Done (global)
 
 A story is **done** when **all** of the following are true:
@@ -186,7 +201,7 @@ For each mode in the spec, list **typical cost components** (hourly, monthly, re
 
 | Epic | Goal |
 |------|------|
-| **E0 — Foundation** | Repo, quality bar, config strategy, trace model |
+| **E0 — Foundation** | Repo (**TypeScript**, **Bun**, **Vitest**, lint/format, CI), config strategy, trace model |
 | **E1 — Rules & data** | Official rules encoded as data + research packs |
 | **E2 — Engine** | Blocks A–G, cumul, employer cost constant |
 | **E3 — Outputs** | CSV, HTML, JSON (+ optional PDF) |
@@ -200,7 +215,7 @@ For each mode in the spec, list **typical cost components** (hourly, monthly, re
 
 | ID | Title | Epic | Notes |
 |----|--------|------|--------|
-| **GARDE-001** | Project bootstrap: stack, layout, lint/test CI, config folder | E0 | No fiscal numbers yet |
+| **GARDE-001** | Project bootstrap: **TypeScript**, **Bun**, **Vitest**, **ESLint** + **Prettier**, typecheck, scripts, CI; repo layout, config folder | E0 | See [Tech stack](#tech-stack); no fiscal numbers yet |
 | **GARDE-002** | Traceability model: `CalculationStep`, sources, formulas (empty engine) | E0 | Foundational types |
 | **GARDE-003** | Config schema for barèmes/plafonds + validation | E0 | Pairs with GARDE-002 |
 | **GARDE-004** | `[DEEP RESEARCH]` Research packs DR-01–DR-04 consolidated in `docs/research/` | E1 | **Delegate** if agent cannot primary-source |
@@ -246,5 +261,6 @@ For each mode in the spec, list **typical cost components** (hourly, monthly, re
 ## References
 
 - Product spec: [`INITIAL_SPEC.md`](./INITIAL_SPEC.md)  
+- Tech stack: [§ Tech stack](#tech-stack)  
 - Story specs: `docs/stories/GARDE-###.md` (created per story)  
 - Research outputs: `docs/research/` (recommended)
