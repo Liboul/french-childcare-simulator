@@ -2,7 +2,7 @@
 
 ## Executive summary
 
-Pour une **crèche conventionnée PSU** (y compris **inter-entreprises** ou **micro-crèche sous PSU**), la **part payée par le parent** (*participation familiale*) est en principe celle du **barème national** (ressources du foyer, composition, volume d’accueil) : **elle ne dépend pas** du fait que l’employeur réserve une place ou finance le reliquat pour la structure. L’**employeur** intervient sur **coût réel − aide publique (PSU, etc.) − participation familiale**, pas en réduisant le barème parental. Pour une **micro-crèche hors PSU** (ou autre EAJE relevant du **CMG « structure »**), les **tarifs sont libres** (dans la limite d’éligibilité PAJE, ex. plafond horaire pour l’aide) : le **reste à charge** dépend alors **fortement du contrat** et de la structure. Ce document formalise cette distinction pour le produit ; le **moteur** ne calcule pas le barème PSU : il attend `monthlyParticipationEur` (saisie ou outil externe CAF). Voir aussi **DR-04** (coûts par mode), **DR-01** (CMG structure vs PSU non modélisé).
+Pour une **crèche conventionnée PSU** (y compris **inter-entreprises** ou **micro-crèche sous PSU**), la **part payée par le parent** (*participation familiale*) est en principe celle du **barème national** (ressources du foyer, composition, volume d’accueil) : **elle ne dépend pas** du fait que l’employeur réserve une place ou finance le reliquat pour la structure. L’**employeur** intervient sur **coût réel − aide publique (PSU, etc.) − participation familiale**, pas en réduisant le barème parental. Pour une **micro-crèche hors PSU** (ou autre EAJE relevant du **CMG « structure »**), les **tarifs sont libres** (dans la limite d’éligibilité PAJE, ex. plafond horaire pour l’aide) : le **reste à charge** dépend alors **fortement du contrat** et de la structure. Ce document formalise cette distinction pour le produit ; le **moteur** ne calcule pas le barème PSU : il attend `monthlyParticipationEur` (facture / avis d’échéance, ou estimation via **monenfant.fr** « Simuler le coût en crèche », ou barème Cnaf — **à ne pas confondre** avec les simulateurs **d’aides** caf.fr type CMG). Voir aussi **DR-04** (coûts par mode), **DR-01** (CMG structure vs PSU non modélisé).
 
 ---
 
@@ -23,7 +23,7 @@ Pour une **crèche conventionnée PSU** (y compris **inter-entreprises** ou **mi
 
 ## 2. Barème PSU (part familiale)
 
-Les règles précises (revenus de référence, planchers, plafonds, **taux d’effort** par nombre d’enfants, prise en compte du temps d’accueil) sont **nationales** et **mises à jour** par la **CAF** / instruction PAJE. Le produit **ne duplique pas** ces tableaux dans le code : l’utilisateur ou l’agent collecte la **facturation réelle** ou le résultat d’un **simulateur officiel**.
+Les règles précises (revenus de référence, planchers, plafonds, **taux d’effort** par nombre d’enfants, prise en compte du temps d’accueil) sont **nationales** et **mises à jour** par la **CAF** / instruction PAJE. Le produit **ne duplique pas** ces tableaux dans le code : l’utilisateur ou l’agent collecte la **facturation réelle**, le résultat du **simulateur de reste à charge** sur **monenfant.fr** (crèche en PSU), ou une lecture des **publications barème / guide PSU** (Cnaf, caf.fr) — **pas** le seul hub caf.fr « Estimer vos droits », qui vise surtout les **aides** (CMG, etc.).
 
 **Forme qualitative retenue** : participation familiale ≈ fonction **(revenus, nb enfants à charge pour le barème, heures / jours d’accueil)**, encadrée par des **minima / maxima** légaux ou réglementaires publiés.
 
@@ -34,7 +34,8 @@ Les règles précises (revenus de référence, planchers, plafonds, **taux d’e
 **Crèche conventionnée PSU** (souvent publique, inter-entreprises, nombreuses crèches privées conventionnées) :
 
 - **Oui, en ordre de grandeur**, parce que la participation familiale dépend surtout de la **situation du foyer** (ressources prises en compte — souvent **N-2**, nombre d’enfants dans le barème, **volume d’accueil** prévu : temps plein / partiel, heures ou jours par mois) et **pas** du nom de la crèche, **à structure et convention PSU équivalentes**.
-- Moyens usuels : **simulateurs d’aides** proposés par la **CAF** ou la **MSA** (rubriques PAJE / garde d’enfants / modes d’accueil — intitulés et parcours évoluent sur les sites), **prise de contact** avec un conseiller (accueil, rendez-vous), parfois **grilles d’exemple** publiées par une **mairie** ou un **conseil départemental** (à titre illustratif).
+- **Part prix parent (PSU)** : **monenfant.fr** — *Simuler le coût en crèche* (https://www.monenfant.fr/simuler-le-cout-en-creche) : estime le **reste à charge mensuel** des familles pour une crèche bénéficiant de la subvention PSU (barème national Cnaf) ; résultat **indicatif** (voir CGU sur le site). **Ne pas substituer** les simulateurs **d’aides** CAF / MSA (CMG, « Estimer vos droits », etc.) : ils ne remplacent pas cet objet.
+- **Aides type CMG** (micro-crèche hors PSU, etc.) : simulateurs et règles **CAF** / **MSA** — voir **DR-01** ; **prise de contact** avec un conseiller, parfois **grilles d’exemple** publiées par une **mairie** ou un **conseil départemental** (à titre illustratif).
 - **Limites** : le montant **définitif** figure sur la **facture / avis de paiement** de la structure une fois l’accueil paramétré ; des postes peuvent s’ajouter (**repas**, garderie, adhésion) ; un changement de revenus déclarés ou de mode d’accueil fait **évoluer** le barème.
 
 **Micro-crèche ou EAJE hors PSU** (tarif libre, CMG « structure » éventuel) :
@@ -54,7 +55,7 @@ Les règles précises (revenus de référence, planchers, plafonds, **taux d’e
 
 ## 4. Implications harness
 
-- Pour **`creche_publique`** et **`creche_inter_entreprises`** : demander la **participation familiale mensuelle réelle** (avis d’échéance, espace CAF, crèche) ; expliquer qu’elle suit le **barème PSU**, **pas** un pourcentage arbitraire de prise en charge employeur sur cette part. **Si l’utilisateur n’a pas encore la place** : pour un scénario **PSU**, proposer un **ordre de grandeur** via **simulateur CAF/MSA** ou contact CAF, avec le **volume d’accueil** envisagé ; saisir ce montant comme **hypothèse** et le dire clairement à l’utilisateur (à confirmer à réception du contrat / premier avis).
+- Pour **`creche_publique`** et **`creche_inter_entreprises`** : demander la **participation familiale mensuelle réelle** (avis d’échéance, espace allocataire, crèche) ; expliquer qu’elle suit le **barème PSU**, **pas** un pourcentage arbitraire de prise en charge employeur sur cette part. **Si l’utilisateur n’a pas encore la place** : pour un scénario **PSU**, proposer un **ordre de grandeur** via **monenfant.fr** (*Simuler le coût en crèche*), **conseiller CAF / MSA / gestionnaire**, ou **barème publié** (Cnaf) ; saisir ce montant comme **hypothèse** et le dire clairement à l’utilisateur (à confirmer à réception du contrat / premier avis). Les simulateurs **d’aides** sur caf.fr ne sont **pas** l’équivalent pour la **part familiale** PSU.
 - Pour **`creche_privee`** : clarifier si la structure est **PSU** ou **PAJE / CMG** pour orienter les attentes (barème national vs contrat + CMG structure). Sans place : **devis / fourchettes** de structures ou hypothèse explicite utilisateur.
 
 ---
@@ -69,5 +70,6 @@ Les règles précises (revenus de référence, planchers, plafonds, **taux d’e
 
 ## Source index
 
-- Publications **caf.fr** / **service-public.gouv.fr** (PAJE, PSU, participation des familles).
+- **monenfant.fr** — simulateur **reste à charge** crèche PSU (part familiale) : https://www.monenfant.fr/simuler-le-cout-en-creche  
+- Publications **caf.fr** / **Cnaf** (guides / barèmes PSU, participation des familles) ; **service-public.gouv.fr** (PAJE, modes d’accueil).  
 - **DR-04** (composantes de coût et exemples).

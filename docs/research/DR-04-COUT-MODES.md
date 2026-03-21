@@ -157,7 +157,7 @@ Les crèches inter-entreprises (ou crèches d’entreprise ouvertes à plusieurs
 
 **Inputs (parent)**
 
-- **Participation familiale** mensuelle réelle (résultat barème PSU / facture crèche), ou ressources + volume d’accueil si un outil externe (CAF) calcule le barème
+- **Participation familiale** mensuelle réelle (résultat barème PSU / facture crèche), ou ressources + volume d’accueil si un outil externe calcule le barème (**monenfant.fr** *Simuler le coût en crèche* pour la part parent PSU — pas les seuls simulateurs **d’aides** caf.fr ; voir **DR-08**)
 - Nombre d’heures ou jours d’accueil (pour comprendre le montant)
 
 **Defaults**: même logique barème PSU que crèche publique conventionnée (paramètres nationaux, actualisation CAF).  
