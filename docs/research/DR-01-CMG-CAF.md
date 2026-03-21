@@ -1,11 +1,3 @@
-# DR-01 — Rapport de recherche (CMG & CAF)
-
-> **Source :** Export Gemini (MHTML) converti en Markdown le 2026-03-21.  
-> **Avertissement :** Vérifier toute règle et tout montant sur les sources officielles (CAF, Service-Public, Légifrance, URSSAF) avant usage en production.  
-> **Lien d’origine :** Gemini share `https://gemini.google.com/share/7c72dee1293a`
-
----
-
 # Rapport de recherche : Architecture et paramétrage du Complément de mode de garde (CMG) pour l'exercice 2026
 
 ## 1. Executive summary
@@ -43,8 +35,9 @@ Depuis septembre 2025, le calcul n'est plus forfaitaire mais proportionnel aux r
 
 Le calcul suit la formule nationale de taux d'effort :  
 
-**Formule (taux d’effort, emploi direct) :**  
-`CMG = Coût de la garde × (1 − (Revenu mensuel × Taux d’effort) / Coût horaire de référence)`
+$$
+CMG = \text{Coût de la garde} \times \left(1 - \left(\frac{\text{Revenu Mensuel} \times \text{Taux d'Effort}}{\text{Coût Horaire de Référence}}\right)\right)
+$$
 
 **Paramètres au 1er avril 2026 :**
 

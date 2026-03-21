@@ -78,6 +78,7 @@ This section is the **sprint-level audit trail**: what shipped, whether executio
 | **GARDE-001** | 2026-03-21       | Done. Bun + strict TS + Vitest + ESLint + Prettier + EditorConfig + `config/` + GitHub Actions CI (`bun run ci`). Minimal `src/` placeholder; README. Prettier also applied to existing `docs/*.md` on first format. |
 | **GARDE-002** | 2026-03-21       | Done. `src/trace/`: `SourceRef`, blocks A–G + labels, `CalculationStep`, `CalculationTrace`, `emptyTrace` / `appendStep`. Barrel export from `src/index.ts`.                                                         |
 | **GARDE-003** | 2026-03-21       | Done. Zod `rulePackSchema` + `parseRulePack`, categories, `todoVerify` OR sources per rule. `config/rules.example.json`. Dependency `zod`.                                                                           |
+| **GARDE-004** | 2026-03-21       | Done. Deep research outputs committed: `docs/research/DR-01-CMG-CAF.md` … `DR-05-PROVIDER-HARNESS.md`; prompts live under `docs/research/prompts/*-PROMPT.md`.                                                       |
 
 ---
 
@@ -146,31 +147,31 @@ Use one prompt per major topic; attach outputs to `docs/research/` and reference
 
 #### DR-01 — CMG & prestations CAF (modes de garde)
 
-**Full prompt:** [`docs/research/prompts/DR-01-CMG-CAF.md`](research/prompts/DR-01-CMG-CAF.md)
+**Full prompt:** [`docs/research/prompts/DR-01-CMG-CAF-PROMPT.md`](research/prompts/DR-01-CMG-CAF-PROMPT.md)
 
 **Summary:** Official CMG and closely related CAF benefits per mode, barèmes, **non-cumul**, **2026** or latest with unknowns; verbatim URLs and tables. Save output under `docs/research/` (e.g. `DR-01-results.md`).
 
 #### DR-02 — Crédit d’impôt (garde d’enfants, emploi à domicile)
 
-**Full prompt:** [`docs/research/prompts/DR-02-CREDIT-IMPOT.md`](research/prompts/DR-02-CREDIT-IMPOT.md)
+**Full prompt:** [`docs/research/prompts/DR-02-CREDIT-IMPOT-PROMPT.md`](research/prompts/DR-02-CREDIT-IMPOT-PROMPT.md)
 
 **Summary:** CGI / BOFiP / Service-Public / impots.gouv: **base**, **taux**, **plafonds**, interactions with CESU / PAJE / CMG and **ordering** of credits; loi de finances **2026** where published. Save as e.g. `DR-02-results.md`.
 
 #### DR-03 — CESU, titres-services, chèques emploi associatif, avantages employeur (berceau)
 
-**Full prompt:** [`docs/research/prompts/DR-03-CESU-EMPLOYEUR.md`](research/prompts/DR-03-CESU-EMPLOYEUR.md)
+**Full prompt:** [`docs/research/prompts/DR-03-CESU-EMPLOYEUR-PROMPT.md`](research/prompts/DR-03-CESU-EMPLOYEUR-PROMPT.md)
 
 **Summary:** URSSAF + fiscal: social and tax treatment, plafonds, participation employeur / crèche d’entreprise; interaction matrices with fiscal and benefit rules. Save as e.g. `DR-03-results.md`.
 
 #### DR-04 — Modèle de coût par mode (composantes & paramètres)
 
-**Full prompt:** [`docs/research/prompts/DR-04-COUT-MODES.md`](research/prompts/DR-04-COUT-MODES.md)
+**Full prompt:** [`docs/research/prompts/DR-04-COUT-MODES-PROMPT.md`](research/prompts/DR-04-COUT-MODES-PROMPT.md)
 
 **Summary:** For each product mode (nounou, MAM, crèches, inter-entreprises…), **line items**, national vs local vs user inputs; optional **Paris** public-crèche example with municipal URL. Save as e.g. `DR-04-results.md`.
 
 #### DR-05 — Provider harnesses (Claude Skills, OpenAI, Gemini — how to ship)
 
-**Full prompt:** [`docs/research/prompts/DR-05-PROVIDER-HARNESS.md`](research/prompts/DR-05-PROVIDER-HARNESS.md)
+**Full prompt:** [`docs/research/prompts/DR-05-PROVIDER-HARNESS-PROMPT.md`](research/prompts/DR-05-PROVIDER-HARNESS-PROMPT.md)
 
 **Summary:** **Product/platform** research (not fiscal): packaging, distribution, tools/APIs, comparison table, MVP vendor recommendation, rename risks. Save as e.g. `DR-05-results.md`.
 
@@ -256,3 +257,4 @@ The product has **two layers**; only the second is provider-specific:
 - Tech stack: [§ Tech stack](#tech-stack)
 - Story specs: `docs/stories/GARDE-###.md` (created per story)
 - Research outputs: `docs/research/` (recommended)
+- New session handoff prompt: [`NEXT_SESSION.md`](./NEXT_SESSION.md)
