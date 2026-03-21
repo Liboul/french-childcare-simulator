@@ -95,6 +95,7 @@ This section is the **sprint-level audit trail**: what shipped, whether executio
 | **GARDE-017** | 2026-03-21       | Done. `docs/demo-scenarios/` (3 JSON `ScenarioInput`), `docs/SOURCES_OFFICIELLES.md`, script `demo:scenario`, tests fixtures.                                                                                                                               |
 | **GARDE-015** | 2026-03-21       | Done. Spike harness : **DR-05** en repo ; **ADR-0001** (`docs/architecture/`) — moteur portable, harness branchable, MVP OpenAI (DR-05). **GARDE-016** = impl. harness.                                                                                     |
 | **GARDE-016** | 2026-03-21       | Done. `harness/` : `POST /v1/calculate` (Bun), `openapi.yaml`, instructions GPT + prompts, `claude/SKILL.md`, test `harness-calculate`.                                                                                                                     |
+| **GARDE-018** | 2026-03-21       | Done. `docs/shipping/README.md` : runbooks Anthropic / OpenAI / Google, sécurité, liens `harness/` + DR-05 + ADR ; lien depuis `harness/README.md`.                                                                                                         |
 
 ---
 
@@ -241,6 +242,7 @@ The product has **two layers**; only the second is provider-specific:
 | **GARDE-015** | `[SPIKE]` **`[DEEP RESEARCH]`** Provider harness & distribution: DR-05 + ADR (`docs/architecture/` or `docs/research/`)               | E4    | **Clarifies Claude Skills vs OpenAI vs Gemini**; defines what “ship” means before GARDE-016 |
 | **GARDE-016** | Implement harness(es) per ADR: instructions, tool wiring, example prompts; **core stays portable**                                    | E4    | Depends on **GARDE-015**, stable JSON API (GARDE-012)                                       |
 | **GARDE-017** | Demo scenarios + “official sources” table in repo                                                                                     | E4    | For acceptance demos; can follow GARDE-016                                                  |
+| **GARDE-018** | **Shipping runbooks** : `docs/shipping/` (Claude / OpenAI / Gemini), checklists + liens repo + DR-05 ; dépend de **GARDE-016**        | E4    | Pas d’hébergement managé dans la story ; auth/TLS à la charge du déployeur                  |
 
 ### Suggested sequencing (first sprint)
 
@@ -249,7 +251,7 @@ The product has **two layers**; only the second is provider-specific:
 3. GARDE-005 → GARDE-006 → GARDE-007 → GARDE-008 → GARDE-009 → GARDE-010 → GARDE-011
 4. GARDE-012 (+ GARDE-013 if time)
 5. GARDE-014 (ongoing; harden before release)
-6. **GARDE-015** (DR-05 spike + ADR) → **GARDE-016** → GARDE-017
+6. **GARDE-015** (DR-05 spike + ADR) → **GARDE-016** → GARDE-017 → **GARDE-018** (runbooks livraison)
 
 **Critical path**: GARDE-004 / research packs → GARDE-005 → engine stories. **E4 critical path**: GARDE-015 → GARDE-016 (harness implements what the spike decides).
 
