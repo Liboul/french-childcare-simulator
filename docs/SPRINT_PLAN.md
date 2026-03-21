@@ -214,7 +214,7 @@ The product has **two layers**; only the second is provider-specific:
 | **E0 — Foundation**   | Repo (**TypeScript**, **Bun**, **Vitest**, lint/format, CI), config strategy, trace model |
 | **E1 — Rules & data** | Official rules encoded as data + research packs                                           |
 | **E2 — Engine**       | Full calculation pipeline (trace segments), cumul, employer cost constant                 |
-| **E3 — Outputs**      | CSV, HTML, JSON (+ optional PDF)                                                          |
+| **E3 — Outputs**      | CSV, HTML, JSON                                                                           |
 | **E4 — Packaging**    | Provider harness research (DR-05), skill/GPT/Gem artifacts, docs, demo scenarios          |
 
 ---
@@ -237,21 +237,48 @@ The product has **two layers**; only the second is provider-specific:
 | **GARDE-010** | Final aggregation; reste à charge; disposable income; **employer cost constant** across scenarios                                     | E2    | Integration-heavy                                                                           |
 | **GARDE-011** | Uncertainty handling: flags, parametrizable variants, no silent defaults                                                              | E2    | Per INITIAL_SPEC § Gestion de l’incertitude                                                 |
 | **GARDE-012** | Exporters: JSON + HTML + CSV (hypothèses, calculs, sources)                                                                           | E3    |                                                                                             |
-| **GARDE-013** | Optional PDF export                                                                                                                   | E3    | Spike if library choice blocks                                                              |
 | **GARDE-014** | Test matrix: plafonds, CMG, cumul, CESU consumed, negative RAC guard, ineligible mode                                                 | E0/E2 | Can split per engine stage; must complete before “1.0”                                      |
 | **GARDE-015** | `[SPIKE]` **`[DEEP RESEARCH]`** Provider harness & distribution: DR-05 + ADR (`docs/architecture/` or `docs/research/`)               | E4    | **Clarifies Claude Skills vs OpenAI vs Gemini**; defines what “ship” means before GARDE-016 |
 | **GARDE-016** | Implement harness(es) per ADR: instructions, tool wiring, example prompts; **core stays portable**                                    | E4    | Depends on **GARDE-015**, stable JSON API (GARDE-012)                                       |
 | **GARDE-017** | Demo scenarios + “official sources” table in repo                                                                                     | E4    | For acceptance demos; can follow GARDE-016                                                  |
 | **GARDE-018** | **Shipping runbooks** : `docs/shipping/` (Claude / OpenAI / Gemini), checklists + liens repo + DR-05 ; dépend de **GARDE-016**        | E4    | Pas d’hébergement managé dans la story ; auth/TLS à la charge du déployeur                  |
+| **GARDE-019** | **IR / TMI** : impôt marginal ou modèle simplifié pour le « revenu disponible » (alignement INITIAL_SPEC)                             | E2    | **`[DEEP RESEARCH]`** ; dépend **GARDE-010** ; paramètres versionnés                        |
+| **GARDE-020** | **Harness : validation `ScenarioInput`** — erreurs structurées (ex. `422`) pour guider l’agent / l’utilisateur                        | E4    | Dépend **GARDE-016** ; Zod ou équivalent ; OpenAPI mis à jour                               |
+| **GARDE-021** | **Schéma JSON `ScenarioInput`** — artefact versionné + endpoint ou fichier servi pour Actions / MCP                                   | E4    | Souvent après **GARDE-020** ; lien `openapi.yaml`                                           |
+| **GARDE-022** | **Chemins `unsupported` / `ineligible`** : codes stables + texte + liens doc pour le harness                                          | E2/E4 | Améliore transparence sans élargir le moteur à tous les modes                               |
+| **GARDE-023** | **Playbook intake** : `harness/INTAKE.md` (ou équivalent) + mise à jour SKILL / instructions GPT                                      | E4    | Questions ordonnées par `mode` ; lien `REFERENCE.md`                                        |
+| **GARDE-024** | **Packaging skill** : profils « repo + Bun » vs « ZIP + HTTP » documentés ; script / doc alignés                                      | E4    | Étend **GARDE-018** / `package:claude-skill`                                                |
+| **GARDE-025** | **Exploitation publique** : gabarit auth (clé API), rate limiting, doc données personnelles / minimisation                            | E4    | Doc + option impl middleware harness ; pas d’hébergeur imposé                               |
+| **GARDE-026** | **Versioning réponses API** : identifiants pack règles + version moteur dans les réponses JSON                                        | E2/E4 | Traçabilité pour audits et clients HTTP                                                     |
+| **GARDE-027** | **Quickstarts** : une page courte par canal sous `docs/shipping/` (Claude Code, claude.ai, GPT, Gemini)                               | E4    | Captures / liens doc fournisseur « au moment T »                                            |
+| **GARDE-028** | **CHANGELOG** discipline : barème (`config/`) + artifacts harness / skill ; règles de semver documentées                              | E1/E4 | Facilite support et revue des déploiements                                                  |
+| **GARDE-029** | **Tests contrat** : alignement exemples OpenAPI / démos / snapshots de réponse                                                        | E0    | Régression quand le schéma ou le moteur change                                              |
+| **GARDE-030** | **Tests invariants monétaires** : property tests ou cas ciblés (RAC, plafonds, monotonie là où attendue)                              | E0/E2 | Renforce confiance sur les montants                                                         |
+| **GARDE-031** | **CI : artefact skill** — `package:claude-skill` en CI + assertion sur le contenu du ZIP                                              | E0    | Empêche régressions de packaging                                                            |
+| **GARDE-032** | **`CONTRIBUTING.md`** : comment proposer des règles, sources obligatoires, `todoVerify`, flux research                                | E0    | Réduit erreurs de contribution                                                              |
+| **GARDE-033** | **Issue templates** GitHub : bug calcul (sources), demande de règle, harness                                                          | E0    | Améliore qualité des rapports                                                               |
+
+\* **GARDE-013** (export PDF) : **hors périmètre** — retiré du backlog produit.
 
 ### Suggested sequencing (first sprint)
 
 1. GARDE-001 → GARDE-002 → GARDE-003
 2. **Parallel**: GARDE-004 (research) with GARDE-001–003
 3. GARDE-005 → GARDE-006 → GARDE-007 → GARDE-008 → GARDE-009 → GARDE-010 → GARDE-011
-4. GARDE-012 (+ GARDE-013 if time)
+4. GARDE-012
 5. GARDE-014 (ongoing; harden before release)
 6. **GARDE-015** (DR-05 spike + ADR) → **GARDE-016** → GARDE-017 → **GARDE-018** (runbooks livraison)
+
+### Suggested sequencing (follow-on backlog, post–GARDE-018)
+
+Ordre indicatif (ajuster selon priorité métier) :
+
+1. **GARDE-026** (versioning réponses) + **GARDE-028** (CHANGELOG) — faible friction, aide tout le reste.
+2. **GARDE-020** → **GARDE-021** (validation + schéma exposé).
+3. **GARDE-023** (intake playbook) + **GARDE-022** (codes unsupported).
+4. **GARDE-024** (packaging skill) + **GARDE-027** (quickstarts) + **GARDE-025** (exploitation publique).
+5. **GARDE-019** (IR/TMI) — plus lourd ; research avant d’encoder des taux.
+6. Qualité : **GARDE-029** → **GARDE-030** → **GARDE-031** ; gouvernance : **GARDE-032** → **GARDE-033**.
 
 **Critical path**: GARDE-004 / research packs → GARDE-005 → engine stories. **E4 critical path**: GARDE-015 → GARDE-016 (harness implements what the spike decides).
 

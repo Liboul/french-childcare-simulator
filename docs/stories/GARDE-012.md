@@ -21,7 +21,7 @@ Un scénario calculé peut être **sérialisé** pour audit ou affichage : **JSO
 
 **Out of scope**
 
-- PDF (**GARDE-013**), i18n, CSS avancé, téléchargement fichier navigateur (consommateur appelle les fonctions).
+- Export PDF (hors périmètre produit), i18n, CSS avancé, téléchargement fichier navigateur (consommateur appelle les fonctions).
 
 ## Acceptance criteria
 
