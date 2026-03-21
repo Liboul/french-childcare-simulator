@@ -60,6 +60,15 @@ Le snapshot expose **`monthlyBrutTaxCreditAssietteEur`** / **`annualBrutTaxCredi
 
 Pour **`creche_publique`**, **`creche_privee`**, **`creche_inter_entreprises`** : l’agent doit **toujours** demander à l’utilisateur le montant **mensuel réellement payé par le parent** et le saisir dans **`monthlyParticipationEur`**. Sans réponse utilisateur, **ne pas** inventer le montant ni utiliser 0 par défaut. Le moteur n’intègre **pas** de simulateur de barème PSU : la saisie est la seule source du brut crèche.
 
+**Outils officiels** (à donner si le montant manque — crèche **PSU** / participation familiale) :
+
+- https://www.caf.fr/allocataires/mes-services-en-ligne/estimer-vos-droits — hub **Estimer vos droits** (CAF).  
+- https://www.caf.fr/allocataires/aides-et-demarches/thematique-libre/votre-simulation-de-mode-de-garde — simulation **mode de garde**.  
+- https://www.mesdroitssociaux.gouv.fr/votre-simulateur/accueil — portail **mesdroitssociaux.gouv.fr**.  
+- Foyers relevant de la **MSA** : site **msa.fr**, rubrique estimation / simulateur.
+
+Si l’utilisateur refuse d’ouvrir ces outils, l’agent peut proposer une **fourchette ou un €/mois indicatif** en s’appuyant sur des **barèmes et pages officielles** consultées en ligne (**citer les URLs**), avec **validation explicite** de l’utilisateur avant simulation — voir **`SKILL.md`** (section participation crèche).
+
 ## Champs `brutInput` par `mode`
 
 | `mode`                                                           | Champs principaux (en plus de `mode`)                                                                                                                    |
@@ -80,7 +89,8 @@ Dans l’archive skill : dossier **`examples/`** (copie des démos repo). Recopi
 
 ## Limites moteur (à rappeler à l’utilisateur)
 
-- **IR / disponible** : optionnel via **`incomeTax`** (revenu net imposable ou brut + parts + `filing`, ou seulement `annualHouseholdIncomeAfterIncomeTaxEur`). Le snapshot expose TMI / IR estimés ; plafonnement QF non modélisé (`limitationHints`). Vérifier le **PAS** vs solde annuel (voir `warnings`).
+- **IR / disponible** : optionnel via **`incomeTax`** (revenu net imposable ou brut + parts + `filing`, ou seulement `annualHouseholdIncomeAfterIncomeTaxEur`, ou seulement `annualNetSalaryFromPayslipsEur` pour un objet `incomeTax` minimal). Le snapshot expose TMI / IR estimés ; plafonnement QF non modélisé (`limitationHints`). Vérifier le **PAS** vs solde annuel (voir `warnings`).
+- **Revenus foyer dans le snapshot** : échos pour la fiche de transparence — `householdGrossSalaryAnnualEur` / `householdGrossSalaryMonthlyEur` (saisie `annualGrossSalaryEur`), `householdNetSalaryAnnualEur` / `Monthly` (`annualNetSalaryFromPayslipsEur`, net bulletin ≠ après IR), `householdIncomeAfterIncomeTaxAnnualEur` / `Monthly` (`annualHouseholdIncomeAfterIncomeTaxEur`). `null` si le champ source est absent.
 - **Crèche publique** : CMG type PSU souvent **non modélisé** (`unsupported` / `ineligible` selon cas).
 - **Annualisation** crédit d’impôt : le moteur émet un avertissement (`scenario_annual_tax_credit_uses_brut_x12_…`). Avec DR-06, l’assiette CI peut être **`annualBrutTaxCreditAssietteEur`** (≠ `annualBrutEur`).
 - Règles avec `todoVerify` dans le pack : signaler via `uncertainty.referencedRulesPendingVerification`.

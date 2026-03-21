@@ -62,6 +62,10 @@ Structure **dans cet ordre** :
    - Crédit d’impôt : `snapshot.annualTaxCreditEur`, type `snapshot.taxCreditKind`  
    - Reste à charge foyer : `snapshot.netHouseholdBurdenMonthlyEur` / `netHouseholdBurdenAnnualEur`  
    - Si renseigné : disponible après charge `snapshot.disposableIncomeMonthlyEur` ; IR / TMI `estimatedIncomeTaxGrossAnnualEur`, `marginalIncomeTaxRate` (voir `warnings` / `limitationHints`)  
+   - **Revenus du foyer** (tels que déclarés dans `incomeTax`, reprise dans le snapshot — ignorer les clés à `null`) :  
+     - **Salaire brut foyer** : `snapshot.householdGrossSalaryMonthlyEur` / `householdGrossSalaryAnnualEur` (saisie `incomeTax.annualGrossSalaryEur`).  
+     - **Salaire net (bulletins)** : `snapshot.householdNetSalaryMonthlyEur` / `householdNetSalaryAnnualEur` (`incomeTax.annualNetSalaryFromPayslipsEur` — après cotisations, **avant** IR ; **ne pas** confondre avec le revenu après IR).  
+     - **Revenu foyer après IR** (si saisi) : `snapshot.householdIncomeAfterIncomeTaxMonthlyEur` / `householdIncomeAfterIncomeTaxAnnualEur`.  
    - **Alertes** : résumer `warnings`, `limitationHints`, `uncertainty` (et tout `cmgStatus` ≠ `ok`).
 
 2. **Brut / garde (saisie → moteur)**  
@@ -89,7 +93,8 @@ Structure **dans cet ordre** :
 ### Template B — réponse courte (sur demande utilisateur)
 
 - Une ligne **synthèse** avec `netHouseholdBurdenMonthlyEur`, `monthlyBrutEur`, `monthlyCmgEur` + `cmgStatus`, `annualTaxCreditEur` + `taxCreditKind`.  
-- **À valider** : lister en 1 ligne les saisies sensibles (participation crèche, heures/salaire, aide employeur, CESU).  
+- Si non `null` : ajouter **brut / net foyer** (`householdGrossSalaryMonthlyEur`, `householdNetSalaryMonthlyEur`, `householdIncomeAfterIncomeTaxMonthlyEur`) avec intitulés clairs (net bulletin vs après IR).  
+- **À valider** : lister en 1 ligne les saisies sensibles (participation crèche, heures/salaire garde, revenus `incomeTax`, aide employeur, CESU).  
 - **Limites** : puces tirées de `warnings` + `limitationHints` (et `meta` si pertinent).
 
 ### Plusieurs modes comparés
@@ -112,7 +117,13 @@ Voir aussi **`INTAKE.md`** § nounou.
 
 - Tu **demandes explicitement** ce montant en €/mois à l’utilisateur (facture, avis d’échéance, relevé bancaire, espace CAF, courrier de la structure). Tu le mets dans **`brutInput.monthlyParticipationEur`**.
 - **Interdit** : lancer une simulation avec `monthlyParticipationEur` **omis** ; **interdit** d’utiliser `0` ou un montant **plausible** sans accord de l’utilisateur (le moteur **ne calcule pas** le barème PSU).
-- Si l’utilisateur **ne connaît pas** le montant : **explique** où le trouver (facture, espace CAF). **Sans place encore** : pour un parcours **PSU**, oriente vers **simulateur ou contact CAF/MSA** (ressources + volume d’accueil prévu) pour un **ordre de grandeur** ; tu peux lancer une simulation **uniquement** si l’utilisateur **valide explicitement** ce chiffre comme **hypothèse** (à rectifier à la première facture). Pour une **micro-crèche hors PSU**, privilégie **devis** ou hypothèse utilisateur assumée.
+- **Simulateurs officiels (à proposer systématiquement si le montant est inconnu)** — l’utilisateur peut les ouvrir lui-même :
+  - **Hub CAF — Estimer vos droits** : https://www.caf.fr/allocataires/mes-services-en-ligne/estimer-vos-droits  
+  - **Simulation « mode de garde » (PAJE / garde d’enfants, ordre de grandeur participation)** : https://www.caf.fr/allocataires/aides-et-demarches/thematique-libre/votre-simulation-de-mode-de-garde  
+  - **Portail état (autre entrée)** : https://www.mesdroitssociaux.gouv.fr/votre-simulateur/accueil  
+  - **Régime agricole** : orienter vers le **site MSA** (rubrique estimation / simulateur) en parallèle de la CAF.
+- Si l’utilisateur **ne veut pas** passer par ces outils : tu peux faire toi-même une **mini-estimation indicative** en t’appuyant sur **internet** et sur les **barèmes / fiches officielles** (caf.fr, service-public.gouv.fr, et sources primaires citées) pour proposer un **€/mois hypothétique** — **cite toujours l’URL et l’intitulé** de la page utilisée ; précise que c’est **indicatif** et que seuls **simulateur officiel, avis d’échéance ou facture** font foi ; l’utilisateur doit **valider explicitement** ce montant avant `simulate.mjs`. Cette étape ne remplace **pas** l’exécution du moteur : elle sert **uniquement** à remplir `monthlyParticipationEur` quand le moteur ne calcule pas le PSU.
+- Si l’utilisateur **ne connaît pas** le montant : **explique** où le trouver (facture, espace CAF). **Sans place encore** : pour un parcours **PSU**, renvoie d’abord vers les **liens ci-dessus** ou contact CAF/MSA (ressources + volume d’accueil prévu) ; à défaut, applique le paragraphe **mini-estimation** ci-dessus. Tu peux lancer `simulate.mjs` **uniquement** si l’utilisateur **valide explicitement** le chiffre comme **hypothèse** (à rectifier à la première facture). Pour une **micro-crèche hors PSU**, privilégie **devis** ou hypothèse utilisateur assumée.
 - **Rappel** : en crèche **PSU** (souvent publique ou inter-entreprises), la part employeur ne remplace **pas** ce barème côté parent — la question porte bien sur ce que **le salarié paie**, pas sur ce que l’entreprise finance pour la structure.
 
 Voir **`INTAKE.md`** § Crèches.
