@@ -1,0 +1,88 @@
+openapi: 3.0.3
+info:
+  title: Comparatif modes de garde — calculate
+  description: |
+    API harness pour brancher le moteur TypeScript (GARDE-016) sur une **Custom GPT Action**
+    ou tout client HTTP. Le corps de requête est un objet **ScenarioInput** (voir `src/scenario/types.ts`
+    et exemples `docs/demo-scenarios/*.json`).
+  version: 1.0.0
+servers:
+  - url: http://127.0.0.1:8787
+    description: Serveur de développement (`bun run harness:serve`)
+paths:
+  /health:
+    get:
+      operationId: healthCheck
+      summary: Santé du service
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  service:
+                    type: string
+  /v1/calculate:
+    post:
+      operationId: calculateScenario
+      summary: Calcule un scénario (brut, CMG, crédit, RAC, incertitude)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: |
+                **ScenarioInput** : household, brutInput (union discriminée par `mode`), cmg, options taxCredit / baseline, etc.
+              additionalProperties: true
+            examples:
+              nounou:
+                $ref: "#/components/examples/nounouDomicile"
+      responses:
+        "200":
+          description: Résultat `ScenarioResult` (snapshot, trace, warnings, uncertainty)
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        "400":
+          description: Corps invalide ou JSON mal formé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "500":
+          description: Erreur interne
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+components:
+  examples:
+    nounouDomicile:
+      summary: Nounou à domicile (couple)
+      value:
+        household:
+          taxYear: 2026
+        brutInput:
+          mode: nounou_domicile
+          hourlyGrossEur: 12
+          hoursPerMonth: 80
+          employerShareOfGross: 0.42
+        cmg:
+          cumul: {}
+          monthlyReferenceIncomeEur: 4000
+          householdEffortRank: 1
+          hourlyDeclaredGrossEur: 12
+          heuresParMois: 80

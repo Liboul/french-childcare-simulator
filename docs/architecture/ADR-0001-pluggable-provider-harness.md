@@ -46,5 +46,5 @@ Le détail des critères, sources et risques de renommage est dans **DR-05**.
 
 ## Suivi
 
-- **GARDE-016** : implémenter les artefacts concrets par vendeur (prompts, OpenAPI publiée, instructions d’installation).
+- **GARDE-016** : artefacts dans [`harness/`](../harness/README.md) (serveur `POST /v1/calculate`, `openapi.yaml`, instructions GPT, `claude/SKILL.md`). Poursuivre selon besoins (auth, déploiement, ZIP Skill).
 - Réviser cet ADR si DR-05 est **supplanté** par une recherche plus récente ou si la cible MVP change.

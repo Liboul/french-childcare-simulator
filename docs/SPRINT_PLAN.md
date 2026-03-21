@@ -94,6 +94,7 @@ This section is the **sprint-level audit trail**: what shipped, whether executio
 | **GARDE-014** | 2026-03-21       | Done. `src/integration/matrix.test.ts` : matrice ≥8 scénarios (RAC ≥0, cumul PreParE, inéligibilité micro-crèche, PSU/unsupported, assmat/MAM, préfinancé, gate CESU×CMG, export JSON).                                                                     |
 | **GARDE-017** | 2026-03-21       | Done. `docs/demo-scenarios/` (3 JSON `ScenarioInput`), `docs/SOURCES_OFFICIELLES.md`, script `demo:scenario`, tests fixtures.                                                                                                                               |
 | **GARDE-015** | 2026-03-21       | Done. Spike harness : **DR-05** en repo ; **ADR-0001** (`docs/architecture/`) — moteur portable, harness branchable, MVP OpenAI (DR-05). **GARDE-016** = impl. harness.                                                                                     |
+| **GARDE-016** | 2026-03-21       | Done. `harness/` : `POST /v1/calculate` (Bun), `openapi.yaml`, instructions GPT + prompts, `claude/SKILL.md`, test `harness-calculate`.                                                                                                                     |
 
 ---
 
