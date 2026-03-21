@@ -146,12 +146,9 @@ Use one prompt per major topic; attach outputs to `docs/research/` and reference
 
 #### DR-01 — CMG & prestations CAF (modes de garde)
 
-You are a French social benefits researcher. For **2026** (or latest published official figures if 2026 is not yet published, with clear date), document for **each** mode: garde à domicile, assistante maternelle, MAM, crèche (collective/agréée as applicable):
+**Full prompt (expansive, copy-paste):** [`docs/research/prompts/DR-01-CMG-CAF.md`](research/prompts/DR-01-CMG-CAF.md)
 
-- Eligibility conditions, income tests if any, amounts or barèmes, frequency, **non-cumul** with other benefits.
-- Official sources only: CAF.fr, Service-Public.fr, Légifrance if needed.
-
-Output: structured bullets + **verbatim URLs** + a table of **non-cumul** rules. Flag anything not explicitly confirmed for 2026.
+**Summary:** Official CMG and closely related CAF benefits per mode (garde à domicile, assistante maternelle, MAM, EAJE/crèche, etc.), barèmes and **non-cumul**, **2026** or latest published with unknowns; output must include verbatim URLs and tables. Save the research output under `docs/research/` (e.g. `DR-01-results.md`).
 
 #### DR-05 — Provider harnesses: Claude Skills vs OpenAI vs Gemini (how to ship)
 
