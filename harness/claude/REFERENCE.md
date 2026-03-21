@@ -60,14 +60,18 @@ Le snapshot expose **`monthlyBrutTaxCreditAssietteEur`** / **`annualBrutTaxCredi
 
 Pour **`creche_publique`**, **`creche_privee`**, **`creche_inter_entreprises`** : l’agent doit **toujours** demander à l’utilisateur le montant **mensuel réellement payé par le parent** et le saisir dans **`monthlyParticipationEur`**. Sans réponse utilisateur, **ne pas** inventer le montant ni utiliser 0 par défaut. Le moteur n’intègre **pas** de simulateur de barème PSU : la saisie est la seule source du brut crèche.
 
-**Outils officiels** (à donner si le montant manque — crèche **PSU** / participation familiale) :
+**Part salarié en crèche PSU** (participation familiale — **pas** une simulation d’**aide** type CMG) :
 
-- https://www.caf.fr/allocataires/mes-services-en-ligne/estimer-vos-droits — hub **Estimer vos droits** (CAF).  
-- https://www.caf.fr/allocataires/aides-et-demarches/thematique-libre/votre-simulation-de-mode-de-garde — simulation **mode de garde**.  
-- https://www.mesdroitssociaux.gouv.fr/votre-simulateur/accueil — portail **mesdroitssociaux.gouv.fr**.  
-- Foyers relevant de la **MSA** : site **msa.fr**, rubrique estimation / simulateur.
+- **Priorité** : https://www.monenfant.fr/simuler-le-cout-en-creche — **Simuler le coût en crèche** (reste à charge mensuel, barème national Cnaf / PSU ; indicatif).
 
-Si l’utilisateur refuse d’ouvrir ces outils, l’agent peut proposer une **fourchette ou un €/mois indicatif** en s’appuyant sur des **barèmes et pages officielles** consultées en ligne (**citer les URLs**), avec **validation explicite** de l’utilisateur avant simulation — voir **`SKILL.md`** (section participation crèche).
+**Simulateurs d’aides** (CMG, autres prestations — **ne remplacent pas** monenfant pour la **part familiale PSU**) :
+
+- https://www.caf.fr/allocataires/mes-services-en-ligne/estimer-vos-droits — hub **Estimer vos droits**.  
+- https://www.caf.fr/allocataires/aides-et-demarches/thematique-libre/votre-simulation-de-mode-de-garde — simulation **mode de garde** (CMG / PAJE).  
+- https://www.mesdroitssociaux.gouv.fr/votre-simulateur/accueil — **mesdroitssociaux.gouv.fr**.  
+- **MSA** : https://www.msa.fr/ — simulateurs **aides** ; barème PSU = principe national, confirmer au besoin auprès de la caisse.
+
+Si l’utilisateur refuse d’ouvrir **monenfant**, l’agent peut proposer une **fourchette ou un €/mois indicatif** à partir des **publications barème PSU / participation familiale** (caf.fr, Cnaf) — **citer les URLs**, **validation explicite** — voir **`SKILL.md`** (section participation crèche).
 
 ## Champs `brutInput` par `mode`
 
