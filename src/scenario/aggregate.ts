@@ -4,6 +4,8 @@ import { estimateCmgMonthlyEur } from "../family-allowances/cmg/estimate";
 import { estimateEmploiDomicileTaxCreditAnnual } from "../tax-credits/emploi-domicile";
 import { estimateGardeHorsDomicileTaxCreditAnnual } from "../tax-credits/garde-hors-domicile";
 import { taxCreditKindForChildcareMode } from "../tax-credits/types";
+import { brutInputReferencedRuleIds } from "../uncertainty/brut-rule-refs";
+import { buildUncertaintyReport } from "../uncertainty/report";
 import { appendStep, emptyTrace } from "../trace/trace";
 import type { ScenarioInput, ScenarioResult, ScenarioTaxCreditContext } from "./types";
 
@@ -74,6 +76,7 @@ export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): S
 
   const kind = taxCreditKindForChildcareMode(input.brutInput.mode);
   let annualTaxCreditEur = 0;
+  let taxRuleIds: string[] = [];
 
   if (kind === "garde_hors_domicile") {
     const tc = estimateGardeHorsDomicileTaxCreditAnnual(pack, [
@@ -86,6 +89,7 @@ export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): S
       },
     ]);
     annualTaxCreditEur = tc.totalCreditEur;
+    taxRuleIds = tc.ruleIds;
     warnings.push(...tc.warnings);
   } else if (kind === "emploi_domicile") {
     const tc = estimateEmploiDomicileTaxCreditAnnual(pack, {
@@ -95,6 +99,7 @@ export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): S
       sharedCustodyHalvedIncrements: taxCtx.sharedCustodyHalvedEmploymentIncrements,
     });
     annualTaxCreditEur = tc.creditEur;
+    taxRuleIds = tc.ruleIds;
     warnings.push(...tc.warnings);
   }
 
@@ -163,5 +168,13 @@ export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): S
     employerSupportDeltaAnnualEur,
   };
 
-  return { snapshot, trace, warnings };
+  const referencedRuleIds = [
+    ...new Set([...brutInputReferencedRuleIds(input.brutInput), ...cmg.ruleIds, ...taxRuleIds]),
+  ];
+  const uncertainty = buildUncertaintyReport(pack, {
+    engineWarnings: warnings,
+    referencedRuleIds,
+  });
+
+  return { snapshot, trace, warnings, uncertainty };
 }

@@ -89,6 +89,7 @@ This section is the **sprint-level audit trail**: what shipped, whether executio
 | **GARDE-008** | 2026-03-21       | Done. `src/employer-benefits/` : partage aide crèche employeur exempte / avantage en nature (seuil pack), gate CESU déclaratif × CMG (`cesu-cmg-non-cumul`), description CESU préfinancé pour base crédit impôt (GARDE-009). Tests + export barrel. DR-03.  |
 | **GARDE-009** | 2026-03-21       | Done. `src/tax-credits/` : crédit garde hors domicile (200 quater B) et emploi à domicile (199 sexdecies) depuis le pack ; assiette nette CMG / aides employeur / CESU préfinancé ; routage par mode de garde (non-cumul). Pas de TMI (GARDE-010). DR-02.   |
 | **GARDE-010** | 2026-03-21       | Done. `src/scenario/` : `computeScenarioSnapshot` (brut + CMG + crédit ×12), reste à charge équivalent, disponible optionnel, delta soutien employeur vs référence ; trace en 4 étapes. Pas d’IR marginal.                                                  |
+| **GARDE-011** | 2026-03-21       | Done. `src/uncertainty/` : `listTodoVerifyRules`, `readPajemploiIndicativeRates` (variante DR-03/DR-04 explicite), `engineWarningsToFlags`, `buildUncertaintyReport` ; scénario enrichi `uncertainty` (todoVerify ∩ règles référencées).                    |
 
 ---
 

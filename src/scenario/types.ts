@@ -1,6 +1,7 @@
 import type { BrutCostInput, ChildcareMode } from "../childcare/model";
 import type { CmgEstimateRequest, CmgEstimateStatus } from "../family-allowances/cmg/types";
 import type { HouseholdProfile } from "../household/types";
+import type { UncertaintyReport } from "../uncertainty/types";
 import type { CalculationTrace } from "../trace/trace";
 import type { TaxCreditKind } from "../tax-credits/types";
 
@@ -51,4 +52,5 @@ export type ScenarioResult = {
   snapshot: ScenarioSnapshot;
   trace: CalculationTrace;
   warnings: string[];
+  uncertainty: UncertaintyReport;
 };
