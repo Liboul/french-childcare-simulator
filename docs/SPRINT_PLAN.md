@@ -80,6 +80,7 @@ This section is the **sprint-level audit trail**: what shipped, whether executio
 | **GARDE-003** | 2026-03-21       | Done. Zod `rulePackSchema` + `parseRulePack`, categories, `todoVerify` OR sources per rule. `config/rules.example.json`. Dependency `zod`.                                                                            |
 | **GARDE-004** | 2026-03-21       | Done. Deep research outputs committed: `docs/research/DR-01-CMG-CAF.md` … `DR-05-PROVIDER-HARNESS.md`; prompts live under `docs/research/prompts/*-PROMPT.md`.                                                        |
 | **GARDE-005** | 2026-03-21       | Done. `config/rules.fr-2026.json` (DR-01–04 parameters + Service-Public/Légifrance refs, `todoVerify` où requis), `findRule`, tests sur le pack ; pas d’extension Zod (paramètres restent `Record<string, unknown>`). |
+| **GARDE-006** | 2026-03-21       | Done. `src/blocks/ab/` : types foyer/mode, `computeBrutMonthlyCost` + lecture SMIC/majoration garde partagée depuis le pack ; cotisation patronale **uniquement** si taux explicite côté appelant.                    |
 
 ---
 
