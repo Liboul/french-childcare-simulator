@@ -12,6 +12,117 @@ const pack = packResult.data;
 const household2026 = { taxYear: 2026 };
 
 describe("computeScenarioSnapshot", () => {
+  it("nounou à domicile partagée : brut divisé + avertissement alignement CMG", () => {
+    const exclusive = computeScenarioSnapshot(pack, {
+      household: household2026,
+      brutInput: {
+        mode: "nounou_domicile",
+        hourlyGrossEur: 12,
+        hoursPerMonth: 80,
+        employerShareOfGross: 0.42,
+      },
+      cmg: {
+        cumul: {},
+        monthlyReferenceIncomeEur: 4000,
+        householdEffortRank: 1,
+        hourlyDeclaredGrossEur: 12,
+        heuresParMois: 80,
+      },
+    });
+    const shared = computeScenarioSnapshot(pack, {
+      household: household2026,
+      brutInput: {
+        mode: "nounou_domicile",
+        hourlyGrossEur: 12,
+        hoursPerMonth: 80,
+        employerShareOfGross: 0.42,
+        householdShareOfEmploymentCost: 0.5,
+      },
+      cmg: {
+        cumul: {},
+        monthlyReferenceIncomeEur: 4000,
+        householdEffortRank: 1,
+        hourlyDeclaredGrossEur: 12,
+        heuresParMois: 40,
+      },
+    });
+    expect(shared.snapshot.monthlyBrutEur).toBeCloseTo(exclusive.snapshot.monthlyBrutEur / 2, 4);
+    expect(shared.warnings).toContain(
+      "nounou_domicile_shared_employment_align_cmg_with_household_declaration_to_caf",
+    );
+  });
+
+  it("nounou à domicile + DR-06 : brut total > assiette CI si postes exclus", () => {
+    const base = computeScenarioSnapshot(pack, {
+      household: household2026,
+      brutInput: {
+        mode: "nounou_domicile",
+        hourlyGrossEur: 12,
+        hoursPerMonth: 80,
+        employerShareOfGross: 0.42,
+      },
+      cmg: {
+        cumul: {},
+        monthlyReferenceIncomeEur: 4000,
+        householdEffortRank: 1,
+        hourlyDeclaredGrossEur: 12,
+        heuresParMois: 80,
+      },
+    });
+    const withExtras = computeScenarioSnapshot(pack, {
+      household: household2026,
+      brutInput: {
+        mode: "nounou_domicile",
+        hourlyGrossEur: 12,
+        hoursPerMonth: 80,
+        employerShareOfGross: 0.42,
+        domicileComplementaryCosts: {
+          provisionCongesPayesMensuelEur: 50,
+          depensesHorsCreditImpotLisseesMensuelEur: 200,
+        },
+      },
+      cmg: {
+        cumul: {},
+        monthlyReferenceIncomeEur: 4000,
+        householdEffortRank: 1,
+        hourlyDeclaredGrossEur: 12,
+        heuresParMois: 80,
+      },
+    });
+    expect(withExtras.snapshot.monthlyBrutEur).toBeGreaterThan(base.snapshot.monthlyBrutEur);
+    expect(withExtras.snapshot.monthlyBrutTaxCreditAssietteEur).toBe(base.snapshot.monthlyBrutEur);
+    expect(withExtras.snapshot.annualTaxCreditEur).toBe(base.snapshot.annualTaxCreditEur);
+    expect(withExtras.warnings).toContain("domicile_provision_cp_fiscal_timing_dr06");
+    expect(withExtras.warnings).toContain(
+      "domicile_excluded_from_tax_credit_included_in_brut_dr06",
+    );
+  });
+
+  it("Navigo déclaré sans montant mensuel → warning consultation tarif IDFM", () => {
+    const r = computeScenarioSnapshot(pack, {
+      household: household2026,
+      brutInput: {
+        mode: "nounou_domicile",
+        hourlyGrossEur: 12,
+        hoursPerMonth: 80,
+        employerShareOfGross: 0.42,
+        domicileComplementaryCosts: {
+          fraisTransportBase: "navigo_mois_plein",
+        },
+      },
+      cmg: {
+        cumul: {},
+        monthlyReferenceIncomeEur: 4000,
+        householdEffortRank: 1,
+        hourlyDeclaredGrossEur: 12,
+        heuresParMois: 80,
+      },
+    });
+    expect(r.warnings).toContain(
+      "domicile_transport_navigo_or_forfait_missing_monthly_eur_consult_iledefrance_mobilites",
+    );
+  });
+
   it("nounou à domicile : reste à charge annuel < brut annuel (CMG + crédit emploi)", () => {
     const r = computeScenarioSnapshot(pack, {
       household: household2026,
@@ -33,6 +144,8 @@ describe("computeScenarioSnapshot", () => {
     expect(r.snapshot.taxCreditKind).toBe("emploi_domicile");
     expect(r.snapshot.annualTaxCreditEur).toBeGreaterThan(0);
     expect(r.snapshot.netHouseholdBurdenAnnualEur).toBeLessThan(r.snapshot.annualBrutEur);
+    expect(r.snapshot.monthlyBrutTaxCreditAssietteEur).toBe(r.snapshot.monthlyBrutEur);
+    expect(r.snapshot.annualBrutTaxCreditAssietteEur).toBe(r.snapshot.annualBrutEur);
     expect(r.trace.steps).toHaveLength(4);
   });
 

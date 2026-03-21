@@ -9,3 +9,5 @@ Copier-coller ou s’en inspirer pour tester le GPT une fois l’Action branché
 3. « Assistante maternelle : 4,50 € brut/h, 120 h/mois, 12 jours d’accueil, 3,50 € d’indemnité d’entretien par jour, charges patronales 42 %, revenu mensuel de référence 3500 €. »
 
 4. « Quels champs JSON dois-je remplir pour un scénario MAM avec participation de la structure ? »
+
+5. « Nounou à domicile comme avant, mais on lui rembourse son Navigo mois plein : mets le prix officiel du forfait et ajoute ça au calcul. »

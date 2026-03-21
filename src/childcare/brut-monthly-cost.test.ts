@@ -26,6 +26,42 @@ describe("computeBrutMonthlyCost", () => {
     expect(r.lines[0]).toMatchObject({ label: "Salaire brut mensuel", amountEur: 1040 });
     expect(r.lines[1]!.amountEur).toBeCloseTo(260, 5);
     expect(r.monthlyBrutEur).toBeCloseTo(1300, 5);
+    expect(r.monthlyTaxCreditAssietteEur).toBe(r.monthlyBrutEur);
+  });
+
+  it("nounou à domicile partagée : quote-part sur contrat total (ex. 50 %)", () => {
+    const r = computeBrutMonthlyCost(pack, household, {
+      mode: "nounou_domicile",
+      hourlyGrossEur: 12,
+      hoursPerMonth: 80,
+      employerShareOfGross: 0.42,
+      householdShareOfEmploymentCost: 0.5,
+    });
+    const halfSalary = Math.round(12 * 80 * 0.5 * 100) / 100;
+    const employer = Math.round(halfSalary * 0.42 * 100) / 100;
+    expect(r.lines[0]!.amountEur).toBeCloseTo(halfSalary, 5);
+    expect(r.lines[1]!.amountEur).toBeCloseTo(employer, 5);
+    expect(r.monthlyBrutEur).toBeCloseTo(halfSalary + employer, 5);
+    expect(r.lines[0]!.label).toContain("quote-part");
+    expect(r.monthlyTaxCreditAssietteEur).toBe(r.monthlyBrutEur);
+  });
+
+  it("nounou à domicile + DR-06 : transport et cotisables dans assiette CI, provision et hors CI exclus", () => {
+    const r = computeBrutMonthlyCost(pack, household, {
+      mode: "nounou_domicile",
+      hourlyGrossEur: 12,
+      hoursPerMonth: 80,
+      employerShareOfGross: 0.42,
+      domicileComplementaryCosts: {
+        fraisTransportMensuelEur: 50,
+        provisionCongesPayesMensuelEur: 80,
+        depensesCotisablesLisseesMensuelEur: 30,
+        depensesHorsCreditImpotLisseesMensuelEur: 100,
+      },
+    });
+    const base = 12 * 80 * 1.42;
+    expect(r.monthlyBrutEur).toBeCloseTo(base + 50 + 80 + 30 + 100, 4);
+    expect(r.monthlyTaxCreditAssietteEur).toBeCloseTo(base + 50 + 30, 4);
   });
 
   it("garde partagée : majoration 10 % pour 2e enfant simultané, quote-part 50 %", () => {
@@ -42,6 +78,7 @@ describe("computeBrutMonthlyCost", () => {
     const employer = Math.round(householdSalary * 0.25 * 100) / 100;
     expect(r.lines[0]!.amountEur).toBeCloseTo(householdSalary, 5);
     expect(r.monthlyBrutEur).toBeCloseTo(householdSalary + employer, 5);
+    expect(r.monthlyTaxCreditAssietteEur).toBe(r.monthlyBrutEur);
   });
 
   it("assistante maternelle : salaire + indemnités + cotisations sur salaire", () => {
@@ -57,6 +94,7 @@ describe("computeBrutMonthlyCost", () => {
     expect(r.lines[1]!.amountEur).toBe(36);
     expect(r.lines[2]!.amountEur).toBe(100);
     expect(r.monthlyBrutEur).toBe(536);
+    expect(r.monthlyTaxCreditAssietteEur).toBe(536);
   });
 
   it("crèche : brut = participation saisie", () => {
@@ -65,6 +103,7 @@ describe("computeBrutMonthlyCost", () => {
       monthlyParticipationEur: 87.5,
     });
     expect(r.monthlyBrutEur).toBe(87.5);
+    expect(r.monthlyTaxCreditAssietteEur).toBe(87.5);
     expect(r.lines).toHaveLength(1);
   });
 });

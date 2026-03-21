@@ -65,6 +65,8 @@ export function exportScenarioBundleToHtml(bundle: ScenarioExportBundle): string
       <tr><td>Mode</td><td>${escapeHtml(snap.mode)}</td></tr>
       <tr><td>Brut mensuel (€)</td><td>${escapeHtml(String(snap.monthlyBrutEur))}</td></tr>
       <tr><td>Brut annuel (€)</td><td>${escapeHtml(String(snap.annualBrutEur))}</td></tr>
+      <tr><td>Assiette CI mensuelle (€, DR-06)</td><td>${escapeHtml(String(snap.monthlyBrutTaxCreditAssietteEur))}</td></tr>
+      <tr><td>Assiette CI annuelle (€)</td><td>${escapeHtml(String(snap.annualBrutTaxCreditAssietteEur))}</td></tr>
       <tr><td>CMG mensuel (€)</td><td>${escapeHtml(String(snap.monthlyCmgEur))}</td></tr>
       <tr><td>CMG annuel (€)</td><td>${escapeHtml(String(snap.annualCmgEur))}</td></tr>
       <tr><td>Statut CMG</td><td>${escapeHtml(snap.cmgStatus)}</td></tr>

@@ -46,6 +46,30 @@ export function exportScenarioBundleToCsv(bundle: ScenarioExportBundle): string 
     line(["metric", "snapshot.annualBrutEur", String(s.annualBrutEur), "", "", "", "", ""]),
   );
   rows.push(
+    line([
+      "metric",
+      "snapshot.monthlyBrutTaxCreditAssietteEur",
+      String(s.monthlyBrutTaxCreditAssietteEur),
+      "",
+      "",
+      "",
+      "",
+      "",
+    ]),
+  );
+  rows.push(
+    line([
+      "metric",
+      "snapshot.annualBrutTaxCreditAssietteEur",
+      String(s.annualBrutTaxCreditAssietteEur),
+      "",
+      "",
+      "",
+      "",
+      "",
+    ]),
+  );
+  rows.push(
     line(["metric", "snapshot.monthlyCmgEur", String(s.monthlyCmgEur), "", "", "", "", ""]),
   );
   rows.push(line(["metric", "snapshot.annualCmgEur", String(s.annualCmgEur), "", "", "", "", ""]));

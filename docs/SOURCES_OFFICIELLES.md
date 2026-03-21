@@ -13,5 +13,6 @@ Ce tableau reprend l’**index `sources`** du pack [`config/rules.fr-2026.json`]
 | CMG emploi direct        | Service-Public — CMG : emploi direct               | https://www.service-public.fr/particuliers/vosdroits/F39152                               |
 | Paje                     | Service-Public — Paje                              | https://www.service-public.fr/particuliers/vosdroits/F13218                               |
 | CMG (Code sécurité soc.) | Légifrance — CSS art. D531-1 à D531-24             | https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006073189/LEGISCTA000006155866 |
+| Navigo / transports IDF  | Île-de-France Mobilités — titres et tarifs         | https://www.iledefrance-mobilites.fr/titres-et-tarifs/detail/forfait-navigo-mois          |
 
 Les recherches consolidées du projet sont sous [`docs/research/`](./research/).

@@ -1,7 +1,12 @@
 import type { HouseholdProfile } from "../household/types";
 import { findRule } from "../config/find-rule";
 import type { RulePack } from "../config/schema";
-import type { BrutCostInput, BrutCostLine, BrutCostResult } from "./model";
+import type {
+  BrutCostInput,
+  BrutCostLine,
+  BrutCostResult,
+  DomicileComplementaryCostsInput,
+} from "./model";
 
 export function readSmicHourlyMetropoleEur(pack: RulePack): number {
   const rule = findRule(pack, "tarif-smic-horaire-metropole-2026");
@@ -29,6 +34,52 @@ function roundMoney2(n: number): number {
   return Math.round(n * 100) / 100;
 }
 
+function appendDomicileComplementaryLines(
+  lines: BrutCostLine[],
+  baseOperatingTotal: number,
+  extras: DomicileComplementaryCostsInput | undefined,
+): BrutCostResult {
+  if (!extras) {
+    return {
+      monthlyBrutEur: baseOperatingTotal,
+      lines,
+      monthlyTaxCreditAssietteEur: baseOperatingTotal,
+    };
+  }
+  const t = extras.fraisTransportMensuelEur ?? 0;
+  const p = extras.provisionCongesPayesMensuelEur ?? 0;
+  const c = extras.depensesCotisablesLisseesMensuelEur ?? 0;
+  const h = extras.depensesHorsCreditImpotLisseesMensuelEur ?? 0;
+  if (t > 0) {
+    lines.push({
+      label: "Frais de transport remboursés (saisie foyer, DR-06)",
+      amountEur: roundMoney2(t),
+    });
+  }
+  if (p > 0) {
+    lines.push({
+      label: "Provision congés payés (lissage volontaire, hors assiette crédit d’impôt)",
+      amountEur: roundMoney2(p),
+    });
+  }
+  if (c > 0) {
+    lines.push({
+      label:
+        "Dépenses cotisables lissées (ICCP, ICP, CP à la prise — assiette CI à confirmer, DR-06)",
+      amountEur: roundMoney2(c),
+    });
+  }
+  if (h > 0) {
+    lines.push({
+      label: "Montants hors crédit d’impôt lissés (ex. indemnité licenciement, DR-06)",
+      amountEur: roundMoney2(h),
+    });
+  }
+  const total = roundMoney2(baseOperatingTotal + t + p + c + h);
+  const taxAssiette = roundMoney2(baseOperatingTotal + t + c);
+  return { monthlyBrutEur: total, lines, monthlyTaxCreditAssietteEur: taxAssiette };
+}
+
 /**
  * Coût brut mensuel pour le mode de garde, hors aides publiques et impôts.
  * `household` est réservé à la traçabilité / validations futures ; non utilisé pour l’instant.
@@ -42,14 +93,27 @@ export function computeBrutMonthlyCost(
 
   switch (input.mode) {
     case "nounou_domicile": {
-      const salary = roundMoney2(input.hourlyGrossEur * input.hoursPerMonth);
+      const share = input.householdShareOfEmploymentCost ?? 1;
+      const fullSalary = roundMoney2(input.hourlyGrossEur * input.hoursPerMonth);
+      const salary = roundMoney2(fullSalary * share);
       const employer = roundMoney2(salary * input.employerShareOfGross);
-      lines.push({ label: "Salaire brut mensuel", amountEur: salary });
+      const salaryLabel =
+        share < 1
+          ? "Salaire brut mensuel (quote-part foyer, contrat total × part)"
+          : "Salaire brut mensuel";
+      lines.push({ label: salaryLabel, amountEur: salary });
       lines.push({
-        label: "Cotisations patronales (assiette = salaire brut, taux foyer)",
+        label:
+          share < 1
+            ? "Cotisations patronales (assiette = salaire brut foyer, taux foyer)"
+            : "Cotisations patronales (assiette = salaire brut, taux foyer)",
         amountEur: employer,
       });
-      return { monthlyBrutEur: roundMoney2(salary + employer), lines };
+      return appendDomicileComplementaryLines(
+        lines,
+        roundMoney2(salary + employer),
+        input.domicileComplementaryCosts,
+      );
     }
     case "nounou_partagee": {
       const inc = readGardePartageeIncrementPerExtraChild(pack);
@@ -68,7 +132,11 @@ export function computeBrutMonthlyCost(
         label: "Cotisations patronales (assiette = salaire brut foyer)",
         amountEur: employer,
       });
-      return { monthlyBrutEur: roundMoney2(householdSalary + employer), lines };
+      return appendDomicileComplementaryLines(
+        lines,
+        roundMoney2(householdSalary + employer),
+        input.domicileComplementaryCosts,
+      );
     }
     case "assistante_maternelle": {
       const salary = roundMoney2(input.hourlyGrossEur * input.hoursPerMonth);
@@ -80,7 +148,11 @@ export function computeBrutMonthlyCost(
         label: "Cotisations patronales (assiette = salaire brut)",
         amountEur: employer,
       });
-      return { monthlyBrutEur: roundMoney2(salary + indemn + employer), lines };
+      return {
+        monthlyBrutEur: roundMoney2(salary + indemn + employer),
+        lines,
+        monthlyTaxCreditAssietteEur: roundMoney2(salary + indemn + employer),
+      };
     }
     case "mam": {
       const salary = roundMoney2(input.hourlyGrossEur * input.hoursPerMonth);
@@ -94,14 +166,19 @@ export function computeBrutMonthlyCost(
         amountEur: employer,
       });
       lines.push({ label: "Participation structure MAM (saisie foyer)", amountEur: struct });
-      return { monthlyBrutEur: roundMoney2(salary + indemn + employer + struct), lines };
+      const mamTotal = roundMoney2(salary + indemn + employer + struct);
+      return {
+        monthlyBrutEur: mamTotal,
+        lines,
+        monthlyTaxCreditAssietteEur: mamTotal,
+      };
     }
     case "creche_publique":
     case "creche_privee":
     case "creche_inter_entreprises": {
       const fee = roundMoney2(input.monthlyParticipationEur);
       lines.push({ label: "Participation mensuelle (tarif local / contrat)", amountEur: fee });
-      return { monthlyBrutEur: fee, lines };
+      return { monthlyBrutEur: fee, lines, monthlyTaxCreditAssietteEur: fee };
     }
     default: {
       const _exhaustive: never = input;
