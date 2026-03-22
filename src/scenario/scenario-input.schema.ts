@@ -128,7 +128,12 @@ const scenarioTaxCreditPartialSchema = z
     sharedCustodyHalvedOutsideHomeCeiling: z.boolean().optional(),
     outsideHomeAnnualEmployerAidDeductibleEur: z.number().optional(),
     taxUnitDependentChildrenForEmploymentCeiling: z.number().optional(),
-    prefundedCesuAnnualEur: z.number().optional(),
+    prefundedCesuAnnualEur: z
+      .number()
+      .optional()
+      .describe(
+        "CESU préfinancé employeur (€/an) pour crédit emploi à domicile. Plafond légal aide employeur dans le rule pack : règle cesu-prefinance-plafond-aide-financiere-employeur → maxAnnualAidPerBeneficiaryEur (2540 avec rules.fr-2026). Voir skill REFERENCE.md ; dépassement → warning cesu_prefunded_exceeds_employer_aid_annual_cap.",
+      ),
     sharedCustodyHalvedEmploymentIncrements: z.boolean().optional(),
   })
   .strict();

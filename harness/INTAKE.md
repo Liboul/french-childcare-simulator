@@ -83,6 +83,7 @@ Champ : **`taxCredit.prefundedCesuAnnualEur`**.
    - **Non** : laisser `prefundedCesuAnnualEur` absent ou à `0` selon le défaut attendu par le validateur.
    - **Oui** : saisir le **montant annuel** d’aide employeur en CESU préfinancé **pertinent pour cette garde** dans `prefundedCesuAnnualEur`.
    - **Ne sait pas** : ne pas supposer « non » ; estimation / fourchette ou hypothèse **explicitement validée**.
+   - **Plafond légal (aide employeur / CESU préfinancé, pas le crédit d’impôt)** : documenté dans le **rule pack** — règle **`cesu-prefinance-plafond-aide-financiere-employeur`**. Avec **`rules.fr-2026`** : **2540 € / an / bénéficiaire** depuis 2025-01-01. **Ne pas** aller chercher ce chiffre sur internet : utiliser **`REFERENCE.md`** § plafond CESU + **`meta.rulePackVersion`** après `simulate.mjs` ; si la saisie dépasse le pack → **`warnings`** `cesu_prefunded_exceeds_employer_aid_annual_cap`.
 
 2. **Si oui — question obligatoire tout de suite après** : ces CESU sont-ils **en complément** du **brut de l’emploi à domicile** tel que sur le **contrat / déclaration URSSAF** (enveloppe employeur **plus large**), ou en **substitution** (**conversion** / **échange** à **coût employeur équivalent**, sans « bonus » d’enveloppe) ?
    - **En plus du brut déclaré pour la garde** : `hourlyGrossEur` et `hoursPerMonth` = salaire brut **tel quel** ; `prefundedCesuAnnualEur` = CESU employeur pour financer (en partie) cette garde — **sans** confondre avec `incomeTax.annualGrossSalaryEur` (brut du **poste salarié** du parent).

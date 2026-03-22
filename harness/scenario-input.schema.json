@@ -11,7 +11,9 @@
           "maximum": 9007199254740991
         }
       },
-      "required": ["taxYear"],
+      "required": [
+        "taxYear"
+      ],
       "additionalProperties": false
     },
     "brutInput": {
@@ -66,7 +68,12 @@
               "additionalProperties": false
             }
           },
-          "required": ["mode", "hourlyGrossEur", "hoursPerMonth", "employerShareOfGross"],
+          "required": [
+            "mode",
+            "hourlyGrossEur",
+            "hoursPerMonth",
+            "employerShareOfGross"
+          ],
           "additionalProperties": false
         },
         {
@@ -212,11 +219,13 @@
               "const": "creche_publique"
             },
             "monthlyParticipationEur": {
-              "type": "number",
-              "description": "Participation familiale mensuelle réelle (barème PSU / facture). Le moteur ne calcule pas le barème — DR-08."
+              "type": "number"
             }
           },
-          "required": ["mode", "monthlyParticipationEur"],
+          "required": [
+            "mode",
+            "monthlyParticipationEur"
+          ],
           "additionalProperties": false
         },
         {
@@ -227,11 +236,13 @@
               "const": "creche_privee"
             },
             "monthlyParticipationEur": {
-              "type": "number",
-              "description": "Participation mensuelle au contrat. Micro-crèche hors PSU : tarif libre (CMG structure si éligible, DR-01). Si PSU : même logique barème que publique — DR-08."
+              "type": "number"
             }
           },
-          "required": ["mode", "monthlyParticipationEur"],
+          "required": [
+            "mode",
+            "monthlyParticipationEur"
+          ],
           "additionalProperties": false
         },
         {
@@ -242,11 +253,13 @@
               "const": "creche_inter_entreprises"
             },
             "monthlyParticipationEur": {
-              "type": "number",
-              "description": "Participation familiale facturée au parent (barème PSU, identique en principe à une crèche publique conventionnée). DR-08."
+              "type": "number"
             }
           },
-          "required": ["mode", "monthlyParticipationEur"],
+          "required": [
+            "mode",
+            "monthlyParticipationEur"
+          ],
           "additionalProperties": false
         }
       ]
@@ -293,20 +306,28 @@
         },
         "childAgeBand": {
           "type": "string",
-          "enum": ["under3", "age3to6"]
+          "enum": [
+            "under3",
+            "age3to6"
+          ]
         },
         "monthlyStructureExpenseEur": {
           "type": "number"
         },
         "territory": {
           "type": "string",
-          "enum": ["metropole", "mayotte"]
+          "enum": [
+            "metropole",
+            "mayotte"
+          ]
         },
         "hourlyCrecheFeeEur": {
           "type": "number"
         }
       },
-      "required": ["cumul"],
+      "required": [
+        "cumul"
+      ],
       "additionalProperties": false
     },
     "taxCredit": {
@@ -325,6 +346,7 @@
           "type": "number"
         },
         "prefundedCesuAnnualEur": {
+          "description": "CESU préfinancé employeur (€/an) pour crédit emploi à domicile. Plafond légal aide employeur dans le rule pack : règle cesu-prefinance-plafond-aide-financiere-employeur → maxAnnualAidPerBeneficiaryEur (2540 avec rules.fr-2026). Voir skill REFERENCE.md ; dépassement → warning cesu_prefunded_exceeds_employer_aid_annual_cap.",
           "type": "number"
         },
         "sharedCustodyHalvedEmploymentIncrements": {
@@ -357,14 +379,16 @@
         },
         "filing": {
           "type": "string",
-          "enum": ["individual", "joint"]
+          "enum": [
+            "individual",
+            "joint"
+          ]
         },
         "annualHouseholdIncomeAfterIncomeTaxEur": {
           "type": "number"
         },
         "annualNetSalaryFromPayslipsEur": {
-          "type": "number",
-          "description": "Salaires nets annuels foyer (bulletins, après cotisations, avant IR) — reporting ; n'alimente pas le barème IR."
+          "type": "number"
         },
         "monthlyResourcesAlreadyAccountForIncomeTax": {
           "type": "boolean"
@@ -373,7 +397,11 @@
       "additionalProperties": false
     }
   },
-  "required": ["household", "brutInput", "cmg"],
+  "required": [
+    "household",
+    "brutInput",
+    "cmg"
+  ],
   "additionalProperties": false,
   "$id": "https://french-childcare-costs.local/schemas/scenario-input.json",
   "title": "ScenarioInput"

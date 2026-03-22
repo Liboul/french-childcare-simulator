@@ -9,6 +9,10 @@ description: Garde enfants FR 2026 — simulate.mjs obligatoire ; après chaque 
 
 Tu **orchestrates** la collecte des données et l’appel au **calculateur**, tu ne recalcules **jamais** les montants à la main.
 
+## Plafond aide employeur CESU préfinancé (sans recherche web)
+
+Pour le **montant maximal légal** de l’**aide employeur** en CESU préfinancé (par bénéficiaire et par an), tu t’appuies sur **`REFERENCE.md`** § *Plafond légal — aide employeur CESU préfinancé* : avec le pack **2026** du dépôt / du ZIP, c’est **2540 €** (règle pack **`cesu-prefinance-plafond-aide-financiere-employeur`**, paramètre **`maxAnnualAidPerBeneficiaryEur`**). **Interdit** de substituer un chiffre trouvé au hasard sur internet : la **référence** est le **rule pack** versionné (`meta.rulePackVersion` après `simulate.mjs`). Un dépassement de saisie se lit dans **`warnings`** (`cesu_prefunded_exceeds_employer_aid_annual_cap`).
+
 ## Règle non négociable — simulation
 
 Dès que tu as un objet JSON **`ScenarioInput`** valide (ou dès que tu veux **vérifier** un brouillon), tu **dois** lancer le moteur embarqué :
@@ -77,7 +81,7 @@ Structure **dans cet ordre** :
 
 4. **Aides et préfinancements**
    - **CMG** : rappeler les paramètres `cmg` **pertinents** (sans tout recopier si le JSON est énorme) et le lien avec `monthlyCmgEur` / `cmgStatus`.
-   - **CESU préfinancé (emploi à domicile)** : si `taxCredit.prefundedCesuAnnualEur` > 0, s’appuyer sur **`trace`** `scenario_tax_credit_prefunded_cesu` + `warnings`, **sans** improviser les plafonds.
+   - **CESU préfinancé (emploi à domicile)** : si `taxCredit.prefundedCesuAnnualEur` > 0, s’appuyer sur **`trace`** `scenario_tax_credit_prefunded_cesu` + **`warnings`**. Pour le **plafond légal de l’aide employeur** (distinct du plafond CI), citer **`REFERENCE.md`** / pack : **2540 € / an / bénéficiaire** avec **`rules.fr-2026`** — **pas** de montant « trouvé sur le web » hors cette référence.
    - **Aide employeur déductible (garde hors domicile)** : si `taxCredit.outsideHomeAnnualEmployerAidDeductibleEur` > 0, rappeler qu’elle **réduit l’assiette** du crédit « garde hors du domicile » (étape **`trace`** `scenario_tax_credit` / routage `garde_hors_domicile`) — citer le montant saisi, **sans** improviser.
    - Ne confonds pas **CESU** avec la **CSG** (cotisation) ; si l’utilisateur dit « CSG » pour des chèques, clarifie poliment.
 
@@ -109,7 +113,7 @@ Puis **un court paragraphe** sur ce qui explique les écarts (même enfant, mêm
 
 **Quand** : **chaque** scénario (`ScenarioInput`), **avant** le premier `simulate.mjs` — y compris **comparaisons** (un JSON par mode : refaire le parcours pour chaque fichier).
 
-- **`nounou_domicile` / `nounou_partagee`** (**partie A**, crédit emploi à domicile) : `taxCredit.prefundedCesuAnnualEur`. Questions : CESU employeur ? puis **complément** vs **substitution** par rapport au **brut URSSAF** (`hourlyGrossEur`, heures).
+- **`nounou_domicile` / `nounou_partagee`** (**partie A**, crédit emploi à domicile) : `taxCredit.prefundedCesuAnnualEur`. Questions : CESU employeur ? puis **complément** vs **substitution** par rapport au **brut URSSAF** (`hourlyGrossEur`, heures). **Plafond aide employeur** : voir section ci-dessus + **`REFERENCE.md`** (**2540 €** / an / bénéficiaire pour le pack 2026 — ne pas rechercher ailleurs).
 - **`assistante_maternelle` / `mam` / `creche_*`** (**partie B**, garde hors domicile) : `taxCredit.outsideHomeAnnualEmployerAidDeductibleEur`. Questions : CESU / titres employeur ou aide assimilée **pour cette garde** ? puis **complément** vs **substitution** par rapport aux **dépenses saisies** (participation crèche, coût assmat…). **Ne pas** mettre ces montants dans `prefundedCesuAnnualEur` : le moteur **ignore** ce champ pour ces modes.
 
 Si l’utilisateur cite des CESU **sans** préciser complément/substitution, **tu poses la question tout de suite** — **pas** d’interprétation implicite.
