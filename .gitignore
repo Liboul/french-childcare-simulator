@@ -1,5 +1,7 @@
 node_modules
-dist
+# dist: keep harness skill ZIP in git for direct download; ignore other build outputs
+dist/*
+!dist/comparatif-modes-garde-fr-2026-skill.zip
 tmp
 
 # Cursor — skill projet (lien local vers dist/ après setup:cursor-harness-skill)
