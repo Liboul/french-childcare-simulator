@@ -117,3 +117,7 @@ Ce plafond concerne l’**aide financière employeur / CSE** versée en **CESU p
 ## Sources officielles à citer dans les réponses
 
 En dépôt complet : `docs/SOURCES_OFFICIELLES.md`. En résumé : Service-Public, CAF, impots.gouv, URSSAF — jamais se substituer à un conseil personnalisé.
+
+## Recherche embarquée dans le skill (`research/`)
+
+Le ZIP / dossier skill contient **`research/README.md`** et les **`DR-*.md`** (copie des rapports `docs/research/` du dépôt, hors `prompts/`). Tu peux t’y **référer si besoin** pour expliquer le cadre ou les limites ; pour les **€ et le routage moteur**, rester sur la sortie **`simulate.mjs`** (voir README du dossier `research/`).

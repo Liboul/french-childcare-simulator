@@ -62,7 +62,7 @@ Pour le flux « moteur dans le dépôt », préférer aussi **`bun run demo:scen
 
 1. `bun install` (une fois).
 2. `bun run package:harness-skill`
-   - Dossier assemblé : `dist/harness-skill/comparatif-modes-garde-fr-2026/` (`SKILL.md`, `REFERENCE.md`, `INTAKE.md`, `scripts/simulate.mjs`, `scenario-input.schema.json`, `examples/*.json`).
+   - Dossier assemblé : `dist/harness-skill/comparatif-modes-garde-fr-2026/` (`SKILL.md`, `REFERENCE.md`, `INTAKE.md`, `scripts/simulate.mjs`, `scenario-input.schema.json`, `examples/*.json`, `research/README.md`, `research/DR-*.md`).
    - Archive prête à l’upload : **`dist/comparatif-modes-garde-fr-2026-skill.zip`**.
 3. Nécessite la commande système **`zip`** (macOS / Linux : souvent déjà présente).
 

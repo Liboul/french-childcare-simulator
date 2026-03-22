@@ -4,7 +4,7 @@ Enveloppe **hors moteur** : HTTP de dev, **OpenAPI** pour Actions GPT, instructi
 Décision d’architecture : [ADR-0001](../docs/architecture/ADR-0001-pluggable-provider-harness.md).
 
 **→ Livraison par fournisseur (Anthropic / OpenAI / Google, etc.) :** [`docs/shipping/README.md`](../docs/shipping/README.md) (**GARDE-018**).  
-**ZIP harness skill :** `bun run package:harness-skill` → `dist/comparatif-modes-garde-fr-2026-skill.zip` (inclut **`scripts/simulate.mjs`**, sans `openapi.yaml` dans l’archive — **GARDE-035**).  
+**ZIP harness skill :** `bun run package:harness-skill` → `dist/comparatif-modes-garde-fr-2026-skill.zip` (inclut **`scripts/simulate.mjs`**, **`research/`** (DR + README), sans `openapi.yaml` dans l’archive — **GARDE-035**).  
 **Cursor (skill projet) :** `bun run setup:cursor-harness-skill` — voir [`docs/shipping/README.md`](../docs/shipping/README.md) § Cursor.
 
 ## Faut-il lancer l’API ?
@@ -46,4 +46,5 @@ Fichier : [`openapi.yaml`](./openapi.yaml). Dans ChatGPT (Create GPT → Actions
 | [`skill/SKILL.md`](./skill/SKILL.md)                                                         | Skill harness — instructions (embarqué dans le ZIP)     |
 | [`skill/REFERENCE.md`](./skill/REFERENCE.md)                                                 | Champs `ScenarioInput` + limites (embarqué dans le ZIP) |
 | [`INTAKE.md`](./INTAKE.md)                                                                   | Playbook d’entretien (ordre des questions)              |
+| [`research/README.md`](./research/README.md)                                                 | Index des DR embarqués dans le ZIP skill (optionnel)    |
 | [`scenario-input.schema.json`](./scenario-input.schema.json)                                 | JSON Schema `ScenarioInput`                             |

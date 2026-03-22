@@ -4,6 +4,9 @@
  */
 import { copyFile, mkdir, readdir, rm } from "node:fs/promises";
 import { join } from "node:path";
+
+/** Rapports DR embarqués (racine `docs/research/`, pas le dossier `prompts/`). */
+const DR_FILENAME = /^DR-\d+.*\.md$/;
 import { spawnSync } from "node:child_process";
 
 const root = join(import.meta.dir, "..");
@@ -48,6 +51,14 @@ const demos = (await readdir(demoDir)).filter((f) => f.endsWith(".json"));
 for (const f of demos) {
   await copyFile(join(demoDir, f), join(outDir, "examples", f));
 }
+
+const researchSrc = join(root, "docs", "research");
+const researchOut = join(outDir, "research");
+await mkdir(researchOut, { recursive: true });
+for (const f of (await readdir(researchSrc)).filter((name) => DR_FILENAME.test(name))) {
+  await copyFile(join(researchSrc, f), join(researchOut, f));
+}
+await copyFile(join(root, "harness", "research", "README.md"), join(researchOut, "README.md"));
 
 const zipName = `${skillName}-skill.zip`;
 const zipPath = join(root, "dist", zipName);

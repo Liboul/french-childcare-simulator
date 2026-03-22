@@ -44,6 +44,7 @@ Pour **comparer plusieurs modes**, construis **un JSON par mode** et exécute **
 - **`REFERENCE.md`** : champs par `mode`, limites moteur.
 - **`scenario-input.schema.json`** : contrat JSON.
 - **`examples/*.json`** : gabarits à copier puis adapter avant de passer à `simulate.mjs`.
+- **`research/`** : rapports **DR-*.md** (recherche approfondie) + **`research/README.md`**. Ce sont des **sources auxquelles tu peux te référer si besoin** (pédagogie, limites, contexte réglementaire) — **pas** la source des montants. **Priorité** : toujours **`simulate.mjs`** + **`snapshot` / `trace` / `warnings`** + **`meta.rulePackVersion`** (voir `README` du dossier `research/`).
 
 ## Procédure
 

@@ -44,6 +44,8 @@ jobs:
           unzip -l dist/comparatif-modes-garde-fr-2026-skill.zip | grep -q 'scenario-input.schema.json'
           unzip -l dist/comparatif-modes-garde-fr-2026-skill.zip | grep -q 'examples/'
           unzip -l dist/comparatif-modes-garde-fr-2026-skill.zip | grep -q 'scripts/simulate.mjs'
+          unzip -l dist/comparatif-modes-garde-fr-2026-skill.zip | grep -q 'research/README.md'
+          unzip -l dist/comparatif-modes-garde-fr-2026-skill.zip | grep -q 'research/DR-01'
           if unzip -l dist/comparatif-modes-garde-fr-2026-skill.zip | grep -q 'openapi.yaml'; then
             echo 'Harness skill ZIP must not contain openapi.yaml (GARDE-035)'
             exit 1
