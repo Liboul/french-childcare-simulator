@@ -8,6 +8,7 @@ Guide pour le **harness** (skill Agent Skills / ZIP, Custom GPT, etc.) : poser l
 - Un calcul = **un mode de garde** ; pour comparer plusieurs modes, relancer avec un autre `brutInput.mode`.
 - **TMI / IR** : optionnel via **`incomeTax`** (revenu net imposable ou brut + parts, ou seulement revenu après IR pour le disponible) — voir **DR-07** ; ne pas confondre avec le **PAS** sur fiche de paie.
 - **crèche publique / inter-entreprises** → CMG souvent `unsupported` (voir `limitationHints` dans la réponse).
+- **Tout mode de garde** → question employeur **CESU / titres préfinancés** (ou assimilés) : **`INTAKE.md`** § 3 bis **partie A ou B** avant `simulate.mjs`.
 
 ## 1. Mode de garde
 
@@ -26,6 +27,7 @@ Demander le mode parmi :
 4. Option : **quote-part du contrat** supportée par ce foyer (`householdShareOfEmploymentCost`, 0–1) si nounou partagée entre foyers.
 5. **Transport de la salariée** (à poser **systématiquement**) : rembourse-t-on les frais (ex. **Navigo** plein, **demi-tarif**, forfait **zones limitées**) ? Si non → `domicileComplementaryCosts.fraisTransportBase`: `"non"`. Si oui → consulter le **tarif officiel** (https://www.iledefrance-mobilites.fr/titres-et-tarifs/detail/forfait-navigo-mois , https://www.navigo.fr/ ), puis `fraisTransportMensuelEur` (€/mois à la charge du foyer) + `fraisTransportBase` (`navigo_mois_plein` \| `navigo_demi_tarif` \| `navigo_zones_limitees` \| `autre`).
 6. Option : **autres coûts complémentaires** DR-06 (`domicileComplementaryCosts` : provision CP, lissages, etc.) — voir `REFERENCE.md` et `docs/research/DR-06-EMPLOI-DOMICILE-COUTS-COMPLEMENTAIRES.md`.
+7. **Chèques CESU préfinancés employeur** : suivre **§ 3 bis partie A** (questions **obligatoires** avant `simulate.mjs`, au même titre que le transport).
 
 ### `nounou_partagee`
 
@@ -35,6 +37,7 @@ Demander le mode parmi :
 4. Part cotisations patronales
 5. **Transport** : même logique que `nounou_domicile` (question obligatoire, montants **au niveau de ce foyer**).
 6. Option : autres postes dans `domicileComplementaryCosts`.
+7. **CESU employeur** : **§ 3 bis partie A**.
 
 ### `assistante_maternelle` / `mam`
 
@@ -43,6 +46,7 @@ Demander le mode parmi :
 3. **Indemnité d’entretien** (€ / jour)
 4. Part cotisations patronales
 5. `mam` uniquement : **participation structure** mensuelle (€)
+6. **CESU / titres employeur pour cette garde** (hors domicile) : **§ 3 bis partie B** — obligatoire avant `simulate.mjs`.
 
 ### Crèches (`creche_*`)
 
@@ -57,18 +61,52 @@ Demander le mode parmi :
    - **`creche_privee`** : demander aussi si la structure est **PSU** ou **micro-crèche / PAJE hors PSU** (tarif plus libre ; CMG structure possible si éligible — voir démo micro-crèche et pack CMG).
    - Contexte détaillé (hors archive skill ZIP) : `docs/research/DR-08-PSU-CRECHE-PART-FAMILLE.md` dans le dépôt.
 
+2. **Aide employeur type CESU préfinancé (ou assimilée) pour cette place** : **§ 3 bis partie B** — obligatoire avant `simulate.mjs` (après le montant de participation ci-dessus).
+
 ## 3. Bloc `cmg` (sans champ `mode` — repris de `brutInput`)
 
 1. **Cumuls** PreParE / AAH (`cmg.cumul` : booléens optionnels).
 2. **Emploi direct** (nounou / assmat / MAM) : revenu mensuel de référence, rang d’effort, salaire horaire brut déclaré, heures / mois (voir démos).
 3. **Micro-crèche** : revenus N-2, nb enfants à charge, tarif horaire réel, etc. (voir `docs/demo-scenarios/micro-creche-bas-revenus-2026.json`).
 
+## 3 bis. CESU préfinancé employeur et aides assimilées (assiette crédit d’impôt)
+
+Le moteur **ne route pas** ces montants de la même façon selon le mode : voir `taxCreditKind` dans le snapshot (`emploi_domicile` vs `garde_hors_domicile`, `REFERENCE.md`).
+
+**Quand poser** — **avant** le **premier** `simulate.mjs` pour **chaque** JSON (un mode par fichier). En **comparaison** de plusieurs modes, **chaque** scénario doit avoir reçu la **partie A ou B** ci-dessous, même si la réponse est « non ».
+
+### Partie A — `nounou_domicile`, `nounou_partagee` (crédit **emploi à domicile**)
+
+Champ : **`taxCredit.prefundedCesuAnnualEur`**.
+
+1. **Question obligatoire (ne pas attendre que l’utilisateur en parle)** : l’employeur du parent (ou des deux parents si pertinent) propose-t-il des **chèques CESU préfinancés** (prise en charge employeur, totale ou partielle) ?
+   - **Non** : laisser `prefundedCesuAnnualEur` absent ou à `0` selon le défaut attendu par le validateur.
+   - **Oui** : saisir le **montant annuel** d’aide employeur en CESU préfinancé **pertinent pour cette garde** dans `prefundedCesuAnnualEur`.
+   - **Ne sait pas** : ne pas supposer « non » ; estimation / fourchette ou hypothèse **explicitement validée**.
+
+2. **Si oui — question obligatoire tout de suite après** : ces CESU sont-ils **en complément** du **brut de l’emploi à domicile** tel que sur le **contrat / déclaration URSSAF** (enveloppe employeur **plus large**), ou en **substitution** (**conversion** / **échange** à **coût employeur équivalent**, sans « bonus » d’enveloppe) ?
+   - **En plus du brut déclaré pour la garde** : `hourlyGrossEur` et `hoursPerMonth` = salaire brut **tel quel** ; `prefundedCesuAnnualEur` = CESU employeur pour financer (en partie) cette garde — **sans** confondre avec `incomeTax.annualGrossSalaryEur` (brut du **poste salarié** du parent).
+   - **Substitution / même coût employeur** : clarifier ce que couvre le **brut nounou** saisi ; **pas de double comptage** entre brut et CESU. Si besoin : **qui paie quoi** (virement vs titre) et **montants annuels** ; réaligner `hourlyGrossEur` / `prefundedCesuAnnualEur`, puis relancer `simulate.mjs`.
+
+### Partie B — `assistante_maternelle`, `mam`, `creche_*` (crédit **garde hors domicile**)
+
+Champ : **`taxCredit.outsideHomeAnnualEmployerAidDeductibleEur`** (aide employeur **annuelle** déduite de l’assiette du crédit « garde hors du domicile » : titres / CESU employeur **affectés à cette garde**, ou autre aide assimilée selon la **déclaration utilisateur**). Le moteur **n’utilise pas** `prefundedCesuAnnualEur` pour ces modes.
+
+1. **Question obligatoire** : l’employeur propose-t-il des **chèques CESU (ou titres) préfinancés**, ou une **autre aide employeur déductible**, pour financer **cette** garde (factures assmat / MAM / crèche) ?
+   - **Non** : `outsideHomeAnnualEmployerAidDeductibleEur` absent ou `0`.
+   - **Oui** : saisir le **montant annuel** que l’utilisateur affecte à cette aide pour l’assiette CI dans `outsideHomeAnnualEmployerAidDeductibleEur` (en cas de doute sur le traitement fiscal, renvoyer vers règles officielles / professionnel).
+   - **Ne sait pas** : idem partie A.
+
+2. **Si oui — question obligatoire** : l’aide est-elle **en plus** des **dépenses payées** déjà reflétées dans la saisie (**participation crèche** `monthlyParticipationEur` ; coût assmat / MAM issu du `brutInput`), ou en **substitution** (réduit ce que vous payez **net**, **même coût employeur**) ? Objectif : **pas de double comptage** entre facture / participation et montant déductible.
+
+**Interdit** : lancer `simulate.mjs` **sans** avoir posé la question 1 de la **partie applicable** (A ou B) ; si l’utilisateur **mentionne** des CESU **sans** répondre à la question 2, **ne pas** deviner — poser la question 2 **immédiatement**. **Interdit** d’utiliser `prefundedCesuAnnualEur` pour un mode **hors domicile** à la place de `outsideHomeAnnualEmployerAidDeductibleEur`.
+
 ## 4. Options fréquentes
 
 - **`baselineDisposableIncomeMonthlyEur`** : pour afficher un « disponible » après RAC (sinon `null`). Avec **`incomeTax`** (assiette RNI ou brut), le moteur peut soustraire l’IR estimé / 12 — vérifier qu’il n’y a pas **double comptage** avec un revenu déjà net de PAS (`monthlyResourcesAlreadyAccountForIncomeTax`).
 - **`incomeTax.annualHouseholdIncomeAfterIncomeTaxEur`** : si le foyer connaît son revenu **après IR** annuel, prioritaire pour le disponible (= ce montant ÷ 12 − RAC mensuel).
 - **`incomeTax.annualNetSalaryFromPayslipsEur`** (optionnel) : total annuel des **salaires nets** (bulletins, après cotisations, **avant** IR) — pour le **reporting** dans le `snapshot` ; ne pilote pas le barème IR. À distinguer du revenu après IR ci-dessus.
-- **`taxCredit`** : précisions crédit d’impôt (garde hors domicile, CESU préfinancé, etc.).
+- **`taxCredit`** : **`prefundedCesuAnnualEur`** (partie A) et **`outsideHomeAnnualEmployerAidDeductibleEur`** (partie B) — parcours **§ 3 bis** pour **chaque** mode ; ne pas omettre les questions employeur.
 - **Soutien employeur** : `declaredEmployerChildcareSupportAnnualEur` + `referenceEmployerChildcareSupportAnnualEur` pour le delta.
 
 ## 5. Gabarits

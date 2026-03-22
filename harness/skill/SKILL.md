@@ -43,7 +43,7 @@ Pour **comparer plusieurs modes**, construis **un JSON par mode** et exécute **
 
 ## Procédure
 
-1. Suis **`INTAKE.md`** puis **`REFERENCE.md`** pour les champs par `mode` ; pose des questions **progressives** (crèches : participation parentale **obligatoire**, voir section dédiée ci-dessous).
+1. Suis **`INTAKE.md`** puis **`REFERENCE.md`** pour les champs par `mode` ; pose des questions **progressives** (crèches : participation parentale **obligatoire** ; nounou : transport ; **tout mode** : § 3 bis **partie A ou B** — CESU / aides employeur déductibles ; sections dédiées ci-dessous).
 2. Écris le JSON dans un fichier (ou pipe stdin), puis exécute **`node scripts/simulate.mjs …`**. En cas de **`validation_failed`**, relis `issues[]` et corrige.
 3. Réponds avec la **fiche transparence** (section suivante) dès qu’il y a une sortie moteur exploitable — **sauf** si l’utilisateur demande explicitement une réponse **ultra-courte** (alors template B seulement).
 
@@ -77,7 +77,8 @@ Structure **dans cet ordre** :
 
 4. **Aides et préfinancements**
    - **CMG** : rappeler les paramètres `cmg` **pertinents** (sans tout recopier si le JSON est énorme) et le lien avec `monthlyCmgEur` / `cmgStatus`.
-   - **CESU / chèques emploi service (préfinancé)** : si `taxCredit.prefundedCesuAnnualEur` (ou champs voisins du schéma) est renseigné, s’appuyer sur l’étape **`trace`** `scenario_tax_credit_prefunded_cesu` + `warnings` pour l’effet sur le crédit d’impôt, **sans** improviser les plafonds.
+   - **CESU préfinancé (emploi à domicile)** : si `taxCredit.prefundedCesuAnnualEur` > 0, s’appuyer sur **`trace`** `scenario_tax_credit_prefunded_cesu` + `warnings`, **sans** improviser les plafonds.
+   - **Aide employeur déductible (garde hors domicile)** : si `taxCredit.outsideHomeAnnualEmployerAidDeductibleEur` > 0, rappeler qu’elle **réduit l’assiette** du crédit « garde hors du domicile » (étape **`trace`** `scenario_tax_credit` / routage `garde_hors_domicile`) — citer le montant saisi, **sans** improviser.
    - Ne confonds pas **CESU** avec la **CSG** (cotisation) ; si l’utilisateur dit « CSG » pour des chèques, clarifie poliment.
 
 5. **Crédit d’impôt (pédagogie + trace)**
@@ -94,13 +95,26 @@ Structure **dans cet ordre** :
 
 - Une ligne **synthèse** avec `netHouseholdBurdenMonthlyEur`, `monthlyBrutEur`, `monthlyCmgEur` + `cmgStatus`, `annualTaxCreditEur` + `taxCreditKind`.
 - Si non `null` : ajouter **brut / net foyer** (`householdGrossSalaryMonthlyEur`, `householdNetSalaryMonthlyEur`, `householdIncomeAfterIncomeTaxMonthlyEur`) avec intitulés clairs (net bulletin vs après IR).
-- **À valider** : lister en 1 ligne les saisies sensibles (participation crèche, heures/salaire garde, revenus `incomeTax`, aide employeur, CESU).
+- **À valider** : lister en 1 ligne les saisies sensibles (participation crèche, heures/salaire garde, revenus `incomeTax`, aide employeur / CESU `prefundedCesuAnnualEur` ou `outsideHomeAnnualEmployerAidDeductibleEur`).
 - **Limites** : puces tirées de `warnings` + `limitationHints` (et `meta` si pertinent).
 
 ### Plusieurs modes comparés
 
 Après **un run par mode**, ajouter un **tableau** : colonnes Mode | `monthlyBrutEur` | `monthlyCmgEur` | `annualTaxCreditEur` | `netHouseholdBurdenAnnualEur` | `employerSupportDeltaAnnualEur` (si non null).  
 Puis **un court paragraphe** sur ce qui explique les écarts (même enfant, mêmes hypothèses employeur si applicable).
+
+## CESU préfinancé et aides employeur déductibles (tous les modes)
+
+**Même exigence que le transport nounou et la participation crèche** : tu **poses** les questions ; tu **n’attends pas** que l’utilisateur s’en souvienne.
+
+**Quand** : **chaque** scénario (`ScenarioInput`), **avant** le premier `simulate.mjs` — y compris **comparaisons** (un JSON par mode : refaire le parcours pour chaque fichier).
+
+- **`nounou_domicile` / `nounou_partagee`** (**partie A**, crédit emploi à domicile) : `taxCredit.prefundedCesuAnnualEur`. Questions : CESU employeur ? puis **complément** vs **substitution** par rapport au **brut URSSAF** (`hourlyGrossEur`, heures).
+- **`assistante_maternelle` / `mam` / `creche_*`** (**partie B**, garde hors domicile) : `taxCredit.outsideHomeAnnualEmployerAidDeductibleEur`. Questions : CESU / titres employeur ou aide assimilée **pour cette garde** ? puis **complément** vs **substitution** par rapport aux **dépenses saisies** (participation crèche, coût assmat…). **Ne pas** mettre ces montants dans `prefundedCesuAnnualEur` : le moteur **ignore** ce champ pour ces modes.
+
+Si l’utilisateur cite des CESU **sans** préciser complément/substitution, **tu poses la question tout de suite** — **pas** d’interprétation implicite.
+
+Détail : **`INTAKE.md`** § 3 bis.
 
 ## Transport de la nounou (`nounou_domicile`, `nounou_partagee`)
 
