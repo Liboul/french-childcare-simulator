@@ -1,4 +1,5 @@
 import type { UncertaintyFlag } from "./types";
+import { messageFrForWarningCode } from "./warning-messages-fr";
 
 /** Avertissements purement informatifs (hypothèses de modèle). */
 const INFO_CODES = new Set<string>([
@@ -14,9 +15,11 @@ export function engineWarningsToFlags(warnings: readonly string[]): UncertaintyF
   for (const code of warnings) {
     if (seen.has(code)) continue;
     seen.add(code);
+    const messageFr = messageFrForWarningCode(code);
     out.push({
       code,
       severity: INFO_CODES.has(code) ? "info" : "warning",
+      ...(messageFr != null ? { messageFr } : {}),
     });
   }
   return out;

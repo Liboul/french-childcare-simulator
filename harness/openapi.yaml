@@ -139,6 +139,7 @@ components:
         - netHouseholdBurdenMonthlyEur
         - disposableIncomeMonthlyEur
         - employerSupportDeltaAnnualEur
+        - employerSupportIsComparisonScenario
         - householdGrossSalaryAnnualEur
         - householdGrossSalaryMonthlyEur
         - householdNetSalaryAnnualEur
@@ -177,6 +178,11 @@ components:
         netHouseholdBurdenMonthlyEur: { type: number }
         disposableIncomeMonthlyEur: { type: number, nullable: true }
         employerSupportDeltaAnnualEur: { type: number, nullable: true }
+        employerSupportIsComparisonScenario:
+          type: boolean
+          description: >
+            true si déclaré + référence employeur sont tous deux renseignés : l’écart
+            employerSupportDeltaAnnualEur est comparatif et ne modifie pas netHouseholdBurden*.
         householdGrossSalaryAnnualEur: { type: number, nullable: true }
         householdGrossSalaryMonthlyEur: { type: number, nullable: true }
         householdNetSalaryAnnualEur: { type: number, nullable: true }
@@ -189,7 +195,14 @@ components:
         incomeTaxQuotientEur: { type: number, nullable: true }
     ScenarioResult:
       type: object
-      required: [snapshot, trace, warnings, uncertainty, meta, limitationHints]
+      required:
+        - snapshot
+        - trace
+        - warnings
+        - uncertainty
+        - meta
+        - limitationHints
+        - incomeTaxDisposableHintsFr
       properties:
         snapshot:
           $ref: "#/components/schemas/ScenarioSnapshot"
@@ -208,6 +221,12 @@ components:
         limitationHints:
           type: array
           items: { type: object, additionalProperties: true }
+        incomeTaxDisposableHintsFr:
+          type: array
+          description: >
+            Messages FR lorsque disposableIncomeMonthlyEur reste null malgré un bloc incomeTax
+            (champs manquants, net bulletin vs après IR).
+          items: { type: string }
   responses:
     Unauthorized:
       description: Clé API requise mais absente ou incorrecte

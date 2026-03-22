@@ -208,13 +208,29 @@ export function exportScenarioBundleToCsv(bundle: ScenarioExportBundle): string 
       "",
     ]),
   );
+  rows.push(
+    line([
+      "metric",
+      "snapshot.employerSupportIsComparisonScenario",
+      s.employerSupportIsComparisonScenario ? "true" : "false",
+      "",
+      "",
+      "",
+      "",
+      "",
+    ]),
+  );
+
+  bundle.result.incomeTaxDisposableHintsFr.forEach((h, i) => {
+    rows.push(line(["income_tax_disposable_hint_fr", String(i), h, "", "", "", "", ""]));
+  });
 
   bundle.result.warnings.forEach((w, i) => {
     rows.push(line(["warning", String(i), w, "", "", "", "", ""]));
   });
 
   bundle.result.uncertainty.flags.forEach((f) => {
-    rows.push(line(["flag", f.code, f.severity, "", "", "", "", ""]));
+    rows.push(line(["flag", f.code, f.severity, f.messageFr ?? "", "", "", "", ""]));
   });
 
   bundle.result.uncertainty.referencedRulesPendingVerification.forEach((r) => {

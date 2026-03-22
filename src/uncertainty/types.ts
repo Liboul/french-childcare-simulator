@@ -7,6 +7,8 @@ export type UncertaintyFlag = {
   /** Code stable (souvent identique à l’entrée `warnings[]` du moteur). */
   code: string;
   severity: "info" | "warning";
+  /** Explication courte en français lorsque le code est répertorié (`warning-messages-fr.ts`). */
+  messageFr?: string;
 };
 
 export type PackRulePendingVerification = {

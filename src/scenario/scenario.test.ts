@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import rulesFr2026 from "../../config/rules.fr-2026.json" with { type: "json" };
+import nounouRevenusFoyerDemo from "../../docs/demo-scenarios/nounou-domicile-revenus-foyer-2026.json" with { type: "json" };
 import { parseRulePack } from "../config/parse";
 import { computeScenarioSnapshot } from "./aggregate";
+import type { ScenarioInput } from "./types";
 
 const packResult = parseRulePack(rulesFr2026);
 if (!packResult.ok) {
@@ -47,9 +49,15 @@ describe("computeScenarioSnapshot", () => {
       },
     });
     expect(shared.snapshot.monthlyBrutEur).toBeCloseTo(exclusive.snapshot.monthlyBrutEur / 2, 4);
+    expect(exclusive.snapshot.employerSupportIsComparisonScenario).toBe(false);
+    expect(shared.snapshot.employerSupportIsComparisonScenario).toBe(false);
     expect(shared.warnings).toContain(
       "nounou_domicile_shared_employment_align_cmg_with_household_declaration_to_caf",
     );
+    const cafFlag = shared.uncertainty.flags.find(
+      (f) => f.code === "nounou_domicile_shared_employment_align_cmg_with_household_declaration_to_caf",
+    );
+    expect(cafFlag?.messageFr).toContain("CAF");
   });
 
   it("nounou à domicile + DR-06 : brut total > assiette CI si postes exclus", () => {
@@ -193,6 +201,29 @@ describe("computeScenarioSnapshot", () => {
     );
   });
 
+  it("crèche publique : CMG unsupported → narrative trace + messageFr warning", () => {
+    const r = computeScenarioSnapshot(pack, {
+      household: household2026,
+      brutInput: { mode: "creche_publique", monthlyParticipationEur: 450 },
+      cmg: {
+        cumul: {},
+        annualReferenceIncomeN2Eur: 30_000,
+        structureDependentChildren: 1,
+        isSingleParentHousehold: false,
+        childAgeBand: "under3",
+        monthlyStructureExpenseEur: 800,
+        territory: "metropole",
+        hourlyCrecheFeeEur: 8,
+      },
+    });
+    expect(r.snapshot.cmgStatus).toBe("unsupported");
+    const cmgStep = r.trace.steps.find((s) => s.id === "scenario_cmg");
+    expect(cmgStep?.narrative).toContain("limite");
+    const w = r.uncertainty.flags.find((f) => f.code === "cmg_psu_or_non_structure_branch_not_modeled");
+    expect(w?.messageFr).toContain("CAF");
+    expect(r.limitationHints.some((h) => h.code === "cmg_creche_publique_psu_non_modele")).toBe(true);
+  });
+
   it("écart soutien employeur vs référence → avertissement", () => {
     const r = computeScenarioSnapshot(pack, {
       household: household2026,
@@ -209,6 +240,8 @@ describe("computeScenarioSnapshot", () => {
       referenceEmployerChildcareSupportAnnualEur: 1500,
     });
     expect(r.snapshot.employerSupportDeltaAnnualEur).toBe(500);
+    expect(r.snapshot.employerSupportIsComparisonScenario).toBe(true);
+    expect(r.trace.steps.some((s) => s.id === "scenario_employer_support_comparison")).toBe(true);
     expect(r.warnings).toContain("employer_childcare_support_differs_from_reference_scenario");
   });
 
@@ -228,6 +261,8 @@ describe("computeScenarioSnapshot", () => {
       referenceEmployerChildcareSupportAnnualEur: 1500,
     });
     expect(r.snapshot.employerSupportDeltaAnnualEur).toBe(0);
+    expect(r.snapshot.employerSupportIsComparisonScenario).toBe(true);
+    expect(r.trace.steps.some((s) => s.id === "scenario_employer_support_comparison")).toBe(true);
     expect(r.warnings).not.toContain("employer_childcare_support_differs_from_reference_scenario");
   });
 
@@ -253,6 +288,7 @@ describe("computeScenarioSnapshot", () => {
     expect(r.snapshot.householdGrossSalaryAnnualEur).toBeNull();
     expect(r.snapshot.householdNetSalaryAnnualEur).toBeNull();
     expect(r.snapshot.householdIncomeAfterIncomeTaxAnnualEur).toBeNull();
+    expect(r.incomeTaxDisposableHintsFr).toEqual([]);
   });
 
   it("incomeTax (RNI) : snapshot IR + limitation QF", () => {
@@ -282,6 +318,38 @@ describe("computeScenarioSnapshot", () => {
     expect(r.limitationHints.map((h) => h.code)).toContain(
       "income_tax_quotient_familial_plafond_non_modele",
     );
+    expect(r.snapshot.disposableIncomeMonthlyEur).toBeNull();
+    expect(r.incomeTaxDisposableHintsFr.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("incomeTax brut + net bulletins : hints si disponible absent", () => {
+    const r = computeScenarioSnapshot(pack, nounouRevenusFoyerDemo as ScenarioInput);
+    expect(r.snapshot.disposableIncomeMonthlyEur).toBeNull();
+    expect(r.incomeTaxDisposableHintsFr.length).toBeGreaterThanOrEqual(3);
+    expect(r.incomeTaxDisposableHintsFr.some((h) => h.includes("bulletins"))).toBe(true);
+  });
+
+  it("emploi_domicile + CESU préfinancé : trace dédiée", () => {
+    const r = computeScenarioSnapshot(pack, {
+      household: household2026,
+      brutInput: {
+        mode: "nounou_domicile",
+        hourlyGrossEur: 12,
+        hoursPerMonth: 80,
+        employerShareOfGross: 0.42,
+      },
+      cmg: {
+        cumul: {},
+        monthlyReferenceIncomeEur: 4000,
+        householdEffortRank: 1,
+        hourlyDeclaredGrossEur: 12,
+        heuresParMois: 80,
+      },
+      taxCredit: { prefundedCesuAnnualEur: 800 },
+    });
+    expect(
+      r.trace.steps.some((s) => s.id === "scenario_tax_credit_prefunded_cesu"),
+    ).toBe(true);
   });
 
   it("annualHouseholdIncomeAfterIncomeTaxEur seul : disponible = après IR /12 − RAC", () => {
@@ -310,6 +378,7 @@ describe("computeScenarioSnapshot", () => {
     expect(r.snapshot.disposableIncomeMonthlyEur).toBe(
       Math.round((4000 - r.snapshot.netHouseholdBurdenMonthlyEur) * 100) / 100,
     );
+    expect(r.incomeTaxDisposableHintsFr).toEqual([]);
   });
 
   it("incomeTax brut + net bulletin : snapshot reprend les montants foyer (÷12)", () => {
@@ -340,6 +409,8 @@ describe("computeScenarioSnapshot", () => {
     expect(r.snapshot.householdNetSalaryAnnualEur).toBe(45_000);
     expect(r.snapshot.householdNetSalaryMonthlyEur).toBe(3750);
     expect(r.snapshot.householdIncomeAfterIncomeTaxAnnualEur).toBeNull();
+    expect(r.snapshot.disposableIncomeMonthlyEur).toBeNull();
+    expect(r.incomeTaxDisposableHintsFr.length).toBeGreaterThan(0);
   });
 
   it("baseline + incomeTax : IR mensuel estimé déduit (warning PAS)", () => {
@@ -392,5 +463,6 @@ describe("computeScenarioSnapshot", () => {
     expect(r.warnings).toContain(
       "income_tax_subtracted_from_baseline_verify_not_double_with_pas_dr07",
     );
+    expect(r.incomeTaxDisposableHintsFr).toEqual([]);
   });
 });

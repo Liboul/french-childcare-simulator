@@ -30,6 +30,12 @@ export function exportScenarioBundleToHtml(bundle: ScenarioExportBundle): string
     .join("\n");
 
   const warnings = bundle.result.warnings.map((w) => `<li>${escapeHtml(w)}</li>`).join("\n");
+  const disposableHints =
+    bundle.result.incomeTaxDisposableHintsFr.length > 0
+      ? bundle.result.incomeTaxDisposableHintsFr
+          .map((h) => `<li>${escapeHtml(h)}</li>`)
+          .join("\n")
+      : "";
 
   return `<!DOCTYPE html>
 <html lang="fr">
@@ -82,8 +88,15 @@ export function exportScenarioBundleToHtml(bundle: ScenarioExportBundle): string
       <tr><td>Revenu foyer après IR déclaré annuel (€)</td><td>${snap.householdIncomeAfterIncomeTaxAnnualEur == null ? "—" : escapeHtml(String(snap.householdIncomeAfterIncomeTaxAnnualEur))}</td></tr>
       <tr><td>Revenu foyer après IR déclaré mensuel (€)</td><td>${snap.householdIncomeAfterIncomeTaxMonthlyEur == null ? "—" : escapeHtml(String(snap.householdIncomeAfterIncomeTaxMonthlyEur))}</td></tr>
       <tr><td>Δ soutien employeur / ref. (€/an)</td><td>${snap.employerSupportDeltaAnnualEur == null ? "—" : escapeHtml(String(snap.employerSupportDeltaAnnualEur))}</td></tr>
+      <tr><td>Comparaison employeur (écart ≠ RAC)</td><td>${snap.employerSupportIsComparisonScenario ? "Oui — l’écart est informatif, sans effet sur le reste à charge affiché" : "Non"}</td></tr>
     </tbody>
   </table>
+
+  ${
+    disposableHints
+      ? `<h2>Disponible après garde (rappels)</h2><ul>${disposableHints}</ul>`
+      : ""
+  }
 
   <h2>Avertissements moteur</h2>
   <ul>

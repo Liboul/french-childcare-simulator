@@ -58,26 +58,26 @@ Structure **dans cet ordre** :
 1. **Vue d’ensemble (≈30 s)**
    - Mode : `snapshot.mode`
    - Brut : `snapshot.monthlyBrutEur` / `snapshot.annualBrutEur`
-   - CMG : `snapshot.monthlyCmgEur`, statut `snapshot.cmgStatus`
+   - CMG : `snapshot.monthlyCmgEur`, statut `snapshot.cmgStatus` — si `unsupported` (ex. crèche PSU non modélisée), rappeler que **0 € est une limite du modèle**, pas un jugement sur les droits réels (`limitationHints`, `trace` `scenario_cmg`, CAF).
    - Crédit d’impôt : `snapshot.annualTaxCreditEur`, type `snapshot.taxCreditKind`
    - Reste à charge foyer : `snapshot.netHouseholdBurdenMonthlyEur` / `netHouseholdBurdenAnnualEur`
-   - Si renseigné : disponible après charge `snapshot.disposableIncomeMonthlyEur` ; IR / TMI `estimatedIncomeTaxGrossAnnualEur`, `marginalIncomeTaxRate` (voir `warnings` / `limitationHints`)
+   - Si renseigné : disponible après charge `snapshot.disposableIncomeMonthlyEur` ; IR / TMI `estimatedIncomeTaxGrossAnnualEur`, `marginalIncomeTaxRate` (voir `warnings` / `limitationHints`). Si `disposableIncomeMonthlyEur` est `null` mais un bloc `incomeTax` est présent : citer **`incomeTaxDisposableHintsFr`** (pourquoi le disponible n’est pas calculé — ex. net bulletin ≠ après IR).
    - **Revenus du foyer** (tels que déclarés dans `incomeTax`, reprise dans le snapshot — ignorer les clés à `null`) :
      - **Salaire brut foyer** : `snapshot.householdGrossSalaryMonthlyEur` / `householdGrossSalaryAnnualEur` (saisie `incomeTax.annualGrossSalaryEur`).
      - **Salaire net (bulletins)** : `snapshot.householdNetSalaryMonthlyEur` / `householdNetSalaryAnnualEur` (`incomeTax.annualNetSalaryFromPayslipsEur` — après cotisations, **avant** IR ; **ne pas** confondre avec le revenu après IR).
      - **Revenu foyer après IR** (si saisi) : `snapshot.householdIncomeAfterIncomeTaxMonthlyEur` / `householdIncomeAfterIncomeTaxAnnualEur`.
-   - **Alertes** : résumer `warnings`, `limitationHints`, `uncertainty` (et tout `cmgStatus` ≠ `ok`).
+   - **Alertes** : résumer `warnings`, `limitationHints`, `uncertainty` (et tout `cmgStatus` ≠ `ok`). Pour `uncertainty.flags`, utiliser **`messageFr`** lorsqu’elle est présente (sinon le `code` stable).
 
 2. **Brut / garde (saisie → moteur)**  
    Tableau ou liste : pour chaque poste important, **colonne saisie** (`brutInput` : mode, heures, salaire, `monthlyParticipationEur`, `employerShareOfGross`, `domicileComplementaryCosts`, part foyer `householdShareOfEmploymentCost`, etc.) → **colonne résultat** (`monthlyBrutEur`, `annualBrutEur`).  
    Si emploi à domicile avec coûts complémentaires : si `monthlyBrutTaxCreditAssietteEur` ≠ `monthlyBrutEur`, **l’expliquer** et citer les deux champs (assiette CI vs brut affiché).
 
 3. **Employeur du foyer (berceau, même coût entreprise)**  
-   Si `declaredEmployerChildcareSupportAnnualEur` / `referenceEmployerChildcareSupportAnnualEur` sont utilisés : expliquer l’effet sur la comparaison et citer `employerSupportDeltaAnnualEur`. Sinon une phrase : pas de variation employeur modélisée pour ce scénario.
+   Si **les deux** montants employeur sont renseignés : citer `employerSupportDeltaAnnualEur` et **`employerSupportIsComparisonScenario`** ; préciser que l’écart **ne modifie pas** `netHouseholdBurden*` (comparaison d’hypothèses uniquement — voir aussi l’étape `trace` `scenario_employer_support_comparison`). Sinon une phrase : pas de variation employeur modélisée pour ce scénario.
 
 4. **Aides et préfinancements**
    - **CMG** : rappeler les paramètres `cmg` **pertinents** (sans tout recopier si le JSON est énorme) et le lien avec `monthlyCmgEur` / `cmgStatus`.
-   - **CESU / chèques emploi service (préfinancé)** : si `taxCredit.prefundedCesuAnnualEur` (ou champs voisins du schéma) est renseigné, dire comment ça affecte le crédit d’impôt **selon la sortie moteur**, pas au jugé.
+   - **CESU / chèques emploi service (préfinancé)** : si `taxCredit.prefundedCesuAnnualEur` (ou champs voisins du schéma) est renseigné, s’appuyer sur l’étape **`trace`** `scenario_tax_credit_prefunded_cesu` + `warnings` pour l’effet sur le crédit d’impôt, **sans** improviser les plafonds.
    - Ne confonds pas **CESU** avec la **CSG** (cotisation) ; si l’utilisateur dit « CSG » pour des chèques, clarifie poliment.
 
 5. **Crédit d’impôt (pédagogie + trace)**

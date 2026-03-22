@@ -83,6 +83,11 @@ export type ScenarioSnapshot = {
   netHouseholdBurdenMonthlyEur: number;
   disposableIncomeMonthlyEur: number | null;
   employerSupportDeltaAnnualEur: number | null;
+  /**
+   * `true` lorsque déclaré **et** référence employeur sont tous deux renseignés : l’écart
+   * `employerSupportDeltaAnnualEur` compare deux hypothèses et **ne modifie pas** `netHouseholdBurden*`.
+   */
+  employerSupportIsComparisonScenario: boolean;
   /** Écho `incomeTax.annualGrossSalaryEur` + mensuel ÷12 ; null si non saisi. */
   householdGrossSalaryAnnualEur: number | null;
   householdGrossSalaryMonthlyEur: number | null;
@@ -113,4 +118,9 @@ export type ScenarioResult = {
   uncertainty: UncertaintyReport;
   meta: ScenarioMeta;
   limitationHints: LimitationHint[];
+  /**
+   * Messages FR lorsque `disposableIncomeMonthlyEur` est `null` malgré un bloc `incomeTax` :
+   * champs manquants, distinction net bulletin vs après IR, réserves sur l’estimation IR.
+   */
+  incomeTaxDisposableHintsFr: string[];
 };

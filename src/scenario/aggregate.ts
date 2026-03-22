@@ -13,6 +13,7 @@ import {
   incomeTaxBaremeFr2026,
 } from "../income-tax";
 import type { FrenchIncomeTaxEstimate2026 } from "../income-tax/estimate-fr-2026";
+import { buildIncomeTaxDisposableHintsFr } from "./income-tax-disposable-hints";
 import { buildIncomeTaxLimitationHints } from "./income-tax-hints";
 import { buildLimitationHints } from "./limitation-hints";
 import { buildScenarioMeta } from "./scenario-meta";
@@ -114,6 +115,15 @@ export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): S
   const annualCmgEur = round2(monthlyCmgEur * MONTHS_PER_TAX_YEAR);
   warnings.push(...cmg.warnings);
 
+  let cmgNarrative = `Statut CMG : ${cmg.status}.`;
+  if (cmg.status === "unsupported") {
+    cmgNarrative +=
+      " Les 0 € affichés viennent d’une **limite de modèle** (branche non intégrée ou mode non géré) : **ne pas** en déduire l’absence d’aide en réalité — voir `limitationHints` et la CAF.";
+  } else if (cmg.status === "ineligible") {
+    cmgNarrative +=
+      " Selon les paramètres saisis dans ce scénario ; à confirmer auprès de la CAF si besoin.";
+  }
+
   order += 1;
   trace = appendStep(trace, {
     id: "scenario_cmg",
@@ -122,13 +132,15 @@ export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): S
     label: "CMG (estimation)",
     formula: "estimateCmgMonthlyEur × 12",
     ruleId: cmg.ruleIds[0],
-    narrative: `Statut CMG : ${cmg.status}.`,
+    narrative: cmgNarrative,
     sources: [],
   });
 
   const kind = taxCreditKindForChildcareMode(input.brutInput.mode);
   let annualTaxCreditEur = 0;
   let taxRuleIds: string[] = [];
+  let emploiDomicileTaxCreditResult: ReturnType<typeof estimateEmploiDomicileTaxCreditAnnual> | null =
+    null;
 
   if (kind === "garde_hors_domicile") {
     const tc = estimateGardeHorsDomicileTaxCreditAnnual(pack, [
@@ -144,15 +156,25 @@ export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): S
     taxRuleIds = tc.ruleIds;
     warnings.push(...tc.warnings);
   } else if (kind === "emploi_domicile") {
-    const tc = estimateEmploiDomicileTaxCreditAnnual(pack, {
+    emploiDomicileTaxCreditResult = estimateEmploiDomicileTaxCreditAnnual(pack, {
       annualQualifyingExpensesEur: annualBrutTaxCreditAssietteEur,
       taxUnitDependentChildrenCount: taxCtx.taxUnitDependentChildrenForEmploymentCeiling,
       prefundedCesuAnnualEur: taxCtx.prefundedCesuAnnualEur,
       sharedCustodyHalvedIncrements: taxCtx.sharedCustodyHalvedEmploymentIncrements,
     });
-    annualTaxCreditEur = tc.creditEur;
-    taxRuleIds = tc.ruleIds;
-    warnings.push(...tc.warnings);
+    annualTaxCreditEur = emploiDomicileTaxCreditResult.creditEur;
+    taxRuleIds = emploiDomicileTaxCreditResult.ruleIds;
+    warnings.push(...emploiDomicileTaxCreditResult.warnings);
+  }
+
+  let taxCreditNarrative =
+    kind === "emploi_domicile" &&
+    Math.abs(annualBrutTaxCreditAssietteEur - annualBrutEur) > EMPLOYER_DELTA_EPSILON_EUR
+      ? `Routage : ${kind}. Assiette crédit d’impôt = brut annuel ajusté (DR-06, ≠ brut foyer total).`
+      : `Routage : ${kind}. Assiette annuelle simplifiée = coût brut annuel.`;
+  if (kind === "emploi_domicile" && taxCtx.prefundedCesuAnnualEur > 0) {
+    taxCreditNarrative +=
+      " Préfinancement CESU / chèque emploi service : le montant déclaré est déduit de l’assiette avant application du plafond et du taux du crédit d’impôt.";
   }
 
   order += 1;
@@ -165,13 +187,31 @@ export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): S
       kind === "garde_hors_domicile"
         ? "estimateGardeHorsDomicileTaxCreditAnnual"
         : "estimateEmploiDomicileTaxCreditAnnual",
-    narrative:
-      kind === "emploi_domicile" &&
-      Math.abs(annualBrutTaxCreditAssietteEur - annualBrutEur) > EMPLOYER_DELTA_EPSILON_EUR
-        ? `Routage : ${kind}. Assiette crédit d’impôt = brut annuel ajusté (DR-06, ≠ brut foyer total).`
-        : `Routage : ${kind}. Assiette annuelle simplifiée = coût brut annuel.`,
+    narrative: taxCreditNarrative,
     sources: [],
   });
+
+  if (kind === "emploi_domicile" && taxCtx.prefundedCesuAnnualEur > 0) {
+    const pref = taxCtx.prefundedCesuAnnualEur;
+    const capHit =
+      emploiDomicileTaxCreditResult?.warnings.includes(
+        "cesu_prefunded_exceeds_employer_aid_annual_cap",
+      ) ?? false;
+    order += 1;
+    trace = appendStep(trace, {
+      id: "scenario_tax_credit_prefunded_cesu",
+      segment: "tax_credits",
+      order,
+      label: "Préfinancement CESU / chèque emploi service",
+      formula: "max(0, assiette − préfinancement) ; plafond dépenses ; × taux CI",
+      narrative:
+        `Préfinancement annuel déclaré : ${pref} €. Il réduit l’assiette du crédit d’impôt emploi à domicile (montant final dans \`snapshot.annualTaxCreditEur\`).` +
+        (capHit
+          ? " Avertissement : plafond d’aide employeur dépassé pour ce préfinancement — détail dans 'warnings'."
+          : ""),
+      sources: [],
+    });
+  }
 
   const netHouseholdBurdenAnnualEur = round2(
     Math.max(0, annualBrutEur - annualCmgEur - annualTaxCreditEur),
@@ -215,6 +255,10 @@ export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): S
     }
   }
 
+  const employerSupportIsComparisonScenario =
+    input.declaredEmployerChildcareSupportAnnualEur != null &&
+    input.referenceEmployerChildcareSupportAnnualEur != null;
+
   const householdGrossSalaryAnnualEur = it?.annualGrossSalaryEur ?? null;
   const householdGrossSalaryMonthlyEur =
     householdGrossSalaryAnnualEur != null
@@ -251,6 +295,26 @@ export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): S
     }
   }
 
+  if (employerSupportIsComparisonScenario && employerSupportDeltaAnnualEur != null) {
+    order += 1;
+    const d = employerSupportDeltaAnnualEur;
+    trace = appendStep(trace, {
+      id: "scenario_employer_support_comparison",
+      segment: "employer_benefits",
+      order,
+      label: "Soutien employeur (comparaison de scénarios)",
+      formula: "declaredEmployerChildcareSupportAnnualEur − referenceEmployerChildcareSupportAnnualEur",
+      narrative: `Écart : ${d} €/an. Ce montant est **purement comparatif** (deux hypothèses d’enveloppe employeur) : il **n’entre pas** dans le calcul de \`netHouseholdBurdenMonthlyEur\` / \`netHouseholdBurdenAnnualEur\` (brut − CMG − crédit d’impôt).`,
+      sources: [],
+    });
+  }
+
+  const incomeTaxDisposableHintsFr = buildIncomeTaxDisposableHintsFr(
+    input,
+    disposableIncomeMonthlyEur,
+    incomeTaxEstimate,
+  );
+
   order += 1;
   trace = appendStep(trace, {
     id: "scenario_net_burden",
@@ -280,6 +344,7 @@ export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): S
     netHouseholdBurdenMonthlyEur,
     disposableIncomeMonthlyEur,
     employerSupportDeltaAnnualEur,
+    employerSupportIsComparisonScenario,
     householdGrossSalaryAnnualEur,
     householdGrossSalaryMonthlyEur,
     householdNetSalaryAnnualEur,
@@ -310,5 +375,13 @@ export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): S
     ...buildIncomeTaxLimitationHints(incomeTaxEstimate),
   ];
 
-  return { snapshot, trace, warnings, uncertainty, meta, limitationHints };
+  return {
+    snapshot,
+    trace,
+    warnings,
+    uncertainty,
+    meta,
+    limitationHints,
+    incomeTaxDisposableHintsFr,
+  };
 }
