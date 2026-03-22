@@ -16,13 +16,13 @@ Product intent and transparency requirements are spelled out in [`docs/INITIAL_S
 
 ## What’s in the box
 
-| Piece | Role |
-| ----- | ---- |
-| **`src/`** | TypeScript **calculation engine**: scenarios in, structured result out. |
-| **`config/`** | **Rule packs** (barèmes, plafonds, versioned JSON) validated against `src/config/schema.ts`; see `config/rules.example.json`. |
-| **`harness/`** | **Agent-facing layer**: JSON schema, intake playbook, skill instructions, optional **dev HTTP API** + **OpenAPI** for GPT Actions. See [`harness/README.md`](harness/README.md). |
-| **`docs/demo-scenarios/`** | Example **`ScenarioInput`** JSON files for tests and demos. |
-| **`scripts/`** (packaged in skill) | **`simulate.mjs`**: bundled Node runner so assistants can execute the same logic **without** a Bun checkout (see packaging below). |
+| Piece                              | Role                                                                                                                                                                             |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`src/`**                         | TypeScript **calculation engine**: scenarios in, structured result out.                                                                                                          |
+| **`config/`**                      | **Rule packs** (barèmes, plafonds, versioned JSON) validated against `src/config/schema.ts`; see `config/rules.example.json`.                                                    |
+| **`harness/`**                     | **Agent-facing layer**: JSON schema, intake playbook, skill instructions, optional **dev HTTP API** + **OpenAPI** for GPT Actions. See [`harness/README.md`](harness/README.md). |
+| **`docs/demo-scenarios/`**         | Example **`ScenarioInput`** JSON files for tests and demos.                                                                                                                      |
+| **`scripts/`** (packaged in skill) | **`simulate.mjs`**: bundled Node runner so assistants can execute the same logic **without** a Bun checkout (see packaging below).                                               |
 
 **Architecture** (portable engine + pluggable harness) is recorded in [`docs/architecture/README.md`](docs/architecture/README.md) and [ADR-0001](docs/architecture/ADR-0001-pluggable-provider-harness.md).
 

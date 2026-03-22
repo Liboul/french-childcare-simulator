@@ -9,17 +9,17 @@ Les fichiers **`DR-*.md`** dans ce dossier sont des **rapports de recherche** du
 
 ## Quand ouvrir quel fichier
 
-| Fichier | Sujet (aperçu) |
-| -------- | ---------------- |
-| `DR-01-CMG-CAF.md` | CMG / PAJE, paramètres, modes |
-| `DR-02-CREDIT-IMPOT.md` | Crédits d’impôt garde / emploi à domicile |
-| `DR-03-CESU-EMPLOYEUR.md` | CESU, employeur, non-cumuls, préfinancement |
-| `DR-04-COUT-MODES.md` | Coût par mode de garde (vue recherche) |
-| `DR-05-PROVIDER-HARNESS.md` | Fournisseurs / empaquetage skill (hors calcul) |
+| Fichier                                          | Sujet (aperçu)                                        |
+| ------------------------------------------------ | ----------------------------------------------------- |
+| `DR-01-CMG-CAF.md`                               | CMG / PAJE, paramètres, modes                         |
+| `DR-02-CREDIT-IMPOT.md`                          | Crédits d’impôt garde / emploi à domicile             |
+| `DR-03-CESU-EMPLOYEUR.md`                        | CESU, employeur, non-cumuls, préfinancement           |
+| `DR-04-COUT-MODES.md`                            | Coût par mode de garde (vue recherche)                |
+| `DR-05-PROVIDER-HARNESS.md`                      | Fournisseurs / empaquetage skill (hors calcul)        |
 | `DR-06-EMPLOI-DOMICILE-COUTS-COMPLEMENTAIRES.md` | Coûts complémentaires emploi à domicile / assiette CI |
-| `DR-07-IR-TMI-DISPONIBLE.md` | IR, TMI, revenu disponible |
-| `DR-08-PSU-CRECHE-PART-FAMILLE.md` | Crèche PSU, participation familiale |
+| `DR-07-IR-TMI-DISPONIBLE.md`                     | IR, TMI, revenu disponible                            |
+| `DR-08-PSU-CRECHE-PART-FAMILLE.md`               | Crèche PSU, participation familiale                   |
 
-Les **prompts** utilisés pour *produire* ces recherches (`docs/research/prompts/` dans le dépôt) **ne sont pas** inclus dans le skill : ils ne servent pas au parcours harness utilisateur.
+Les **prompts** utilisés pour _produire_ ces recherches (`docs/research/prompts/` dans le dépôt) **ne sont pas** inclus dans le skill : ils ne servent pas au parcours harness utilisateur.
 
 Pour une liste de liens officiels condensée en dépôt complet, voir aussi `docs/SOURCES_OFFICIELLES.md` (non obligatoire dans le ZIP).

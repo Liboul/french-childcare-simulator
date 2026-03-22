@@ -55,7 +55,8 @@ describe("computeScenarioSnapshot", () => {
       "nounou_domicile_shared_employment_align_cmg_with_household_declaration_to_caf",
     );
     const cafFlag = shared.uncertainty.flags.find(
-      (f) => f.code === "nounou_domicile_shared_employment_align_cmg_with_household_declaration_to_caf",
+      (f) =>
+        f.code === "nounou_domicile_shared_employment_align_cmg_with_household_declaration_to_caf",
     );
     expect(cafFlag?.messageFr).toContain("CAF");
   });
@@ -219,9 +220,13 @@ describe("computeScenarioSnapshot", () => {
     expect(r.snapshot.cmgStatus).toBe("unsupported");
     const cmgStep = r.trace.steps.find((s) => s.id === "scenario_cmg");
     expect(cmgStep?.narrative).toContain("limite");
-    const w = r.uncertainty.flags.find((f) => f.code === "cmg_psu_or_non_structure_branch_not_modeled");
+    const w = r.uncertainty.flags.find(
+      (f) => f.code === "cmg_psu_or_non_structure_branch_not_modeled",
+    );
     expect(w?.messageFr).toContain("CAF");
-    expect(r.limitationHints.some((h) => h.code === "cmg_creche_publique_psu_non_modele")).toBe(true);
+    expect(r.limitationHints.some((h) => h.code === "cmg_creche_publique_psu_non_modele")).toBe(
+      true,
+    );
   });
 
   it("écart soutien employeur vs référence → avertissement", () => {
@@ -347,9 +352,7 @@ describe("computeScenarioSnapshot", () => {
       },
       taxCredit: { prefundedCesuAnnualEur: 800 },
     });
-    expect(
-      r.trace.steps.some((s) => s.id === "scenario_tax_credit_prefunded_cesu"),
-    ).toBe(true);
+    expect(r.trace.steps.some((s) => s.id === "scenario_tax_credit_prefunded_cesu")).toBe(true);
   });
 
   it("annualHouseholdIncomeAfterIncomeTaxEur seul : disponible = après IR /12 − RAC", () => {

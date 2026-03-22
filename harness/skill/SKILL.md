@@ -11,7 +11,7 @@ Tu **orchestrates** la collecte des données et l’appel au **calculateur**, tu
 
 ## Plafond aide employeur CESU préfinancé (sans recherche web)
 
-Pour le **montant maximal légal** de l’**aide employeur** en CESU préfinancé (par bénéficiaire et par an), tu t’appuies sur **`REFERENCE.md`** § *Plafond légal — aide employeur CESU préfinancé* : avec le pack **2026** du dépôt / du ZIP, c’est **2540 €** (règle pack **`cesu-prefinance-plafond-aide-financiere-employeur`**, paramètre **`maxAnnualAidPerBeneficiaryEur`**). **Interdit** de substituer un chiffre trouvé au hasard sur internet : la **référence** est le **rule pack** versionné (`meta.rulePackVersion` après `simulate.mjs`). Un dépassement de saisie se lit dans **`warnings`** (`cesu_prefunded_exceeds_employer_aid_annual_cap`).
+Pour le **montant maximal légal** de l’**aide employeur** en CESU préfinancé (par bénéficiaire et par an), tu t’appuies sur **`REFERENCE.md`** § _Plafond légal — aide employeur CESU préfinancé_ : avec le pack **2026** du dépôt / du ZIP, c’est **2540 €** (règle pack **`cesu-prefinance-plafond-aide-financiere-employeur`**, paramètre **`maxAnnualAidPerBeneficiaryEur`**). **Interdit** de substituer un chiffre trouvé au hasard sur internet : la **référence** est le **rule pack** versionné (`meta.rulePackVersion` après `simulate.mjs`). Un dépassement de saisie se lit dans **`warnings`** (`cesu_prefunded_exceeds_employer_aid_annual_cap`).
 
 ## Règle non négociable — simulation
 
@@ -44,7 +44,7 @@ Pour **comparer plusieurs modes**, construis **un JSON par mode** et exécute **
 - **`REFERENCE.md`** : champs par `mode`, limites moteur.
 - **`scenario-input.schema.json`** : contrat JSON.
 - **`examples/*.json`** : gabarits à copier puis adapter avant de passer à `simulate.mjs`.
-- **`research/`** : rapports **DR-*.md** (recherche approfondie) + **`research/README.md`**. Ce sont des **sources auxquelles tu peux te référer si besoin** (pédagogie, limites, contexte réglementaire) — **pas** la source des montants. **Priorité** : toujours **`simulate.mjs`** + **`snapshot` / `trace` / `warnings`** + **`meta.rulePackVersion`** (voir `README` du dossier `research/`).
+- **`research/`** : rapports **DR-\*.md** (recherche approfondie) + **`research/README.md`**. Ce sont des **sources auxquelles tu peux te référer si besoin** (pédagogie, limites, contexte réglementaire) — **pas** la source des montants. **Priorité** : toujours **`simulate.mjs`** + **`snapshot` / `trace` / `warnings`** + **`meta.rulePackVersion`** (voir `README` du dossier `research/`).
 
 ## Procédure
 

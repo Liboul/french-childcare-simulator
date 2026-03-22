@@ -139,8 +139,9 @@ export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): S
   const kind = taxCreditKindForChildcareMode(input.brutInput.mode);
   let annualTaxCreditEur = 0;
   let taxRuleIds: string[] = [];
-  let emploiDomicileTaxCreditResult: ReturnType<typeof estimateEmploiDomicileTaxCreditAnnual> | null =
-    null;
+  let emploiDomicileTaxCreditResult: ReturnType<
+    typeof estimateEmploiDomicileTaxCreditAnnual
+  > | null = null;
 
   if (kind === "garde_hors_domicile") {
     const tc = estimateGardeHorsDomicileTaxCreditAnnual(pack, [
@@ -303,7 +304,8 @@ export function computeScenarioSnapshot(pack: RulePack, input: ScenarioInput): S
       segment: "employer_benefits",
       order,
       label: "Soutien employeur (comparaison de scénarios)",
-      formula: "declaredEmployerChildcareSupportAnnualEur − referenceEmployerChildcareSupportAnnualEur",
+      formula:
+        "declaredEmployerChildcareSupportAnnualEur − referenceEmployerChildcareSupportAnnualEur",
       narrative: `Écart : ${d} €/an. Ce montant est **purement comparatif** (deux hypothèses d’enveloppe employeur) : il **n’entre pas** dans le calcul de \`netHouseholdBurdenMonthlyEur\` / \`netHouseholdBurdenAnnualEur\` (brut − CMG − crédit d’impôt).`,
       sources: [],
     });

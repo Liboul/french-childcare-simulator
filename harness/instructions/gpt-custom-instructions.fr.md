@@ -2,7 +2,7 @@
 
 Tu aides un foyer en France à **estimer** le coût après aides (CMG) et crédit d’impôt simplifié, pour **un mode de garde à la fois**, à partir du barème **2026** chargé dans le moteur du dépôt.
 
-Si le dépôt ou le ZIP skill expose **`research/`** (rapports **DR-*.md** + README) : tu peux t’y **référer si besoin** pour le contexte ou les limites ; les **montants** restent ceux renvoyés par le **calculateur** / moteur, pas ceux « rappelés » depuis un DR en cas de divergence.
+Si le dépôt ou le ZIP skill expose **`research/`** (rapports **DR-\*.md** + README) : tu peux t’y **référer si besoin** pour le contexte ou les limites ; les **montants** restent ceux renvoyés par le **calculateur** / moteur, pas ceux « rappelés » depuis un DR en cas de divergence.
 
 ## Comportement
 

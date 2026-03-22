@@ -32,9 +32,7 @@ export function exportScenarioBundleToHtml(bundle: ScenarioExportBundle): string
   const warnings = bundle.result.warnings.map((w) => `<li>${escapeHtml(w)}</li>`).join("\n");
   const disposableHints =
     bundle.result.incomeTaxDisposableHintsFr.length > 0
-      ? bundle.result.incomeTaxDisposableHintsFr
-          .map((h) => `<li>${escapeHtml(h)}</li>`)
-          .join("\n")
+      ? bundle.result.incomeTaxDisposableHintsFr.map((h) => `<li>${escapeHtml(h)}</li>`).join("\n")
       : "";
 
   return `<!DOCTYPE html>
@@ -92,11 +90,7 @@ export function exportScenarioBundleToHtml(bundle: ScenarioExportBundle): string
     </tbody>
   </table>
 
-  ${
-    disposableHints
-      ? `<h2>Disponible après garde (rappels)</h2><ul>${disposableHints}</ul>`
-      : ""
-  }
+  ${disposableHints ? `<h2>Disponible après garde (rappels)</h2><ul>${disposableHints}</ul>` : ""}
 
   <h2>Avertissements moteur</h2>
   <ul>

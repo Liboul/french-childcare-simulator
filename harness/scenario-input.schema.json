@@ -11,9 +11,7 @@
           "maximum": 9007199254740991
         }
       },
-      "required": [
-        "taxYear"
-      ],
+      "required": ["taxYear"],
       "additionalProperties": false
     },
     "brutInput": {
@@ -68,12 +66,7 @@
               "additionalProperties": false
             }
           },
-          "required": [
-            "mode",
-            "hourlyGrossEur",
-            "hoursPerMonth",
-            "employerShareOfGross"
-          ],
+          "required": ["mode", "hourlyGrossEur", "hoursPerMonth", "employerShareOfGross"],
           "additionalProperties": false
         },
         {
@@ -222,10 +215,7 @@
               "type": "number"
             }
           },
-          "required": [
-            "mode",
-            "monthlyParticipationEur"
-          ],
+          "required": ["mode", "monthlyParticipationEur"],
           "additionalProperties": false
         },
         {
@@ -239,10 +229,7 @@
               "type": "number"
             }
           },
-          "required": [
-            "mode",
-            "monthlyParticipationEur"
-          ],
+          "required": ["mode", "monthlyParticipationEur"],
           "additionalProperties": false
         },
         {
@@ -256,10 +243,7 @@
               "type": "number"
             }
           },
-          "required": [
-            "mode",
-            "monthlyParticipationEur"
-          ],
+          "required": ["mode", "monthlyParticipationEur"],
           "additionalProperties": false
         }
       ]
@@ -306,28 +290,20 @@
         },
         "childAgeBand": {
           "type": "string",
-          "enum": [
-            "under3",
-            "age3to6"
-          ]
+          "enum": ["under3", "age3to6"]
         },
         "monthlyStructureExpenseEur": {
           "type": "number"
         },
         "territory": {
           "type": "string",
-          "enum": [
-            "metropole",
-            "mayotte"
-          ]
+          "enum": ["metropole", "mayotte"]
         },
         "hourlyCrecheFeeEur": {
           "type": "number"
         }
       },
-      "required": [
-        "cumul"
-      ],
+      "required": ["cumul"],
       "additionalProperties": false
     },
     "taxCredit": {
@@ -379,10 +355,7 @@
         },
         "filing": {
           "type": "string",
-          "enum": [
-            "individual",
-            "joint"
-          ]
+          "enum": ["individual", "joint"]
         },
         "annualHouseholdIncomeAfterIncomeTaxEur": {
           "type": "number"
@@ -397,11 +370,7 @@
       "additionalProperties": false
     }
   },
-  "required": [
-    "household",
-    "brutInput",
-    "cmg"
-  ],
+  "required": ["household", "brutInput", "cmg"],
   "additionalProperties": false,
   "$id": "https://french-childcare-costs.local/schemas/scenario-input.json",
   "title": "ScenarioInput"

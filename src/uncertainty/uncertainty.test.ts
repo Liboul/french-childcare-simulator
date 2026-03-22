@@ -59,7 +59,9 @@ describe("engineWarningsToFlags", () => {
     ]);
     expect(f.find((x) => x.code.includes("scenario_annual"))?.severity).toBe("info");
     expect(f.find((x) => x.code.includes("employer_childcare"))?.severity).toBe("warning");
-    expect(f.find((x) => x.code.includes("employer_childcare"))?.messageFr).toContain("reste à charge");
+    expect(f.find((x) => x.code.includes("employer_childcare"))?.messageFr).toContain(
+      "reste à charge",
+    );
   });
 });
 
