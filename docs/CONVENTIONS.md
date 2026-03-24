@@ -37,6 +37,7 @@ scripts/
 ## Paquets skill
 
 - L’archive skill embarque le **distillat** (code, `config/`, doc paramètres) — **pas** `docs/research/`. Voir [`packaging/README.md`](packaging/README.md).
+- **Cursor (projet local)** : après `package:skill`, `bun run link:cursor-skill` — même fichier, section « Cursor ».
 - Chaque scénario livré dans le ZIP doit inclure le **script** et le **code source** correspondant sous un chemin prévisible, ex. `scenarios/<slug>/` (détail dans la story de packaging).
 
 ## Config

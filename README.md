@@ -20,4 +20,4 @@ bun run ci
 
 Scénarios (stub) : `bun run scenario:creche-publique` (ou `creche-berceau-employeur`, `assistante-maternelle`, `nounou-domicile`).
 
-**Packaging skill** : `bun run package:skill` → `dist/comparatif-modes-garde-fr-2026-skill.zip` (distillat, pas `docs/research/`). Prochaines stories : **moteur métier** par scénario — voir [`docs/SPRINT_PLAN.md`](docs/SPRINT_PLAN.md).
+**Packaging skill** : `bun run package:skill` → `dist/comparatif-modes-garde-fr-2026-skill.zip` (distillat, pas `docs/research/`). **Cursor (local)** : après ce build, `bun run link:cursor-skill` recrée le symlink `.cursor/skills/comparatif-modes-garde-fr-2026` → `dist/skill-stage/…` — détails dans [`docs/packaging/README.md`](docs/packaging/README.md). Prochaines stories : **moteur métier** par scénario — voir [`docs/SPRINT_PLAN.md`](docs/SPRINT_PLAN.md).

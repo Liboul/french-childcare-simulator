@@ -31,3 +31,12 @@ bun run package:skill
 Produit `dist/skill-stage/comparatif-modes-garde-fr-2026/` et **`dist/comparatif-modes-garde-fr-2026-skill.zip`**. L’archive contient notamment **`scripts/simulate.mjs`** (Node, bundle), **`src/scenarios/`**, **`src/config/`** (parse / schéma) et **`src/shared/`** (chargement du pack), mais **pas** `docs/research/`.
 
 **`simulate.mjs`** : entrées **JSON** optionnelles par slug (3ᵉ argument, variable `SIMULATE_INPUT`, ou stdin si 3ᵉ argument = `-`) ; validation stricte des clés dans le code (`simulate-input.ts`) — pas de fichiers `*.test.ts` copiés sous `src/` dans le ZIP.
+
+## Cursor — skill projet (local uniquement)
+
+Pour que **Cursor** charge le skill depuis ce dépôt (Agent Skills au niveau projet), il faut le **dossier** `comparatif-modes-garde-fr-2026` avec `SKILL.md` à la racine du skill — le même arbre que `dist/skill-stage/comparatif-modes-garde-fr-2026/` (contenu aligné sur le ZIP).
+
+1. `bun run package:skill` — génère `dist/` (gitignoré).
+2. `bun run link:cursor-skill` — exécute [`scripts/link-cursor-skill-local.ts`](../../scripts/link-cursor-skill-local.ts) : crée ou remplace le symlink **`.cursor/skills/comparatif-modes-garde-fr-2026`** → **`../../dist/skill-stage/comparatif-modes-garde-fr-2026`**.
+
+Ce second script **ne doit pas** faire partie de la CI : la CI peut se limiter à `package:skill` (ZIP + staging). Après un clone, tant que `dist/` n’existe pas, le symlink versionné est **cassé** jusqu’au premier `package:skill` puis `link:cursor-skill`.

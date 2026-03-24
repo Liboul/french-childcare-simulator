@@ -14,6 +14,8 @@ bun run ci
 
 Archive skill (ZIP) : `bun run package:skill` — voir [`docs/packaging/README.md`](docs/packaging/README.md).
 
+**Skill Cursor dans l’éditeur (local, hors CI)** : après `package:skill`, exécuter `bun run link:cursor-skill` pour que le symlink versionné sous `.cursor/skills/` pointe vers `dist/skill-stage/comparatif-modes-garde-fr-2026/`. Sans dossier `dist/` (non versionné), lancer d’abord `package:skill`. Même section « Cursor » dans [`docs/packaging/README.md`](docs/packaging/README.md).
+
 `bun run ci` exécute : typecheck, ESLint, Prettier (check), tests (`bun test ./src` — limite explicite au dépôt courant, pas `./trash/src`).
 
 ## Règles métier et chiffres

@@ -4,9 +4,9 @@
 
 Ce document définit le **produit** et les **contraintes d’architecture** pour un dépôt reparti **à zéro** : moins de code, plus d’utilité pour un **agent IA** qui doit accompagner un utilisateur dans la **simulation d’un scénario de garde** (et, le cas échéant, la **comparaison** entre scénarios).
 
-L’objectif n’est pas de maximiser les fonctionnalités dans du code fourni via des script à un, mais de fournir une **interface claire** (scripts packagés dans un skill, documentation des paramètres, rendus obligatoires) pour que l’agent sache **quels scénarios existent**, **comment les paramétrer**, **où lire les règles**, et **comment présenter un bilan complet et vérifiable**.
+L’objectif n’est pas de maximiser les fonctionnalités dans du code fourni **sous forme de scripts isolés**, mais de fournir une **interface claire** (scripts packagés dans un skill, documentation des paramètres, rendus obligatoires) pour que l’agent sache **quels scénarios existent**, **comment les paramétrer**, **où lire les règles**, et **comment présenter un bilan complet et vérifiable**.
 
-> **Ancienne base** : le code et la doc historiques ont été déplacés sous `./trash/` pour permettre une réimplémentation sélective (copie de morceules utiles), sans hériter d’une structure devenue trop lourde par rapport à cet objectif.
+> **Ancienne base** : le code et la doc historiques ont été déplacés sous `./trash/` pour permettre une réimplémentation sélective (copie de morceaux utiles), sans hériter d’une structure devenue trop lourde par rapport à cet objectif.
 
 ---
 
@@ -92,7 +92,7 @@ Les **intermédiaires de calcul** (assiettes, plafonds appliqués, taux) font pa
 
 ### 6.1 Exigence
 
-Le **README principal du skill** doit indiquer **explicitement** que l’agent doit **toujours** produire un **tableau complet et précis** du bilan pour le scénario traité, et qu’**omettre** des lignes importantes ou les **sources** est une **erreur d' usage** du skill.
+Le **README principal du skill** doit indiquer **explicitement** que l’agent doit **toujours** produire un **tableau complet et précis** du bilan pour le scénario traité, et qu’**omettre** des lignes importantes ou les **sources** est une **erreur d’usage** du skill.
 
 ### 6.2 Structure minimale des colonnes
 
