@@ -28,14 +28,14 @@ Le résultat doit rester une **aide à la simulation**, pas un conseil fiscal ou
 
 Chaque ligne ci-dessous est un **scénario produit** au sens « fonction métier + packaging skill ». Les **variations** (crèche municipale vs intercommunale, taux réduit, nombre d’enfants, etc.) sont des **paramètres** et/ou des **variantes documentées** dans la fiche du scénario, pas nécessairement des fichiers séparés au premier abord.
 
-| Scénario | Description courte | Variations typiques (non exhaustif) |
-| -------- | ------------------ | ----------------------------------- |
-| **Crèche publique** | Garde en structure publique, participation famille, **PSU** / revenus, éventuels frais. | Tarif local (commune / CAF), tranche de revenus, âge, quotité, jours ouvrés, frais de cantine. |
-| **Crèche avec berceau payé par l’entreprise** | Prise en charge employeur (berceau inter-entreprises ou équivalent) avec effets sur **salaire brut**, **avantage en nature** ou exonération selon cas, comparaison au **coût employeur**. | Plafonds d’exonération, quote-part salariale, impact sur l’IR / le net, cumuls avec autres avantages. |
-| **Assistante maternelle** | Emploi / accueil en MAM selon périmètre retenu ; cotisations ; **CMG** mode « agréé » ; crédit d’impôt selon assiette. | Horaires, rémunération, indemnités d’entretien / repas, MAM vs accueil individuel, nombre d’enfants accueillis chez l’assmat. |
-| **Nounou à domicile (seul ou co-famille(s))** | Emploi direct ; PAJE / CESU / cotisations ; **CMG** garde à domicile ; crédit d’impôt emploi à domicile ; coûts complémentaires (transport, congés, etc.). | Mono-employeur vs **co-employeurs** / répartition des heures et des coûts, aides déjà consommées ailleurs, non-cumuls. |
+| Scénario                                      | Description courte                                                                                                                                                                        | Variations typiques (non exhaustif)                                                                                           |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| **Crèche publique**                           | Garde en structure publique, participation famille, **PSU** / revenus, éventuels frais.                                                                                                   | Tarif local (commune / CAF), tranche de revenus, âge, quotité, jours ouvrés, frais de cantine.                                |
+| **Crèche avec berceau payé par l’entreprise** | Prise en charge employeur (berceau inter-entreprises ou équivalent) avec effets sur **salaire brut**, **avantage en nature** ou exonération selon cas, comparaison au **coût employeur**. | Plafonds d’exonération, quote-part salariale, impact sur l’IR / le net, cumuls avec autres avantages.                         |
+| **Assistante maternelle**                     | Emploi / accueil en MAM selon périmètre retenu ; cotisations ; **CMG** mode « agréé » ; crédit d’impôt selon assiette.                                                                    | Horaires, rémunération, indemnités d’entretien / repas, MAM vs accueil individuel, nombre d’enfants accueillis chez l’assmat. |
+| **Nounou à domicile (seul ou co-famille(s))** | Emploi direct ; PAJE / CESU / cotisations ; **CMG** garde à domicile ; crédit d’impôt emploi à domicile ; coûts complémentaires (transport, congés, etc.).                                | Mono-employeur vs **co-employeurs** / répartition des heures et des coûts, aides déjà consommées ailleurs, non-cumuls.        |
 
-Les **recherches approfondies** (`docs/research/`, prompts **DR-***) restent le référentiel pour détailler règles, plafonds et non-cumuls ; elles seront **réintégrées ou régénérées** au fil des stories.
+Les **recherches approfondies** (`docs/research/`, prompts **DR-\***) restent le référentiel pour détailler règles, plafonds et non-cumuls ; elles seront **réintégrées ou régénérées** au fil des stories.
 
 ---
 
@@ -98,12 +98,12 @@ Le **README principal du skill** doit indiquer **explicitement** que l’agent d
 
 Le tableau (ou équivalent structuré puis rendu en tableau) doit comporter au minimum :
 
-| Colonne | Rôle |
-| ------- | ---- |
-| **Libellé** | Ligne du bilan (ex. « Cotisations salariales », « CMG », « Crédit d’impôt emploi à domicile »). |
-| **Montant** | Valeur principale (€ / mois / an selon convention documentée pour le scénario). |
-| **Calcul / formule** | Expression ou enchaînement lisible (ex. « min(plafond ; 50 % × base) »), renvoyant aux paramètres numériques utilisés. |
-| **Sources** | Lien(s) vers la règle officielle ou la référence légale (Service-Public, CAF, impots.gouv, URSSAF, collectivité, etc.). |
+| Colonne              | Rôle                                                                                                                    |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **Libellé**          | Ligne du bilan (ex. « Cotisations salariales », « CMG », « Crédit d’impôt emploi à domicile »).                         |
+| **Montant**          | Valeur principale (€ / mois / an selon convention documentée pour le scénario).                                         |
+| **Calcul / formule** | Expression ou enchaînement lisible (ex. « min(plafond ; 50 % × base) »), renvoyant aux paramètres numériques utilisés.  |
+| **Sources**          | Lien(s) vers la règle officielle ou la référence légale (Service-Public, CAF, impots.gouv, URSSAF, collectivité, etc.). |
 
 Des colonnes supplémentaires (période, commentaire, id de règle dans `config/`) sont les bienvenues si elles améliorent la traçabilité.
 
@@ -166,27 +166,27 @@ Les principes suivants, issus de la gouvernance du dépôt avant reset, **resten
 - **Une seule source de vérité** pour les chiffres (fichiers de config).
 - **Traçabilité** avant polish UI.
 - **Petits commits**, pas de refactor gratuit hors story.
-- **Recherche approfondie** : lorsque nécessaire, le **propriétaire du projet** exécute les prompts **DR-*** dans un outil externe ; l’agent ne remplace pas cette étape par de la navigation ad hoc.
+- **Recherche approfondie** : lorsque nécessaire, le **propriétaire du projet** exécute les prompts **DR-\*** dans un outil externe ; l’agent ne remplace pas cette étape par de la navigation ad hoc.
 
 ### 10.3 Stack technique (par défaut)
 
 Sauf décision contraire documentée en story :
 
-| Élément | Choix |
-| ------- | ----- |
-| Langage | **TypeScript** strict |
-| Runtime / paquets | **Bun** |
-| Tests | **Vitest** |
-| Lint / format | **ESLint** + **Prettier** |
-| CI | Pipeline type **GitHub Actions** (`bun run ci` : typecheck, lint, format check, tests) |
+| Élément           | Choix                                                                                  |
+| ----------------- | -------------------------------------------------------------------------------------- |
+| Langage           | **TypeScript** strict                                                                  |
+| Runtime / paquets | **Bun**                                                                                |
+| Tests             | **Bun test**                                                                           |
+| Lint / format     | **ESLint** + **Prettier**                                                              |
+| CI                | Pipeline type **GitHub Actions** (`bun run ci` : typecheck, lint, format check, tests) |
 
 ### 10.4 Livraison « moteur + skill »
 
 Le produit a deux couches :
 
-| Couche | Rôle |
-| ------ | ---- |
-| **Cœur** | Fonctions scénario, config, tests, exports structurés |
+| Couche              | Rôle                                                                                         |
+| ------------------- | -------------------------------------------------------------------------------------------- |
+| **Cœur**            | Fonctions scénario, config, tests, exports structurés                                        |
 | **Skill / harness** | Instructions, scripts packagés, INTAKE, exemples, ZIP ou chemins repo — selon ADR à réécrire |
 
 ---
@@ -199,8 +199,8 @@ Le résultat structuré (JSON) est la **source de vérité** pour l’agent. Les
 
 ## 12. Prochaines étapes (hors périmètre de ce fichier)
 
-1. Recréer **`docs/SPRINT_PLAN.md`** et la structure **`docs/stories/`** à partir du § 10.
-2. Définir les **conventions de nommage** des scripts par scénario et des helpers partagés.
+1. ~~Recréer **`docs/SPRINT_PLAN.md`**, **`docs/CONVENTIONS.md`** et la structure **`docs/stories/`**~~ — fait ; voir [`SPRINT_PLAN.md`](./SPRINT_PLAN.md).
+2. Implémenter les **scénarios** et le **packaging skill** selon les stories du plan.
 3. Réimporter depuis `./trash/` les éléments utiles (config, traces, research) story par story, plutôt qu’en copier-coller massif.
 
 ---

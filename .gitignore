@@ -1,2 +1,7 @@
 # Ancienne base déplacée ici pour repartir de zéro — retirer cette ligne pour versionner ./trash/
 /trash/
+
+node_modules/
+dist/
+coverage/
+./cursor/skills/

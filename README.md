@@ -1,7 +1,20 @@
 # french-childcare-costs
 
-Le dépôt a été **réinitialisé** : l’historique de code et de documentation utile à la migration se trouve en local sous **`./trash/`** (dossier **ignoré par git** par défaut ; éditer `.gitignore` si vous souhaitez le versionner).
+Comparaison des **coûts réels** des modes de garde en France — **orientée agent** (scripts, bilans, sources). La spec produit est **[`docs/INITIAL_SPEC.md`](docs/INITIAL_SPEC.md)**.
 
-La **spécification produit** actuelle est dans **[`docs/INITIAL_SPEC.md`](docs/INITIAL_SPEC.md)** (orientation agent, scénarios, tableaux de bilan, mode opératoire sprint/commits).
+| Doc                                          | Rôle                                            |
+| -------------------------------------------- | ----------------------------------------------- |
+| [`docs/SPRINT_PLAN.md`](docs/SPRINT_PLAN.md) | Sprints, DoD, backlog, deep research            |
+| [`docs/CONVENTIONS.md`](docs/CONVENTIONS.md) | Nommage scénarios et chemins code               |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md)         | Installation, `bun run ci`, commits `GARDE-###` |
 
-Prochaine étape : recréer `docs/SPRINT_PLAN.md`, le bootstrap technique (Bun, TypeScript, tests) et les stories à partir de cette spec.
+Ancienne base locale (non versionnée par défaut) : **`./trash/`** — retirer `/trash/` de `.gitignore` pour la versionner.
+
+## Développement
+
+```bash
+bun install
+bun run ci
+```
+
+Prochaine story prioritaire : **`GARDE-003`** (schéma config + parse) — voir [`docs/SPRINT_PLAN.md`](docs/SPRINT_PLAN.md).

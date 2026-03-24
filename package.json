@@ -1,0 +1,25 @@
+{
+  "name": "french-childcare-costs",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test ./src",
+    "test:watch": "bun test --watch ./src",
+    "lint": "eslint src",
+    "format": "prettier --check .",
+    "format:write": "prettier --write .",
+    "ci": "bun run typecheck && bun run lint && bun run format && bun run test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "@types/bun": "^1.3.11",
+    "eslint": "^9.21.0",
+    "eslint-config-prettier": "^10.0.1",
+    "prettier": "^3.5.2",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.26.0"
+  }
+}
