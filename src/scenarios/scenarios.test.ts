@@ -9,7 +9,7 @@ import { computeNounouDomicile } from "./nounou-domicile/index";
 import { renderBilanTableau as renderNounou } from "./nounou-domicile/render-table";
 import { SCENARIO_SLUGS } from "./registry";
 
-describe("scenarios (GARDE-005 / GARDE-007 / GARDE-008 / GARDE-009)", () => {
+describe("scenarios (GARDE-005 … GARDE-010)", () => {
   it("registry lists four slugs", () => {
     expect(SCENARIO_SLUGS).toHaveLength(4);
   });
@@ -66,10 +66,26 @@ describe("scenarios (GARDE-005 / GARDE-007 / GARDE-008 / GARDE-009)", () => {
     expect(t.lignes.some((l) => l.libelle.includes("Coût employeur mensuel"))).toBe(true);
   });
 
-  it("nounou domicile compute + render", () => {
+  it("nounou domicile stub sans coût", () => {
     const r = computeNounouDomicile({});
+    expect(r.status).toBe("stub");
     expect(r.meta.rulePackVersion).toBeDefined();
     const t = renderNounou(r);
     expect(t.scenarioSlug).toBe("nounou-domicile");
+    expect(t.lignes.some((l) => l.libelle.toLowerCase().includes("smic"))).toBe(true);
+  });
+
+  it("nounou domicile partial (CMG calculé + crédit emploi à domicile)", () => {
+    const r = computeNounouDomicile({
+      monthlyEmploymentCostEur: 1200,
+      monthlyHouseholdIncomeForCmgEur: 3500,
+      householdChildRank: 1,
+      childrenCountForCreditCeiling: 1,
+    });
+    expect(r.status).toBe("partial");
+    expect(r.trace?.cmgSource).toBe("calcul_pack");
+    expect(r.trace?.annualCreditEmploiDomicileEur).toBeGreaterThan(0);
+    const t = renderNounou(r);
+    expect(t.lignes.some((l) => l.libelle.includes("Crédit d’impôt emploi à domicile"))).toBe(true);
   });
 });

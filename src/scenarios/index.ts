@@ -22,5 +22,6 @@ export {
 export {
   type NounouDomicileInput,
   type NounouDomicileResult,
+  type NounouDomicileTrace,
   computeNounouDomicile,
 } from "./nounou-domicile/index";
