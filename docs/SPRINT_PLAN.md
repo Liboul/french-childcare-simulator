@@ -66,6 +66,7 @@ Une story est **terminée** lorsque **tous** les points suivants sont vrais :
 | **GARDE-001** | 2026-03-24       | Done. Reset dépôt + nouvelle [`INITIAL_SPEC.md`](./INITIAL_SPEC.md) agent-first ; ancien code dans `./trash/` (gitignored).                                                                                                |
 | **GARDE-002** | 2026-03-24       | Done. Toolchain Bun + TS strict + `bun test` + ESLint + Prettier + CI `bun run ci` ; `src/` minimal ; [`SPRINT_PLAN.md`](./SPRINT_PLAN.md), [`CONVENTIONS.md`](./CONVENTIONS.md), [`CONTRIBUTING.md`](../CONTRIBUTING.md). |
 | **GARDE-003** | 2026-03-24       | Done. Zod `rulePackSchema`, `parseRulePack`, `findRule` ; `config/rules.example.json` + `config/rules.fr-2026.json` (réimport) ; tests [`docs/stories/GARDE-003.md`](./stories/GARDE-003.md).                              |
+| **GARDE-004** | 2026-03-24       | Done. Réimport `docs/research/` (+ `prompts/`) ; [`packaging/README.md`](./packaging/README.md) et [`research/README.md`](./research/README.md) (DR hors package skill, distillat dedans) ; spec + sprint alignés.         |
 
 ---
 
@@ -107,43 +108,43 @@ Au **début** de chaque story : **rédiger ou mettre à jour** `docs/stories/GAR
 
 **Deep research** = vérification systématique sur sources **officielles** (Service-Public, CAF, impots.gouv, URSSAF, collectivités), non-cumuls, plafonds 2026.
 
-**Passage obligatoire** : si la recherche est nécessaire, le **propriétaire du projet** exécute le prompt **DR-** dans un outil externe ; le dépôt stocke le résultat sous `docs/research/`.
+**Passage obligatoire** : si la recherche est nécessaire, le **propriétaire du projet** exécute le prompt **DR-** dans un outil externe ; le dépôt stocke le résultat sous **`docs/research/`** (rapports **DR-\*.md** et **`prompts/`**).
 
-Les prompts historiques sont récupérables dans **`./trash/docs/research/prompts/`** en attendant de les réintégrer.
+**Packaging** : ces livrables restent un **outil de travail dans le dépôt**. Le **package skill** (ZIP ou équivalent) **n’inclut pas** les deep research brutes : il embarque le **distillat** nécessaire à la simulation (`config/`, code, doc paramètres / scénarios). Détail : [`packaging/README.md`](./packaging/README.md).
 
 ---
 
 ## Delivery model : moteur + skill
 
-| Layer               | Role                                                                         |
-| ------------------- | ---------------------------------------------------------------------------- |
-| **Cœur**            | Fonctions scénario, config, tests, JSON structuré, `renderBilanTableau`      |
-| **Harness / skill** | Instructions, scripts packagés, INTAKE, exemples — par fournisseur si besoin |
+| Layer               | Role                                                                                                                                                   |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Cœur**            | Fonctions scénario, `config/`, tests, JSON structuré, `renderBilanTableau`                                                                             |
+| **Harness / skill** | Instructions, scripts, INTAKE, exemples ; **contenu packagé = distillat** (pas `docs/research/`) — voir [`packaging/README.md`](./packaging/README.md) |
 
 ---
 
 ## Epic map (cible)
 
-| Epic                    | Goal                                                                                        |
-| ----------------------- | ------------------------------------------------------------------------------------------- |
-| **E0 — Foundation**     | Repo, TS, Bun, `bun test`, lint, CI, conventions                                            |
-| **E1 — Rules & data**   | Packs de règles + research `docs/research/`                                                 |
-| **E2 — Scénarios**      | Une fonction + script + doc par scénario (voir [`CONVENTIONS.md`](./CONVENTIONS.md))        |
-| **E3 — Shared helpers** | Net depuis brut, IR simplifié, etc. — scripts + doc                                         |
-| **E4 — Packaging**      | Skill ZIP / repo, README « tableau obligatoire », FAQ « Que puis-je faire avec ce skill ? » |
+| Epic                    | Goal                                                                                            |
+| ----------------------- | ----------------------------------------------------------------------------------------------- |
+| **E0 — Foundation**     | Repo, TS, Bun, `bun test`, lint, CI, conventions                                                |
+| **E1 — Rules & data**   | `config/` + `docs/research/` (DR dans le dépôt pour audit ; distillat seul dans le skill)       |
+| **E2 — Scénarios**      | Une fonction + script + doc par scénario (voir [`CONVENTIONS.md`](./CONVENTIONS.md))            |
+| **E3 — Shared helpers** | Net depuis brut, IR simplifié, etc. — scripts + doc                                             |
+| **E4 — Packaging**      | Skill (ZIP / repo) : **distillat** + instructions ; pas les DR ; FAQ tableau / « Que puis-je… » |
 
 ---
 
 ## Backlog (stories) — à affiner
 
-| ID            | Title                                                                 | Epic | Notes                     |
-| ------------- | --------------------------------------------------------------------- | ---- | ------------------------- |
-| **GARDE-001** | Reset + `INITIAL_SPEC` agent-first                                    | E0   | Done                      |
-| **GARDE-002** | Bootstrap : Bun, TS, `bun test`, ESLint, Prettier, CI, `src/` minimal | E0   | Done                      |
-| **GARDE-003** | Schéma config règles + parse (Zod)                                    | E1   | Done                      |
-| **GARDE-004** | Recherche packs DR-01… dans `docs/research/` (réimport ou rerun)      | E1   | Déléguer au propriétaire  |
-| **GARDE-005** | Squelette `src/scenarios/` : 4 scénarios + `renderBilanTableau` stub  | E2   |                           |
-| **GARDE-006** | Skill : `SKILL.md`, script `simulate.mjs`, packaging                  | E4   | Après DR-05 ou équivalent |
+| ID            | Title                                                                 | Epic | Notes               |
+| ------------- | --------------------------------------------------------------------- | ---- | ------------------- |
+| **GARDE-001** | Reset + `INITIAL_SPEC` agent-first                                    | E0   | Done                |
+| **GARDE-002** | Bootstrap : Bun, TS, `bun test`, ESLint, Prettier, CI, `src/` minimal | E0   | Done                |
+| **GARDE-003** | Schéma config règles + parse (Zod)                                    | E1   | Done                |
+| **GARDE-004** | `docs/research/` réintégré + politique packaging (distillat ≠ DR)     | E1   | Done                |
+| **GARDE-005** | Squelette `src/scenarios/` : 4 scénarios + `renderBilanTableau` stub  | E2   |                     |
+| **GARDE-006** | Skill : `SKILL.md`, `simulate.mjs`, ZIP **sans** `docs/research/`     | E4   | Distillat seulement |
 
 ---
 
@@ -162,4 +163,5 @@ Les prompts historiques sont récupérables dans **`./trash/docs/research/prompt
 
 - [`INITIAL_SPEC.md`](./INITIAL_SPEC.md)
 - [`CONVENTIONS.md`](./CONVENTIONS.md)
+- [`packaging/README.md`](./packaging/README.md) — contenu du package skill (distillat)
 - Stories : `docs/stories/GARDE-###.md` (template dans la story)

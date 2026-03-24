@@ -35,7 +35,7 @@ Chaque ligne ci-dessous est un **scénario produit** au sens « fonction métier
 | **Assistante maternelle**                     | Emploi / accueil en MAM selon périmètre retenu ; cotisations ; **CMG** mode « agréé » ; crédit d’impôt selon assiette.                                                                    | Horaires, rémunération, indemnités d’entretien / repas, MAM vs accueil individuel, nombre d’enfants accueillis chez l’assmat. |
 | **Nounou à domicile (seul ou co-famille(s))** | Emploi direct ; PAJE / CESU / cotisations ; **CMG** garde à domicile ; crédit d’impôt emploi à domicile ; coûts complémentaires (transport, congés, etc.).                                | Mono-employeur vs **co-employeurs** / répartition des heures et des coûts, aides déjà consommées ailleurs, non-cumuls.        |
 
-Les **recherches approfondies** (`docs/research/`, prompts **DR-\***) restent le référentiel pour détailler règles, plafonds et non-cumuls ; elles seront **réintégrées ou régénérées** au fil des stories.
+Les **recherches approfondies** (`docs/research/`, prompts **DR-\***) servent à **élaborer et auditer** règles, plafonds et non-cumuls dans le **dépôt**. Le **package skill** livré à l’agent **n’embarque pas** ces rapports bruts : il contient le **distillat** utile à la simulation — surtout **`config/`**, le **code**, et la **documentation paramètres / scénarios** (voir [`docs/packaging/README.md`](packaging/README.md)).
 
 ---
 

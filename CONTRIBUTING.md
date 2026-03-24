@@ -16,7 +16,7 @@ bun run ci
 
 ## Règles métier et chiffres
 
-Les plafonds, taux et exclusions fiscales / sociales doivent provenir de **`config/`** avec **sources** officielles ou **`todoVerify`**, jamais inventés. Voir [`docs/INITIAL_SPEC.md`](docs/INITIAL_SPEC.md) et [`docs/SPRINT_PLAN.md`](docs/SPRINT_PLAN.md) (deep research **DR-\***).
+Les plafonds, taux et exclusions fiscales / sociales doivent provenir de **`config/`** avec **sources** officielles ou **`todoVerify`**, jamais inventés. Les rapports **`docs/research/`** servent à rédiger la config ; l’**archive skill** n’embarque pas les DR, seulement le **distillat** — voir [`docs/packaging/README.md`](docs/packaging/README.md).
 
 ## Stories et commits
 
