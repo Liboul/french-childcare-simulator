@@ -19,3 +19,7 @@
 ```bash
 node scripts/simulate.mjs <slug>
 ```
+
+## Dépôt Git (contributeurs)
+
+Rebuild du package (ZIP + `dist/skill-stage/`), lien **Cursor** projet et prérequis : **`docs/packaging/README.md`** à la racine du dépôt (section « Cursor »).
