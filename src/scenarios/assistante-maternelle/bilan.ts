@@ -1,7 +1,7 @@
 import { findRule } from "../../config/find-rule";
 import type { RulePack } from "../../config/schema";
 import type { BilanLigne, BilanLigneSource } from "../bilan-table";
-import { rulePackReferenceLine } from "../render-common";
+import { monthlyEquivalentFromAnnualEur, rulePackReferenceLine } from "../render-common";
 import type { AssistanteMaternelleResult } from "./index";
 
 function sourcesFromRule(rule: {
@@ -47,9 +47,9 @@ export function buildAssistanteMaternelleLignes(
   });
 
   lignes.push({
-    libelle: "Dépenses éligibles au crédit d’impôt garde hors domicile (année)",
-    montantEur: 0,
-    calcul: `Éligible annuelle = ${String(t.annualEligibleExpenseForCreditEur)} €`,
+    libelle: "Base éligible crédit d’impôt F8 (équivalent mensuel, plafond par enfant)",
+    montantEur: monthlyEquivalentFromAnnualEur(t.annualEligibleExpenseForCreditEur),
+    calcul: `Éligible annuelle plafonnée ${String(t.annualEligibleExpenseForCreditEur)} € ÷ 12 — aligné sur les autres lignes en €/mois (\`params.md\`, trace).`,
     sources: creditRule ? sourcesFromRule(creditRule) : [],
   });
 

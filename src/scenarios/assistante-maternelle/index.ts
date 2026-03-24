@@ -4,7 +4,11 @@ import {
 } from "../../shared/cmg-assmat-emploi-direct";
 import { appendCreditVsIrSatellite } from "../../shared/credit-vs-ir-brut";
 import type { CreditVsIrBrutSatellite } from "../../shared/credit-vs-ir-brut";
-import { resolveCmgFromEmploymentInput } from "../../shared/cmg-from-employment-input";
+import {
+  isExplicitMonthlyCmgProvided,
+  isIncomeProvidedForCmgFormula,
+  resolveCmgFromEmploymentInput,
+} from "../../shared/cmg-from-employment-input";
 import {
   computeCreditGardeHorsDomicileAnnual,
   readCreditGardeHorsDomicileParams,
@@ -20,13 +24,15 @@ import type { ScenarioResultBase } from "../types";
 
 /**
  * Coût employeur mensuel (salaire + cotisations) pour la garde chez l’assistante maternelle agréée.
- * CMG : soit saisie (`monthlyCmgPaidEur`), soit calculée si `monthlyHouseholdIncomeForCmgEur` est fourni.
+ * CMG : soit saisie (`monthlyCmgPaidEur`), soit calculée si `monthlyHouseholdIncomeForCmgEur` est fourni (saisie prioritaire si les deux sont renseignés).
  */
 export type AssistanteMaternelleInput = {
+  /** Coût employeur mensuel (salaire + cotisations) — même assiette approximative pour CMG pack et crédit F8 ; voir `params.md`. */
   monthlyEmploymentCostEur?: number;
   monthlyHouseholdIncomeForCmgEur?: number;
   householdChildRank?: number;
   monthlyCmgPaidEur?: number;
+  /** Plafonds crédit F8 : enfants pour lesquels ces dépenses ouvrent le plafond (≠ obligatoirement tous les enfants du foyer). */
   childrenCount?: number;
   custody?: "full" | "shared";
   revenuNetImposableEur?: number;
@@ -140,7 +146,16 @@ export function computeAssistanteMaternelle(
   const notes: string[] = [
     "Garde chez une assistante maternelle agréée : crédit d’impôt **frais de garde hors du domicile** (CGI art. 200 quater B), pas le crédit emploi à domicile — aligné BOFiP / Service-Public pour ce mode.",
     "Calcul partiel : plafonds salaire / indemnités d’entretien et non-cumuls (PreParE, etc.) ne sont pas tous intégrés — voir pack et `docs/research/`.",
+    "Même montant `monthlyEmploymentCostEur` pour CMG et base F8 (approximation, postes non ventilés) ; taux et `deductCmgFromBase` : règle `credit-impot-garde-hors-domicile` — voir `params.md`.",
   ];
+  if (
+    isExplicitMonthlyCmgProvided(input.monthlyCmgPaidEur) &&
+    isIncomeProvidedForCmgFormula(input.monthlyHouseholdIncomeForCmgEur)
+  ) {
+    notes.push(
+      "CMG saisi et revenu pour barème tous deux fournis : seul le **CMG saisi** est utilisé ; le revenu est ignoré pour le calcul CMG — voir `params.md` (Priorité saisie / revenu).",
+    );
+  }
   if (!creditParams) {
     notes.push(
       "Avertissement : règle `credit-impot-garde-hors-domicile` absente du pack — crédit d’impôt à 0.",
