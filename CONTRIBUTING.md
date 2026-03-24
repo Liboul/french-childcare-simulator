@@ -12,6 +12,8 @@ bun install
 bun run ci
 ```
 
+Archive skill (ZIP) : `bun run package:skill` — voir [`docs/packaging/README.md`](docs/packaging/README.md).
+
 `bun run ci` exécute : typecheck, ESLint, Prettier (check), tests (`bun test ./src` — limite explicite au dépôt courant, pas `./trash/src`).
 
 ## Règles métier et chiffres

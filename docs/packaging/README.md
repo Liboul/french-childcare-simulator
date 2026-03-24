@@ -19,3 +19,13 @@ Il **n’embarque pas** les **deep research** complètes (`docs/research/DR-*.md
 - **`./trash/`**, artefacts CI internes, schémas de dev non requis à l’exécution.
 
 Les URLs **officielles** citées dans les calculs viennent surtout du **pack de règles** et des **lignes de trace** ; le distillat peut renvoyer vers les mêmes liens sans dupliquer tout le travail de recherche.
+
+## Génération dans le dépôt
+
+Sources des instructions : dossier **`skill/`** (`SKILL.md`, `INTAKE.md`, `REFERENCE.md`, `DISTILLAT.md`).
+
+```bash
+bun run package:skill
+```
+
+Produit `dist/skill-stage/comparatif-modes-garde-fr-2026/` et **`dist/comparatif-modes-garde-fr-2026-skill.zip`**. L’archive contient notamment **`scripts/simulate.mjs`** (Node, bundle) et **`src/scenarios/`**, mais **pas** `docs/research/`.

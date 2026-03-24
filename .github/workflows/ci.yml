@@ -21,3 +21,16 @@ jobs:
 
       - name: CI
         run: bun run ci
+
+      - name: Package skill (GARDE-006)
+        run: bun run package:skill
+
+      - name: Verify skill ZIP
+        run: |
+          unzip -l dist/comparatif-modes-garde-fr-2026-skill.zip | grep -q 'SKILL.md'
+          unzip -l dist/comparatif-modes-garde-fr-2026-skill.zip | grep -q 'scripts/simulate.mjs'
+          unzip -l dist/comparatif-modes-garde-fr-2026-skill.zip | grep -q 'config/rules.fr-2026.json'
+          if unzip -l dist/comparatif-modes-garde-fr-2026-skill.zip | grep -q 'docs/research'; then echo 'ZIP must not contain docs/research'; exit 1; fi
+          TMP=$(mktemp -d)
+          unzip -q dist/comparatif-modes-garde-fr-2026-skill.zip -d "$TMP"
+          node "$TMP/comparatif-modes-garde-fr-2026/scripts/simulate.mjs" creche-publique | grep -q '"scenarioSlug": "creche-publique"'

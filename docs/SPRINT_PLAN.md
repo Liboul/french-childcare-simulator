@@ -68,6 +68,7 @@ Une story est **terminée** lorsque **tous** les points suivants sont vrais :
 | **GARDE-003** | 2026-03-24       | Done. Zod `rulePackSchema`, `parseRulePack`, `findRule` ; `config/rules.example.json` + `config/rules.fr-2026.json` (réimport) ; tests [`docs/stories/GARDE-003.md`](./stories/GARDE-003.md).                              |
 | **GARDE-004** | 2026-03-24       | Done. Réimport `docs/research/` (+ `prompts/`) ; [`packaging/README.md`](./packaging/README.md) et [`research/README.md`](./research/README.md) (DR hors package skill, distillat dedans) ; spec + sprint alignés.         |
 | **GARDE-005** | 2026-03-24       | Done. `src/scenarios/` : 4 slugs, `compute*` + `renderBilanTableau`, `registry`, scripts `scripts/scenarios/` ; [`docs/stories/GARDE-005.md`](./stories/GARDE-005.md).                                                     |
+| **GARDE-006** | 2026-03-24       | Done. `skill/` + `bun run package:skill` → ZIP distillat ; `scripts/simulate.mjs` (Node) ; CI vérifie absence `docs/research/` ; [`docs/stories/GARDE-006.md`](./stories/GARDE-006.md).                                    |
 
 ---
 
@@ -138,14 +139,14 @@ Au **début** de chaque story : **rédiger ou mettre à jour** `docs/stories/GAR
 
 ## Backlog (stories) — à affiner
 
-| ID            | Title                                                                 | Epic | Notes               |
-| ------------- | --------------------------------------------------------------------- | ---- | ------------------- |
-| **GARDE-001** | Reset + `INITIAL_SPEC` agent-first                                    | E0   | Done                |
-| **GARDE-002** | Bootstrap : Bun, TS, `bun test`, ESLint, Prettier, CI, `src/` minimal | E0   | Done                |
-| **GARDE-003** | Schéma config règles + parse (Zod)                                    | E1   | Done                |
-| **GARDE-004** | `docs/research/` réintégré + politique packaging (distillat ≠ DR)     | E1   | Done                |
-| **GARDE-005** | Squelette `src/scenarios/` : 4 scénarios + `renderBilanTableau` stub  | E2   | Done                |
-| **GARDE-006** | Skill : `SKILL.md`, `simulate.mjs`, ZIP **sans** `docs/research/`     | E4   | Distillat seulement |
+| ID            | Title                                                                 | Epic | Notes |
+| ------------- | --------------------------------------------------------------------- | ---- | ----- |
+| **GARDE-001** | Reset + `INITIAL_SPEC` agent-first                                    | E0   | Done  |
+| **GARDE-002** | Bootstrap : Bun, TS, `bun test`, ESLint, Prettier, CI, `src/` minimal | E0   | Done  |
+| **GARDE-003** | Schéma config règles + parse (Zod)                                    | E1   | Done  |
+| **GARDE-004** | `docs/research/` réintégré + politique packaging (distillat ≠ DR)     | E1   | Done  |
+| **GARDE-005** | Squelette `src/scenarios/` : 4 scénarios + `renderBilanTableau` stub  | E2   | Done  |
+| **GARDE-006** | Skill : `SKILL.md`, `simulate.mjs`, ZIP **sans** `docs/research/`     | E4   | Done  |
 
 ---
 
