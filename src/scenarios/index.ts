@@ -15,6 +15,7 @@ export {
 export {
   type CrechePubliqueInput,
   type CrechePubliqueResult,
+  type CrechePubliqueTrace,
   computeCrechePublique,
 } from "./creche-publique/index";
 export {

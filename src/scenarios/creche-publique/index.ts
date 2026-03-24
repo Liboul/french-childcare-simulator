@@ -1,20 +1,106 @@
+import {
+  computeCreditGardeHorsDomicileAnnual,
+  readCreditGardeHorsDomicileParams,
+} from "../../shared/credit-garde-hors-domicile";
 import { getRulePack } from "../../shared/load-rules";
 import type { ScenarioResultBase } from "../types";
 
-/** Squelette — champs à ajouter dans les stories suivantes. */
-export type CrechePubliqueInput = Record<string, never>;
+/**
+ * `monthlyParticipationEur` : part facturée au foyer (après PSU / aides locales affichées sur la facture).
+ * Si la facture est **déjà nette de CMG**, mettre `monthlyCmgStructureEur: 0` (sinon double déduction).
+ */
+export type CrechePubliqueInput = {
+  monthlyParticipationEur?: number;
+  monthlyCmgStructureEur?: number;
+  childrenCount?: number;
+  custody?: "full" | "shared";
+};
 
-export type CrechePubliqueResult = ScenarioResultBase & { scenarioSlug: "creche-publique" };
+export type CrechePubliqueTrace = {
+  monthlyParticipationEur: number;
+  monthlyCmgStructureEur: number;
+  childrenCount: number;
+  custody: "full" | "shared";
+  annualEligibleExpenseForCreditEur: number;
+  annualCreditGardeHorsDomicileEur: number;
+  monthlyCreditEquivalentEur: number;
+  netMonthlyCashAfterCmgEur: number;
+  netMonthlyBurdenAfterCreditEur: number;
+};
+
+export type CrechePubliqueResult = ScenarioResultBase & {
+  scenarioSlug: "creche-publique";
+  trace?: CrechePubliqueTrace;
+};
 
 export function computeCrechePublique(input: CrechePubliqueInput): CrechePubliqueResult {
-  void input;
   const pack = getRulePack();
+  const meta = { rulePackVersion: pack.version, effectiveFrom: pack.effectiveFrom };
+
+  const raw = input.monthlyParticipationEur;
+  if (raw === undefined || raw === null || Number.isNaN(raw)) {
+    return {
+      scenarioSlug: "creche-publique",
+      status: "stub",
+      notes: [
+        "Saisir au minimum `monthlyParticipationEur` (part familiale mensuelle) pour un calcul partiel.",
+      ],
+      meta,
+    };
+  }
+  if (raw < 0) {
+    return {
+      scenarioSlug: "creche-publique",
+      status: "stub",
+      notes: ["`monthlyParticipationEur` doit être un nombre ≥ 0."],
+      meta,
+    };
+  }
+
+  const monthlyParticipationEur = raw;
+  const monthlyCmgStructureEur = Math.max(0, input.monthlyCmgStructureEur ?? 0);
+  const childrenCount = Math.max(1, Math.floor(input.childrenCount ?? 1));
+  const custody = input.custody === "shared" ? "shared" : "full";
+
+  const creditParams = readCreditGardeHorsDomicileParams(pack);
+  const creditAnnual = creditParams
+    ? computeCreditGardeHorsDomicileAnnual(creditParams, {
+        monthlyParticipationEur,
+        monthlyCmgEur: monthlyCmgStructureEur,
+        childrenCount,
+        custody,
+      })
+    : { annualEligibleExpenseEur: 0, annualCreditEur: 0 };
+
+  const monthlyCreditEquivalentEur = creditAnnual.annualCreditEur / 12;
+  const netMonthlyCashAfterCmgEur = monthlyParticipationEur - monthlyCmgStructureEur;
+  const netMonthlyBurdenAfterCreditEur = netMonthlyCashAfterCmgEur - monthlyCreditEquivalentEur;
+
+  const notes: string[] = [
+    "Calcul partiel : crédit d’impôt = 50 % des dépenses éligibles (plafonds par enfant, garde alternée si `custody: shared`), après déduction CMG si ventilée — paramètres `credit-impot-garde-hors-domicile` du pack.",
+    "Barème PSU / reste à charge structure non recalculé ici : la participation doit refléter la facture réelle ou une estimation (monenfant.fr, etc.).",
+  ];
+  if (!creditParams) {
+    notes.push(
+      "Avertissement : règle `credit-impot-garde-hors-domicile` absente du pack — crédit d’impôt à 0.",
+    );
+  }
+
   return {
     scenarioSlug: "creche-publique",
-    status: "stub",
-    notes: [
-      "Moteur garde non implémenté — le tableau reprend déjà le pack et le SMIC de référence",
-    ],
-    meta: { rulePackVersion: pack.version, effectiveFrom: pack.effectiveFrom },
+    status: "partial",
+    notes,
+    meta,
+    trace: {
+      monthlyParticipationEur,
+      monthlyCmgStructureEur,
+      childrenCount,
+      custody,
+      annualEligibleExpenseForCreditEur: creditAnnual.annualEligibleExpenseEur,
+      annualCreditGardeHorsDomicileEur: creditAnnual.annualCreditEur,
+      monthlyCreditEquivalentEur,
+      netMonthlyCashAfterCmgEur,
+      netMonthlyBurdenAfterCreditEur,
+    },
   };
 }

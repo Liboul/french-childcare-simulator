@@ -14,16 +14,26 @@ describe("scenarios stub (GARDE-005 / GARDE-007)", () => {
     expect(SCENARIO_SLUGS).toHaveLength(4);
   });
 
-  it("creche publique compute + render", () => {
+  it("creche publique stub sans participation", () => {
     const r = computeCrechePublique({});
     expect(r.status).toBe("stub");
     expect(r.meta.rulePackVersion).toMatch(/^\d+\.\d+\.\d+/);
     expect(r.meta.effectiveFrom).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     const t = renderCrechePublique(r);
     expect(t.scenarioSlug).toBe("creche-publique");
-    expect(t.lignes.length).toBeGreaterThanOrEqual(3);
     expect(t.lignes.some((l) => l.libelle.includes("Pack de règles"))).toBe(true);
     expect(t.lignes.some((l) => l.libelle.toLowerCase().includes("smic"))).toBe(true);
+  });
+
+  it("creche publique partial avec participation", () => {
+    const r = computeCrechePublique({ monthlyParticipationEur: 300, monthlyCmgStructureEur: 50 });
+    expect(r.status).toBe("partial");
+    expect(r.trace?.netMonthlyBurdenAfterCreditEur).toBeDefined();
+    const t = renderCrechePublique(r);
+    expect(t.lignes.some((l) => l.libelle.includes("Participation familiale"))).toBe(true);
+    expect(t.lignes.some((l) => l.libelle.includes("Crédit d’impôt garde hors domicile"))).toBe(
+      true,
+    );
   });
 
   it("creche berceau employeur compute + render", () => {

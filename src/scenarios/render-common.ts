@@ -9,16 +9,19 @@ function sourcesFromRule(rule: {
   return rule.sources.map((s) => ({ id: s.id, title: s.title, url: s.url }));
 }
 
+/** Ligne unique « pack version » (réutilisable par scénario métier). */
+export function rulePackReferenceLine(pack: RulePack): BilanLigne {
+  return {
+    libelle: "Pack de règles (référence)",
+    montantEur: 0,
+    calcul: `version=${pack.version}, effectiveFrom=${pack.effectiveFrom}`,
+    sources: [],
+  };
+}
+
 /** Lignes communes : référence pack + SMIC (référence nationale) + placeholder métier. */
 export function baseBilanLignes(result: ScenarioResultBase, pack: RulePack): BilanLigne[] {
-  const lignes: BilanLigne[] = [
-    {
-      libelle: "Pack de règles (référence)",
-      montantEur: 0,
-      calcul: `version=${pack.version}, effectiveFrom=${pack.effectiveFrom}`,
-      sources: [],
-    },
-  ];
+  const lignes: BilanLigne[] = [rulePackReferenceLine(pack)];
 
   const smic = findRule(pack, "tarif-smic-horaire-metropole-2026");
   if (smic) {

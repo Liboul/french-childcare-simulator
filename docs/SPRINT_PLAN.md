@@ -70,6 +70,7 @@ Une story est **terminée** lorsque **tous** les points suivants sont vrais :
 | **GARDE-005** | 2026-03-24       | Done. `src/scenarios/` : 4 slugs, `compute*` + `renderBilanTableau`, `registry`, scripts `scripts/scenarios/` ; [`docs/stories/GARDE-005.md`](./stories/GARDE-005.md).                                                     |
 | **GARDE-006** | 2026-03-24       | Done. `skill/` + `bun run package:skill` → ZIP distillat ; `scripts/simulate.mjs` (Node) ; CI vérifie absence `docs/research/` ; [`docs/stories/GARDE-006.md`](./stories/GARDE-006.md).                                    |
 | **GARDE-007** | 2026-03-24       | Done. `getRulePack()` + `baseBilanLignes` (pack + SMIC) ; `meta` sur résultats scénario ; `simulate.mjs` enrichi ; [`docs/stories/GARDE-007.md`](./stories/GARDE-007.md).                                                  |
+| **GARDE-008** | 2026-03-24       | Done. Crèche publique **partial** (participation, CMG, crédit F8) ; [`credit-garde-hors-domicile`](../../src/shared/credit-garde-hors-domicile.ts) ; [`docs/stories/GARDE-008.md`](./stories/GARDE-008.md).                |
 
 ---
 
@@ -149,6 +150,7 @@ Au **début** de chaque story : **rédiger ou mettre à jour** `docs/stories/GAR
 | **GARDE-005** | Squelette `src/scenarios/` : 4 scénarios + `renderBilanTableau` stub  | E2   | Done  |
 | **GARDE-006** | Skill : `SKILL.md`, `simulate.mjs`, ZIP **sans** `docs/research/`     | E4   | Done  |
 | **GARDE-007** | Charger `rules.fr-2026.json` dans le moteur ; bilan + `meta` pack     | E2   | Done  |
+| **GARDE-008** | Crèche publique : calcul partiel + crédit impôt ; roadmap 4 scénarios | E2   | Done  |
 
 ---
 
