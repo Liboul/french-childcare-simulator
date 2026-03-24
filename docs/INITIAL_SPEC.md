@@ -200,8 +200,8 @@ Le résultat structuré (JSON) est la **source de vérité** pour l’agent. Les
 ## 12. Prochaines étapes (hors périmètre de ce fichier)
 
 1. ~~Recréer **`docs/SPRINT_PLAN.md`**, **`docs/CONVENTIONS.md`** et la structure **`docs/stories/`**~~ — fait ; voir [`SPRINT_PLAN.md`](./SPRINT_PLAN.md).
-2. Implémenter les **scénarios** et le **packaging skill** selon les stories du plan.
-3. Réimporter depuis `./trash/` les éléments utiles (config, traces, research) story par story, plutôt qu’en copier-coller massif.
+2. Implémenter les **scénarios** et le **packaging skill** (**distillat** dans l’archive — voir [`packaging/README.md`](packaging/README.md)) selon les stories du plan.
+3. Poursuivre la reprise depuis `./trash/` au besoin (moteur, traces) ; **`docs/research/`** est réintégré dans le dépôt (pas dans le package skill).
 
 ---
 
