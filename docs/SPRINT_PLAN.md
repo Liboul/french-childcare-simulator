@@ -74,6 +74,7 @@ Une story est **terminée** lorsque **tous** les points suivants sont vrais :
 | **GARDE-009** | 2026-03-24       | Done. Assistante maternelle **partial** ; [`cmg-assmat-emploi-direct`](../../src/shared/cmg-assmat-emploi-direct.ts) + crédit F8 ; [`docs/stories/GARDE-009.md`](./stories/GARDE-009.md).                                                                          |
 | **GARDE-010** | 2026-03-24       | Done. Nounou à domicile **partial** ; [`cmg-garde-domicile-emploi-direct`](../../src/shared/cmg-garde-domicile-emploi-direct.ts) + [`credit-emploi-domicile`](../../src/shared/credit-emploi-domicile.ts) ; [`docs/stories/GARDE-010.md`](./stories/GARDE-010.md). |
 | **GARDE-011** | 2026-03-24       | Done. Berceau employeur **partial** ; F8 + [`avantage-employeur-creche`](../../src/shared/avantage-employeur-creche.ts) ; [`docs/stories/GARDE-011.md`](./stories/GARDE-011.md).                                                                                   |
+| **GARDE-012** | 2026-03-24       | Done. `simulate.mjs` : JSON par slug + validation Zod (`simulate-input.ts`) ; INTAKE/SKILL ; ZIP sans `*.test.ts` sous `src/` ; [`docs/stories/GARDE-012.md`](./stories/GARDE-012.md).                                                                             |
 
 ---
 
@@ -140,6 +141,10 @@ Au **début** de chaque story : **rédiger ou mettre à jour** `docs/stories/GAR
 | **E3 — Shared helpers** | Net depuis brut, IR simplifié, etc. — scripts + doc                                             |
 | **E4 — Packaging**      | Skill (ZIP / repo) : **distillat** + instructions ; pas les DR ; FAQ tableau / « Que puis-je… » |
 
+### Epic E3 — « Shared helpers » (cible, hors backlog actuel)
+
+Ce que désigne **E3** dans ce plan : modules **transverses** au périmètre « un scénario = une fonction » — par exemple **impôt sur le revenu** simplifié, revenu disponible après IR, barèmes TMI, pas des lignes CMG/crédit garde déjà dans les scénarios. Aligné sur [`INITIAL_SPEC.md`](./INITIAL_SPEC.md) (simulations satellites) et la recherche [`DR-07-IR-TMI-DISPONIBLE.md`](./research/DR-07-IR-TMI-DISPONIBLE.md). **Pas** de story E3 imposée dans le backlog ci-dessous tant que le produit ne priorise pas un comparatif « net après impôt » global.
+
 ---
 
 ## Backlog (stories) — à affiner
@@ -157,6 +162,7 @@ Au **début** de chaque story : **rédiger ou mettre à jour** `docs/stories/GAR
 | **GARDE-009** | Assistante maternelle : CMG emploi direct + crédit garde hors domicile    | E2   | Done  |
 | **GARDE-010** | Nounou à domicile : CMG garde à domicile + crédit emploi à domicile (199) | E2   | Done  |
 | **GARDE-011** | Crèche berceau employeur : F8 + seuil aide employeur (1830 €/enfant)      | E2   | Done  |
+| **GARDE-012** | `simulate.mjs` : entrées JSON par slug + validation Zod + doc INTAKE      | E4   | Done  |
 
 ---
 

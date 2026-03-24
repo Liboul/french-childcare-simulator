@@ -1,5 +1,6 @@
 export * from "./bilan-table";
 export * from "./registry";
+export * from "./simulate-input";
 export * from "./types";
 
 export {

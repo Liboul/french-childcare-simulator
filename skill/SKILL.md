@@ -20,16 +20,21 @@ Tu **guides** l’utilisateur vers un scénario supporté, tu **exécutes** le c
 
 ## Règle non négociable — simulation
 
-Dès que tu dois donner des **chiffres** pour un scénario, lance :
+Dès que tu dois donner des **chiffres** pour un scénario, lance **`scripts/simulate.mjs`** avec le **slug** et, si tu as collecté des paramètres, un **JSON** dont les **clés** sont celles de `src/scenarios/<slug>/params.md` (noms exacts, un seul objet par scénario).
 
 ```bash
-node scripts/simulate.mjs <slug>
+node scripts/simulate.mjs <slug> '{"champ": valeur, ...}'
 ```
 
-Exemple : `node scripts/simulate.mjs creche-publique`
+Exemples :
 
-- **Sortie** : JSON avec `result` (état moteur) et `tableau` (lignes du bilan : libellé, montant €, calcul, sources).
-- Tant que le moteur est en **stub** (`result.status === "stub"`), dis-le clairement et n’invente pas de barèmes : les **montants encodés** viendront du **`config/`** versionné dans le dépôt / prochaines stories.
+- `node scripts/simulate.mjs creche-publique '{"monthlyParticipationEur":300}'`
+- `node scripts/simulate.mjs creche-publique` (sans JSON → souvent **stub** tant que la participation manque)
+
+Autres modes d’entrée : variable **`SIMULATE_INPUT`** (JSON), ou **stdin** avec le 3ᵉ argument `-`. Voir [`INTAKE.md`](./INTAKE.md).
+
+- **Sortie** : JSON avec `result` (état moteur), `tableau` (lignes du bilan), `meta` (versions). En cas d’erreur d’appel : `error` = `json_parse` ou `validation` avec `issues` et `allowedKeys`.
+- Tant que le moteur est en **stub** (`result.status === "stub"`), dis-le clairement et n’invente pas de barèmes : les **montants encodés** viennent du **`config/`** versionné.
 
 ## Tableau de bilan (obligatoire)
 

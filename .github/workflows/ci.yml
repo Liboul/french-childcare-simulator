@@ -35,3 +35,7 @@ jobs:
           unzip -q dist/comparatif-modes-garde-fr-2026-skill.zip -d "$TMP"
           node "$TMP/comparatif-modes-garde-fr-2026/scripts/simulate.mjs" creche-publique | grep -q '"scenarioSlug": "creche-publique"'
           node "$TMP/comparatif-modes-garde-fr-2026/scripts/simulate.mjs" creche-publique | grep -q '"rulePackVersion"'
+          node "$TMP/comparatif-modes-garde-fr-2026/scripts/simulate.mjs" creche-publique '{"monthlyParticipationEur":300}' | grep -q '"status": "partial"'
+          OUT=$(node "$TMP/comparatif-modes-garde-fr-2026/scripts/simulate.mjs" creche-publique '{"notAllowedKey":1}' 2>&1) || true
+          echo "$OUT" | grep -q '"error": "validation"'
+          if unzip -l dist/comparatif-modes-garde-fr-2026-skill.zip | grep -q '\.test\.ts'; then echo 'ZIP must not contain *.test.ts under src'; exit 1; fi

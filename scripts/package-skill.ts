@@ -2,13 +2,29 @@
  * Assemble le dossier skill + ZIP (distillat uniquement — pas `docs/research/`).
  */
 import { spawnSync } from "node:child_process";
-import { copyFile, cp, mkdir, rm, stat, unlink } from "node:fs/promises";
+import { copyFile, cp, mkdir, readdir, rm, stat, unlink } from "node:fs/promises";
 import { join } from "node:path";
 
 const root = join(import.meta.dir, "..");
 const skillFolderName = "comparatif-modes-garde-fr-2026";
 const stageRoot = join(root, "dist", "skill-stage");
 const outDir = join(stageRoot, skillFolderName);
+
+/** Ne pas embarquer les tests Bun dans le distillat skill. */
+async function unlinkTestTsRecursive(dir: string): Promise<void> {
+  const entries = await readdir(dir, { withFileTypes: true });
+  for (const e of entries) {
+    const p = join(dir, e.name);
+    if (e.isDirectory()) {
+      await unlinkTestTsRecursive(p);
+    } else if (e.name.endsWith(".test.ts")) {
+      await unlink(p).catch((err: unknown) => {
+        const c = err as { code?: string };
+        if (c.code !== "ENOENT") throw err;
+      });
+    }
+  }
+}
 
 await rm(stageRoot, { recursive: true, force: true });
 await mkdir(join(outDir, "scripts"), { recursive: true });
@@ -57,15 +73,9 @@ await unlink(join(outDir, "src", "config", "schema.test.ts")).catch((e: unknown)
   if (err.code !== "ENOENT") throw e;
 });
 await cp(join(root, "src", "shared"), join(outDir, "src", "shared"), { recursive: true });
-await unlink(join(outDir, "src", "shared", "load-rules.test.ts")).catch((e: unknown) => {
-  const err = e as { code?: string };
-  if (err.code !== "ENOENT") throw e;
-});
+await unlinkTestTsRecursive(join(outDir, "src", "shared"));
 await cp(join(root, "src", "scenarios"), join(outDir, "src", "scenarios"), { recursive: true });
-await unlink(join(outDir, "src", "scenarios", "scenarios.test.ts")).catch((e: unknown) => {
-  const err = e as { code?: string };
-  if (err.code !== "ENOENT") throw e;
-});
+await unlinkTestTsRecursive(join(outDir, "src", "scenarios"));
 
 if (!(await stat(join(outDir, "scripts", "simulate.mjs"))).isFile()) {
   console.error("Missing scripts/simulate.mjs");
