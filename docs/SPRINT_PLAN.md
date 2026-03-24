@@ -141,9 +141,11 @@ Au **début** de chaque story : **rédiger ou mettre à jour** `docs/stories/GAR
 | **E3 — Shared helpers** | Net depuis brut, IR simplifié, etc. — scripts + doc                                             |
 | **E4 — Packaging**      | Skill (ZIP / repo) : **distillat** + instructions ; pas les DR ; FAQ tableau / « Que puis-je… » |
 
-### Epic E3 — « Shared helpers » (cible, hors backlog actuel)
+### Epic E3 — « Shared helpers »
 
-Ce que désigne **E3** dans ce plan : modules **transverses** au périmètre « un scénario = une fonction » — par exemple **impôt sur le revenu** simplifié, revenu disponible après IR, barèmes TMI, pas des lignes CMG/crédit garde déjà dans les scénarios. Aligné sur [`INITIAL_SPEC.md`](./INITIAL_SPEC.md) (simulations satellites) et la recherche [`DR-07-IR-TMI-DISPONIBLE.md`](./research/DR-07-IR-TMI-DISPONIBLE.md). **Pas** de story E3 imposée dans le backlog ci-dessous tant que le produit ne priorise pas un comparatif « net après impôt » global.
+Ce que désigne **E3** dans ce plan : modules **transverses** au périmètre « un scénario = une fonction » — par exemple **impôt sur le revenu** simplifié, revenu disponible après IR, barèmes TMI, en complément des lignes CMG / crédits déjà dans `src/shared/`. Aligné sur [`INITIAL_SPEC.md`](./INITIAL_SPEC.md) (simulations satellites) et [`DR-07-IR-TMI-DISPONIBLE.md`](./research/DR-07-IR-TMI-DISPONIBLE.md).
+
+**Review des simulateurs** (dépendances, duplication, ordre d’implémentation) : [`E3-scenario-review.md`](./E3-scenario-review.md). Story porteuse : **GARDE-013**.
 
 ---
 
@@ -163,6 +165,7 @@ Ce que désigne **E3** dans ce plan : modules **transverses** au périmètre « 
 | **GARDE-010** | Nounou à domicile : CMG garde à domicile + crédit emploi à domicile (199) | E2   | Done  |
 | **GARDE-011** | Crèche berceau employeur : F8 + seuil aide employeur (1830 €/enfant)      | E2   | Done  |
 | **GARDE-012** | `simulate.mjs` : entrées JSON par slug + validation Zod + doc INTAKE      | E4   | Done  |
+| **GARDE-013** | E3 : helpers cashflow communs + couche IR / disponible (voir review)      | E3   | WIP   |
 
 ---
 
