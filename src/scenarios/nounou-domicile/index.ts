@@ -2,7 +2,11 @@ import {
   type CmgGardeDomicileComputed,
   computeCmgGardeDomicileEmploiDirectMonthly,
 } from "../../shared/cmg-garde-domicile-emploi-direct";
-import { resolveCmgFromEmploymentInput } from "../../shared/cmg-from-employment-input";
+import {
+  isExplicitMonthlyCmgProvided,
+  isIncomeProvidedForCmgFormula,
+  resolveCmgFromEmploymentInput,
+} from "../../shared/cmg-from-employment-input";
 import { appendCreditVsIrSatellite } from "../../shared/credit-vs-ir-brut";
 import type { CreditVsIrBrutSatellite } from "../../shared/credit-vs-ir-brut";
 import {
@@ -17,13 +21,15 @@ import type { ScenarioResultBase } from "../types";
 /**
  * Garde à domicile par employeur direct (Pajemploi) : CMG « emploi direct garde à domicile »
  * et crédit d’impôt **emploi à domicile** (CGI 199 sexdecies), pas le crédit « garde hors domicile ».
+ * CMG : saisie prioritaire sur le revenu si les deux sont fournis.
  */
 export type NounouDomicileInput = {
+  /** Coût employeur mensuel — même assiette approximative pour CMG et base crédit 199 ; voir `params.md`. */
   monthlyEmploymentCostEur?: number;
   monthlyHouseholdIncomeForCmgEur?: number;
   householdChildRank?: number;
   monthlyCmgPaidEur?: number;
-  /** Enfants pris en compte pour les majorations de plafond du crédit emploi à domicile. */
+  /** Majorations du plafond annuel du crédit 199 (≠ obligatoirement tous les enfants du foyer). */
   childrenCountForCreditCeiling?: number;
   custody?: "full" | "shared";
   revenuNetImposableEur?: number;
@@ -140,7 +146,17 @@ export function computeNounouDomicile(input: NounouDomicileInput): NounouDomicil
   const notes: string[] = [
     "Crédit d’impôt **emploi à domicile** (CGI art. 199 sexdecies) — **non cumulable** avec le crédit « frais de garde hors du domicile » (CGI art. 200 quater B) pour les mêmes dépenses.",
     "Calcul partiel : prise en charge partielle des cotisations (50 % dans le pack CMG) et plafonds détaillés non intégrés ligne à ligne — voir `docs/research/`.",
+    "Même montant `monthlyEmploymentCostEur` pour CMG et base du crédit 199 — approximation ; base annuelle = coût − CMG puis plafond (voir params.md, Assiette unique).",
+    "Co-gardes / co-employeurs : pas de répartition automatique — saisir la part du foyer ou simuler par foyer (voir params.md, Limites).",
   ];
+  if (
+    isExplicitMonthlyCmgProvided(input.monthlyCmgPaidEur) &&
+    isIncomeProvidedForCmgFormula(input.monthlyHouseholdIncomeForCmgEur)
+  ) {
+    notes.push(
+      "CMG saisi et revenu pour barème tous deux fournis : seul le **CMG saisi** est utilisé ; le revenu est ignoré pour le calcul CMG — voir params.md (Priorité saisie / revenu).",
+    );
+  }
   if (!creditParams) {
     notes.push(
       "Avertissement : règle `credit-impot-emploi-domicile-plafonds` absente du pack — crédit d’impôt à 0.",

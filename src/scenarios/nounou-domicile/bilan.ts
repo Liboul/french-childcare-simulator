@@ -1,7 +1,8 @@
 import { findRule } from "../../config/find-rule";
 import type { RulePack } from "../../config/schema";
+import { readCreditEmploiDomicileParams } from "../../shared/credit-emploi-domicile";
 import type { BilanLigne, BilanLigneSource } from "../bilan-table";
-import { rulePackReferenceLine } from "../render-common";
+import { monthlyEquivalentFromAnnualEur, rulePackReferenceLine } from "../render-common";
 import type { NounouDomicileResult } from "./index";
 
 function sourcesFromRule(rule: {
@@ -21,6 +22,10 @@ export function buildNounouDomicileLignes(
 
   const cmgRule = findRule(pack, "cmg-emploi-direct-garde-domicile-2026-04");
   const creditRule = findRule(pack, "credit-impot-emploi-domicile-plafonds");
+  const creditPackParams = readCreditEmploiDomicileParams(pack);
+  const creditRateLabel = creditPackParams
+    ? `taux ${String(Math.round(creditPackParams.rate * 1000) / 10)} % (règle credit-impot-emploi-domicile-plafonds)`
+    : "taux du pack";
 
   lignes.push({
     libelle: "Coût employeur mensuel (salaire + cotisations)",
@@ -47,23 +52,23 @@ export function buildNounouDomicileLignes(
   });
 
   lignes.push({
-    libelle: "Plafond dépenses annuelles (crédit emploi à domicile)",
-    montantEur: 0,
-    calcul: `Plafond retenu = ${String(t.annualCeilingExpenseForCreditEur)} € / an (majorations enfants selon saisie)`,
+    libelle: "Plafond dépenses (crédit emploi à domicile, équivalent mensuel)",
+    montantEur: monthlyEquivalentFromAnnualEur(t.annualCeilingExpenseForCreditEur),
+    calcul: `Plafond annuel retenu ${String(t.annualCeilingExpenseForCreditEur)} € ÷ 12 — majorations selon saisie (voir params.md).`,
     sources: creditRule ? sourcesFromRule(creditRule) : [],
   });
 
   lignes.push({
-    libelle: "Dépenses éligibles au crédit d’impôt (année, après déduction CMG)",
-    montantEur: 0,
-    calcul: `Éligible annuelle = ${String(t.annualEligibleExpenseForCreditEur)} €`,
+    libelle: "Base éligible crédit 199 sexdecies (équivalent mensuel, après CMG)",
+    montantEur: monthlyEquivalentFromAnnualEur(t.annualEligibleExpenseForCreditEur),
+    calcul: `Éligible annuelle plafonnée ${String(t.annualEligibleExpenseForCreditEur)} € ÷ 12 — coût employeur − CMG puis plafond (voir params.md).`,
     sources: creditRule ? sourcesFromRule(creditRule) : [],
   });
 
   lignes.push({
     libelle: "Crédit d’impôt emploi à domicile (équivalent mensuel)",
     montantEur: -t.monthlyCreditEquivalentEur,
-    calcul: `Crédit annuel ${String(t.annualCreditEmploiDomicileEur)} € ÷ 12 — taux 50 % du pack (règle credit-impot-emploi-domicile-plafonds).`,
+    calcul: `Crédit annuel ${String(t.annualCreditEmploiDomicileEur)} € ÷ 12 — ${creditRateLabel}.`,
     sources: creditRule ? sourcesFromRule(creditRule) : [],
   });
 
