@@ -11,6 +11,7 @@ export {
 export {
   type CrecheBerceauEmployeurInput,
   type CrecheBerceauEmployeurResult,
+  type CrecheBerceauEmployeurTrace,
   computeCrecheBerceauEmployeur,
 } from "./creche-berceau-employeur/index";
 export {

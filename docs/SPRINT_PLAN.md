@@ -73,6 +73,7 @@ Une story est **terminée** lorsque **tous** les points suivants sont vrais :
 | **GARDE-008** | 2026-03-24       | Done. Crèche publique **partial** (participation, CMG, crédit F8) ; [`credit-garde-hors-domicile`](../../src/shared/credit-garde-hors-domicile.ts) ; [`docs/stories/GARDE-008.md`](./stories/GARDE-008.md).                                                        |
 | **GARDE-009** | 2026-03-24       | Done. Assistante maternelle **partial** ; [`cmg-assmat-emploi-direct`](../../src/shared/cmg-assmat-emploi-direct.ts) + crédit F8 ; [`docs/stories/GARDE-009.md`](./stories/GARDE-009.md).                                                                          |
 | **GARDE-010** | 2026-03-24       | Done. Nounou à domicile **partial** ; [`cmg-garde-domicile-emploi-direct`](../../src/shared/cmg-garde-domicile-emploi-direct.ts) + [`credit-emploi-domicile`](../../src/shared/credit-emploi-domicile.ts) ; [`docs/stories/GARDE-010.md`](./stories/GARDE-010.md). |
+| **GARDE-011** | 2026-03-24       | Done. Berceau employeur **partial** ; F8 + [`avantage-employeur-creche`](../../src/shared/avantage-employeur-creche.ts) ; [`docs/stories/GARDE-011.md`](./stories/GARDE-011.md).                                                                                   |
 
 ---
 
@@ -155,6 +156,7 @@ Au **début** de chaque story : **rédiger ou mettre à jour** `docs/stories/GAR
 | **GARDE-008** | Crèche publique : calcul partiel + crédit impôt ; roadmap 4 scénarios     | E2   | Done  |
 | **GARDE-009** | Assistante maternelle : CMG emploi direct + crédit garde hors domicile    | E2   | Done  |
 | **GARDE-010** | Nounou à domicile : CMG garde à domicile + crédit emploi à domicile (199) | E2   | Done  |
+| **GARDE-011** | Crèche berceau employeur : F8 + seuil aide employeur (1830 €/enfant)      | E2   | Done  |
 
 ---
 

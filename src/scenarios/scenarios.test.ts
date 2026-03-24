@@ -9,7 +9,7 @@ import { computeNounouDomicile } from "./nounou-domicile/index";
 import { renderBilanTableau as renderNounou } from "./nounou-domicile/render-table";
 import { SCENARIO_SLUGS } from "./registry";
 
-describe("scenarios (GARDE-005 … GARDE-010)", () => {
+describe("scenarios (GARDE-005 … GARDE-011)", () => {
   it("registry lists four slugs", () => {
     expect(SCENARIO_SLUGS).toHaveLength(4);
   });
@@ -36,12 +36,25 @@ describe("scenarios (GARDE-005 … GARDE-010)", () => {
     );
   });
 
-  it("creche berceau employeur compute + render", () => {
+  it("creche berceau employeur stub sans participation", () => {
     const r = computeCrecheBerceauEmployeur({});
+    expect(r.status).toBe("stub");
     expect(r.meta.rulePackVersion).toBeDefined();
     const t = renderCrecheBerceau(r);
     expect(t.scenarioSlug).toBe("creche-berceau-employeur");
-    expect(t.lignes.length).toBeGreaterThanOrEqual(3);
+    expect(t.lignes.some((l) => l.libelle.toLowerCase().includes("smic"))).toBe(true);
+  });
+
+  it("creche berceau employeur partial + aide employeur", () => {
+    const r = computeCrecheBerceauEmployeur({
+      monthlyParticipationEur: 280,
+      monthlyCmgStructureEur: 40,
+      annualEmployerChildcareAidEur: 2000,
+    });
+    expect(r.status).toBe("partial");
+    expect(r.trace?.employerTaxableExcessAnnualEur).toBe(170);
+    const t = renderCrecheBerceau(r);
+    expect(t.lignes.some((l) => l.libelle.includes("Seuil exonération employeur"))).toBe(true);
   });
 
   it("assistante maternelle stub sans coût", () => {

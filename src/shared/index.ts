@@ -1,3 +1,8 @@
+export {
+  computeEmployerChildcareAidTaxableExcessAnnual,
+  readAvantageEmployeurCrecheParams,
+} from "./avantage-employeur-creche";
+export type { AvantageEmployeurCrecheParams } from "./avantage-employeur-creche";
 export { computeCmgAssmatEmploiDirectMonthly } from "./cmg-assmat-emploi-direct";
 export type { CmgAssmatComputed } from "./cmg-assmat-emploi-direct";
 export { computeCmgGardeDomicileEmploiDirectMonthly } from "./cmg-garde-domicile-emploi-direct";
