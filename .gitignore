@@ -1,12 +1,2 @@
-node_modules
-# dist: keep harness skill ZIP in git for direct download; ignore other build outputs
-dist/*
-!dist/comparatif-modes-garde-fr-2026-skill.zip
-tmp
-
-# Cursor — skill projet (lien local vers dist/ après setup:cursor-harness-skill)
-.cursor/skills/
-coverage
-.DS_Store
-*.log
-.venv-mhtml
+# Ancienne base déplacée ici pour repartir de zéro — retirer cette ligne pour versionner ./trash/
+/trash/
