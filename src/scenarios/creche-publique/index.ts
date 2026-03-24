@@ -16,6 +16,7 @@ import type { ScenarioResultBase } from "../types";
 export type CrechePubliqueInput = {
   monthlyParticipationEur?: number;
   monthlyCmgStructureEur?: number;
+  /** Enfants pour lesquels ces dépenses de garde en structure ouvrent le plafond F8 (≠ obligatoirement tous les enfants du foyer). */
   childrenCount?: number;
   custody?: "full" | "shared";
   /** Optionnel : IR brut indicatif (pack) vs crédit annuel — les deux avec `nombreParts`. */
@@ -89,9 +90,14 @@ export function computeCrechePublique(input: CrechePubliqueInput): CrechePubliqu
     });
 
   const notes: string[] = [
-    "Calcul partiel : crédit d’impôt = 50 % des dépenses éligibles (plafonds par enfant, garde alternée si `custody: shared`), après déduction CMG si ventilée — paramètres `credit-impot-garde-hors-domicile` du pack.",
+    "Calcul partiel : crédit d’impôt — taux et plafonds dans la règle `credit-impot-garde-hors-domicile` du pack (souvent 50 % de la base éligible plafonnée ; garde alternée si `custody: shared`). Base éligible : voir `deductCmgFromBase` dans `params.md`.",
     "Barème PSU / reste à charge structure non recalculé ici : la participation doit refléter la facture réelle ou une estimation (monenfant.fr, etc.).",
   ];
+  if (monthlyParticipationEur > 0 && monthlyCmgStructureEur > 0) {
+    notes.push(
+      "Contrôle saisie : participation et CMG sont toutes deux non nulles — vérifier que la participation n’est pas déjà « nette » de la CMG (sinon double prise en compte pour la trésorerie et, si `deductCmgFromBase` est vrai dans le pack, pour la base du crédit). Voir `params.md` (section Cohérence participation / CMG).",
+    );
+  }
   if (!creditParams) {
     notes.push(
       "Avertissement : règle `credit-impot-garde-hors-domicile` absente du pack — crédit d’impôt à 0.",

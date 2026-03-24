@@ -20,6 +20,7 @@ import type { ScenarioResultBase } from "../types";
 export type CrecheBerceauEmployeurInput = {
   monthlyParticipationEur?: number;
   monthlyCmgStructureEur?: number;
+  /** Enfants pour lesquels ces dépenses de garde en structure ouvrent le plafond F8 (≠ obligatoirement tous les enfants du foyer). */
   childrenCount?: number;
   custody?: "full" | "shared";
   /** Aide employeur annuelle versée pour la garde (0 si inconnue ou déjà reflétée ailleurs). */
@@ -118,6 +119,11 @@ export function computeCrecheBerceauEmployeur(
     "Calcul partiel : crédit d’impôt garde **hors domicile** (F8) sur la **part familiale** ; l’aide employeur ne réduit pas ce crédit si la participation saisie est déjà la part nette à payer.",
     "Seuil d’exonération employeur : paramètre `avantage-employeur-creche-seuil-exoneration` (jurisprudence, `todoVerify` dans le pack) — excédent potentiellement imposable en salaire.",
   ];
+  if (monthlyParticipationEur > 0 && monthlyCmgStructureEur > 0) {
+    notes.push(
+      "Contrôle saisie : participation et CMG sont toutes deux non nulles — vérifier que la participation n’est pas déjà « nette » de la CMG (sinon double prise en compte pour la trésorerie et, si `deductCmgFromBase` est vrai dans le pack, pour la base du crédit). Voir `params.md` (crèche publique : Cohérence participation / CMG).",
+    );
+  }
   if (!creditParams) {
     notes.push(
       "Avertissement : règle `credit-impot-garde-hors-domicile` absente du pack — crédit d’impôt à 0.",

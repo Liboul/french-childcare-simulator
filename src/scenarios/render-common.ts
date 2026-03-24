@@ -3,6 +3,11 @@ import type { RulePack } from "../config/schema";
 import type { BilanLigne, BilanLigneSource } from "./bilan-table";
 import type { ScenarioResultBase } from "./types";
 
+/** Équivalent mensuel pour affichage (bilan en €/mois) — montants annuels ÷ 12, arrondi à 2 décimales. */
+export function monthlyEquivalentFromAnnualEur(annualEur: number): number {
+  return Math.round((annualEur / 12) * 100) / 100;
+}
+
 function sourcesFromRule(rule: {
   sources: { id: string; title: string; url: string }[];
 }): BilanLigneSource[] {
