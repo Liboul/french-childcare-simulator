@@ -1,3 +1,5 @@
+export { computeCmgAssmatEmploiDirectMonthly } from "./cmg-assmat-emploi-direct";
+export type { CmgAssmatComputed } from "./cmg-assmat-emploi-direct";
 export {
   computeCreditGardeHorsDomicileAnnual,
   readCreditGardeHorsDomicileParams,

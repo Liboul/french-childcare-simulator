@@ -71,6 +71,7 @@ Une story est **terminée** lorsque **tous** les points suivants sont vrais :
 | **GARDE-006** | 2026-03-24       | Done. `skill/` + `bun run package:skill` → ZIP distillat ; `scripts/simulate.mjs` (Node) ; CI vérifie absence `docs/research/` ; [`docs/stories/GARDE-006.md`](./stories/GARDE-006.md).                                    |
 | **GARDE-007** | 2026-03-24       | Done. `getRulePack()` + `baseBilanLignes` (pack + SMIC) ; `meta` sur résultats scénario ; `simulate.mjs` enrichi ; [`docs/stories/GARDE-007.md`](./stories/GARDE-007.md).                                                  |
 | **GARDE-008** | 2026-03-24       | Done. Crèche publique **partial** (participation, CMG, crédit F8) ; [`credit-garde-hors-domicile`](../../src/shared/credit-garde-hors-domicile.ts) ; [`docs/stories/GARDE-008.md`](./stories/GARDE-008.md).                |
+| **GARDE-009** | 2026-03-24       | Done. Assistante maternelle **partial** ; [`cmg-assmat-emploi-direct`](../../src/shared/cmg-assmat-emploi-direct.ts) + crédit F8 ; [`docs/stories/GARDE-009.md`](./stories/GARDE-009.md).                                  |
 
 ---
 
@@ -141,16 +142,17 @@ Au **début** de chaque story : **rédiger ou mettre à jour** `docs/stories/GAR
 
 ## Backlog (stories) — à affiner
 
-| ID            | Title                                                                 | Epic | Notes |
-| ------------- | --------------------------------------------------------------------- | ---- | ----- |
-| **GARDE-001** | Reset + `INITIAL_SPEC` agent-first                                    | E0   | Done  |
-| **GARDE-002** | Bootstrap : Bun, TS, `bun test`, ESLint, Prettier, CI, `src/` minimal | E0   | Done  |
-| **GARDE-003** | Schéma config règles + parse (Zod)                                    | E1   | Done  |
-| **GARDE-004** | `docs/research/` réintégré + politique packaging (distillat ≠ DR)     | E1   | Done  |
-| **GARDE-005** | Squelette `src/scenarios/` : 4 scénarios + `renderBilanTableau` stub  | E2   | Done  |
-| **GARDE-006** | Skill : `SKILL.md`, `simulate.mjs`, ZIP **sans** `docs/research/`     | E4   | Done  |
-| **GARDE-007** | Charger `rules.fr-2026.json` dans le moteur ; bilan + `meta` pack     | E2   | Done  |
-| **GARDE-008** | Crèche publique : calcul partiel + crédit impôt ; roadmap 4 scénarios | E2   | Done  |
+| ID            | Title                                                                  | Epic | Notes |
+| ------------- | ---------------------------------------------------------------------- | ---- | ----- |
+| **GARDE-001** | Reset + `INITIAL_SPEC` agent-first                                     | E0   | Done  |
+| **GARDE-002** | Bootstrap : Bun, TS, `bun test`, ESLint, Prettier, CI, `src/` minimal  | E0   | Done  |
+| **GARDE-003** | Schéma config règles + parse (Zod)                                     | E1   | Done  |
+| **GARDE-004** | `docs/research/` réintégré + politique packaging (distillat ≠ DR)      | E1   | Done  |
+| **GARDE-005** | Squelette `src/scenarios/` : 4 scénarios + `renderBilanTableau` stub   | E2   | Done  |
+| **GARDE-006** | Skill : `SKILL.md`, `simulate.mjs`, ZIP **sans** `docs/research/`      | E4   | Done  |
+| **GARDE-007** | Charger `rules.fr-2026.json` dans le moteur ; bilan + `meta` pack      | E2   | Done  |
+| **GARDE-008** | Crèche publique : calcul partiel + crédit impôt ; roadmap 4 scénarios  | E2   | Done  |
+| **GARDE-009** | Assistante maternelle : CMG emploi direct + crédit garde hors domicile | E2   | Done  |
 
 ---
 

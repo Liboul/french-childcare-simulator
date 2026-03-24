@@ -5,6 +5,7 @@ export * from "./types";
 export {
   type AssistanteMaternelleInput,
   type AssistanteMaternelleResult,
+  type AssistanteMaternelleTrace,
   computeAssistanteMaternelle,
 } from "./assistante-maternelle/index";
 export {
