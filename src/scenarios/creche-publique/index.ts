@@ -2,7 +2,9 @@ import {
   computeCreditGardeHorsDomicileAnnual,
   readCreditGardeHorsDomicileParams,
 } from "../../shared/credit-garde-hors-domicile";
+import { normalizeChildrenCountForCredit, normalizeCustody } from "../../shared/household";
 import { getRulePack } from "../../shared/load-rules";
+import { monthlyCashflowAfterAides } from "../../shared/monthly-cashflow-after-aides";
 import type { ScenarioResultBase } from "../types";
 
 /**
@@ -59,8 +61,8 @@ export function computeCrechePublique(input: CrechePubliqueInput): CrechePubliqu
 
   const monthlyParticipationEur = raw;
   const monthlyCmgStructureEur = Math.max(0, input.monthlyCmgStructureEur ?? 0);
-  const childrenCount = Math.max(1, Math.floor(input.childrenCount ?? 1));
-  const custody = input.custody === "shared" ? "shared" : "full";
+  const childrenCount = normalizeChildrenCountForCredit(input.childrenCount);
+  const custody = normalizeCustody(input.custody);
 
   const creditParams = readCreditGardeHorsDomicileParams(pack);
   const creditAnnual = creditParams
@@ -72,9 +74,12 @@ export function computeCrechePublique(input: CrechePubliqueInput): CrechePubliqu
       })
     : { annualEligibleExpenseEur: 0, annualCreditEur: 0 };
 
-  const monthlyCreditEquivalentEur = creditAnnual.annualCreditEur / 12;
-  const netMonthlyCashAfterCmgEur = monthlyParticipationEur - monthlyCmgStructureEur;
-  const netMonthlyBurdenAfterCreditEur = netMonthlyCashAfterCmgEur - monthlyCreditEquivalentEur;
+  const { monthlyCreditEquivalentEur, netMonthlyCashAfterCmgEur, netMonthlyBurdenAfterCreditEur } =
+    monthlyCashflowAfterAides({
+      monthlyGrossCostEur: monthlyParticipationEur,
+      monthlyCmgEur: monthlyCmgStructureEur,
+      annualCreditImpotEur: creditAnnual.annualCreditEur,
+    });
 
   const notes: string[] = [
     "Calcul partiel : crédit d’impôt = 50 % des dépenses éligibles (plafonds par enfant, garde alternée si `custody: shared`), après déduction CMG si ventilée — paramètres `credit-impot-garde-hors-domicile` du pack.",

@@ -2,11 +2,14 @@ import {
   type CmgGardeDomicileComputed,
   computeCmgGardeDomicileEmploiDirectMonthly,
 } from "../../shared/cmg-garde-domicile-emploi-direct";
+import { resolveCmgFromEmploymentInput } from "../../shared/cmg-from-employment-input";
 import {
   computeCreditEmploiDomicileAnnual,
   readCreditEmploiDomicileParams,
 } from "../../shared/credit-emploi-domicile";
+import { normalizeCustody, normalizeHouseholdChildRank } from "../../shared/household";
 import { getRulePack } from "../../shared/load-rules";
+import { monthlyCashflowAfterAides } from "../../shared/monthly-cashflow-after-aides";
 import type { ScenarioResultBase } from "../types";
 
 /**
@@ -66,20 +69,18 @@ export function computeNounouDomicile(input: NounouDomicileInput): NounouDomicil
   }
 
   const monthlyEmploymentCostEur = rawCost;
-  const custody = input.custody === "shared" ? "shared" : "full";
-  const rank = Math.max(1, Math.floor(input.householdChildRank ?? 1));
+  const custody = normalizeCustody(input.custody);
+  const rank = normalizeHouseholdChildRank(input.householdChildRank);
   const childrenCountForCeiling = Math.max(0, Math.floor(input.childrenCountForCreditCeiling ?? 1));
 
-  const hasExplicitCmg =
-    input.monthlyCmgPaidEur !== undefined &&
-    input.monthlyCmgPaidEur !== null &&
-    !Number.isNaN(input.monthlyCmgPaidEur);
-  const hasIncomeForFormula =
-    input.monthlyHouseholdIncomeForCmgEur !== undefined &&
-    input.monthlyHouseholdIncomeForCmgEur !== null &&
-    !Number.isNaN(input.monthlyHouseholdIncomeForCmgEur);
-
-  if (!hasExplicitCmg && !hasIncomeForFormula) {
+  const resolved = resolveCmgFromEmploymentInput({
+    monthlyCmgPaidEur: input.monthlyCmgPaidEur,
+    monthlyHouseholdIncomeForCmgEur: input.monthlyHouseholdIncomeForCmgEur,
+    monthlyEmploymentCostEur,
+    householdChildRank: rank,
+    computeFromPack: (args) => computeCmgGardeDomicileEmploiDirectMonthly(pack, args),
+  });
+  if (resolved === null) {
     return {
       scenarioSlug: "nounou-domicile",
       status: "stub",
@@ -89,31 +90,25 @@ export function computeNounouDomicile(input: NounouDomicileInput): NounouDomicil
       meta,
     };
   }
+  if (resolved.kind === "missing_rule") {
+    return {
+      scenarioSlug: "nounou-domicile",
+      status: "stub",
+      notes: ["Règle `cmg-emploi-direct-garde-domicile-2026-04` introuvable dans le pack."],
+      meta,
+    };
+  }
 
-  let monthlyCmgEur = 0;
-  let cmgSource: "saisie" | "calcul_pack" = "saisie";
+  let monthlyCmgEur: number;
+  let cmgSource: "saisie" | "calcul_pack";
   let cmgDetail: CmgGardeDomicileComputed | undefined;
-
-  if (hasExplicitCmg) {
-    monthlyCmgEur = Math.max(0, input.monthlyCmgPaidEur!);
+  if (resolved.kind === "saisie") {
+    monthlyCmgEur = resolved.monthlyCmgEur;
     cmgSource = "saisie";
   } else {
-    const computed = computeCmgGardeDomicileEmploiDirectMonthly(pack, {
-      monthlyHouseholdIncomeEur: input.monthlyHouseholdIncomeForCmgEur!,
-      monthlyCostOfCareEur: monthlyEmploymentCostEur,
-      householdChildRank: rank,
-    });
-    if (!computed) {
-      return {
-        scenarioSlug: "nounou-domicile",
-        status: "stub",
-        notes: ["Règle `cmg-emploi-direct-garde-domicile-2026-04` introuvable dans le pack."],
-        meta,
-      };
-    }
-    monthlyCmgEur = computed.monthlyCmgEur;
+    monthlyCmgEur = resolved.monthlyCmgEur;
     cmgSource = "calcul_pack";
-    cmgDetail = computed;
+    cmgDetail = resolved.detail;
   }
 
   const creditParams = readCreditEmploiDomicileParams(pack);
@@ -130,9 +125,12 @@ export function computeNounouDomicile(input: NounouDomicileInput): NounouDomicil
         annualCeilingExpenseEur: 0,
       };
 
-  const monthlyCreditEquivalentEur = creditAnnual.annualCreditEur / 12;
-  const netMonthlyCashAfterCmgEur = monthlyEmploymentCostEur - monthlyCmgEur;
-  const netMonthlyBurdenAfterCreditEur = netMonthlyCashAfterCmgEur - monthlyCreditEquivalentEur;
+  const { monthlyCreditEquivalentEur, netMonthlyCashAfterCmgEur, netMonthlyBurdenAfterCreditEur } =
+    monthlyCashflowAfterAides({
+      monthlyGrossCostEur: monthlyEmploymentCostEur,
+      monthlyCmgEur,
+      annualCreditImpotEur: creditAnnual.annualCreditEur,
+    });
 
   const notes: string[] = [
     "Crédit d’impôt **emploi à domicile** (CGI art. 199 sexdecies) — **non cumulable** avec le crédit « frais de garde hors du domicile » (CGI art. 200 quater B) pour les mêmes dépenses.",

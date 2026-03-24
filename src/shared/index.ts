@@ -23,4 +23,17 @@ export type {
   CreditGardeHorsDomicileAnnual,
   CreditGardeHorsDomicilePackParams,
 } from "./credit-garde-hors-domicile";
+export {
+  isExplicitMonthlyCmgProvided,
+  isIncomeProvidedForCmgFormula,
+  resolveCmgFromEmploymentInput,
+} from "./cmg-from-employment-input";
+export type { CmgEmploymentResolution } from "./cmg-from-employment-input";
+export {
+  normalizeChildrenCountForCredit,
+  normalizeCustody,
+  normalizeHouseholdChildRank,
+} from "./household";
 export { getRulePack, resetRulePackCacheForTests } from "./load-rules";
+export { monthlyCashflowAfterAides } from "./monthly-cashflow-after-aides";
+export type { MonthlyCashflowAfterAides } from "./monthly-cashflow-after-aides";

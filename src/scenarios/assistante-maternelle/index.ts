@@ -2,11 +2,18 @@ import {
   type CmgAssmatComputed,
   computeCmgAssmatEmploiDirectMonthly,
 } from "../../shared/cmg-assmat-emploi-direct";
+import { resolveCmgFromEmploymentInput } from "../../shared/cmg-from-employment-input";
 import {
   computeCreditGardeHorsDomicileAnnual,
   readCreditGardeHorsDomicileParams,
 } from "../../shared/credit-garde-hors-domicile";
+import {
+  normalizeChildrenCountForCredit,
+  normalizeCustody,
+  normalizeHouseholdChildRank,
+} from "../../shared/household";
 import { getRulePack } from "../../shared/load-rules";
+import { monthlyCashflowAfterAides } from "../../shared/monthly-cashflow-after-aides";
 import type { ScenarioResultBase } from "../types";
 
 /**
@@ -66,20 +73,18 @@ export function computeAssistanteMaternelle(
   }
 
   const monthlyEmploymentCostEur = rawCost;
-  const childrenCount = Math.max(1, Math.floor(input.childrenCount ?? 1));
-  const custody = input.custody === "shared" ? "shared" : "full";
-  const rank = Math.max(1, Math.floor(input.householdChildRank ?? 1));
+  const childrenCount = normalizeChildrenCountForCredit(input.childrenCount);
+  const custody = normalizeCustody(input.custody);
+  const rank = normalizeHouseholdChildRank(input.householdChildRank);
 
-  const hasExplicitCmg =
-    input.monthlyCmgPaidEur !== undefined &&
-    input.monthlyCmgPaidEur !== null &&
-    !Number.isNaN(input.monthlyCmgPaidEur);
-  const hasIncomeForFormula =
-    input.monthlyHouseholdIncomeForCmgEur !== undefined &&
-    input.monthlyHouseholdIncomeForCmgEur !== null &&
-    !Number.isNaN(input.monthlyHouseholdIncomeForCmgEur);
-
-  if (!hasExplicitCmg && !hasIncomeForFormula) {
+  const resolved = resolveCmgFromEmploymentInput({
+    monthlyCmgPaidEur: input.monthlyCmgPaidEur,
+    monthlyHouseholdIncomeForCmgEur: input.monthlyHouseholdIncomeForCmgEur,
+    monthlyEmploymentCostEur,
+    householdChildRank: rank,
+    computeFromPack: (args) => computeCmgAssmatEmploiDirectMonthly(pack, args),
+  });
+  if (resolved === null) {
     return {
       scenarioSlug: "assistante-maternelle",
       status: "stub",
@@ -89,33 +94,25 @@ export function computeAssistanteMaternelle(
       meta,
     };
   }
+  if (resolved.kind === "missing_rule") {
+    return {
+      scenarioSlug: "assistante-maternelle",
+      status: "stub",
+      notes: ["Règle `cmg-emploi-direct-assistante-maternelle-2026-04` introuvable dans le pack."],
+      meta,
+    };
+  }
 
-  let monthlyCmgEur = 0;
-  let cmgSource: "saisie" | "calcul_pack" = "saisie";
+  let monthlyCmgEur: number;
+  let cmgSource: "saisie" | "calcul_pack";
   let cmgDetail: CmgAssmatComputed | undefined;
-
-  if (hasExplicitCmg) {
-    monthlyCmgEur = Math.max(0, input.monthlyCmgPaidEur!);
+  if (resolved.kind === "saisie") {
+    monthlyCmgEur = resolved.monthlyCmgEur;
     cmgSource = "saisie";
   } else {
-    const computed = computeCmgAssmatEmploiDirectMonthly(pack, {
-      monthlyHouseholdIncomeEur: input.monthlyHouseholdIncomeForCmgEur!,
-      monthlyCostOfCareEur: monthlyEmploymentCostEur,
-      householdChildRank: rank,
-    });
-    if (!computed) {
-      return {
-        scenarioSlug: "assistante-maternelle",
-        status: "stub",
-        notes: [
-          "Règle `cmg-emploi-direct-assistante-maternelle-2026-04` introuvable dans le pack.",
-        ],
-        meta,
-      };
-    }
-    monthlyCmgEur = computed.monthlyCmgEur;
+    monthlyCmgEur = resolved.monthlyCmgEur;
     cmgSource = "calcul_pack";
-    cmgDetail = computed;
+    cmgDetail = resolved.detail;
   }
 
   const creditParams = readCreditGardeHorsDomicileParams(pack);
@@ -128,9 +125,12 @@ export function computeAssistanteMaternelle(
       })
     : { annualEligibleExpenseEur: 0, annualCreditEur: 0 };
 
-  const monthlyCreditEquivalentEur = creditAnnual.annualCreditEur / 12;
-  const netMonthlyCashAfterCmgEur = monthlyEmploymentCostEur - monthlyCmgEur;
-  const netMonthlyBurdenAfterCreditEur = netMonthlyCashAfterCmgEur - monthlyCreditEquivalentEur;
+  const { monthlyCreditEquivalentEur, netMonthlyCashAfterCmgEur, netMonthlyBurdenAfterCreditEur } =
+    monthlyCashflowAfterAides({
+      monthlyGrossCostEur: monthlyEmploymentCostEur,
+      monthlyCmgEur,
+      annualCreditImpotEur: creditAnnual.annualCreditEur,
+    });
 
   const notes: string[] = [
     "Garde chez une assistante maternelle agréée : crédit d’impôt **frais de garde hors du domicile** (CGI art. 200 quater B), pas le crédit emploi à domicile — aligné BOFiP / Service-Public pour ce mode.",

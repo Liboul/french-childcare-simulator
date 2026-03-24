@@ -15,7 +15,9 @@
 
 **Phase 1 (review)** : document [`E3-scenario-review.md`](../E3-scenario-review.md) — fait.
 
-**Phase 2 (implémentation)** : à découper en sous-commits (helpers cashflow ; puis IR si prêt).
+**Phase 2a (helpers hors IR)** : `monthlyCashflowAfterAides`, `resolveCmgFromEmploymentInput`, normalisations foyer — **fait**.
+
+**Phase 2b (IR / disponible)** : barème, TMI, façade satellite — **à faire** (DR-07).
 
 ## Acceptance criteria (à affiner en phase 2)
 
@@ -26,5 +28,6 @@
 ## Done checklist
 
 - [x] Review scénarios → [`E3-scenario-review.md`](../E3-scenario-review.md)
-- [ ] Implémentation helpers + IR (phase 2)
-- [ ] `SPRINT_PLAN` story log
+- [x] Phase 2a : helpers + refactor scénarios + exports `src/shared/index.ts`
+- [ ] Phase 2b : IR / barème / TMI (ou story dédiée)
+- [ ] `SPRINT_PLAN` story log (à la clôture E3 complète)

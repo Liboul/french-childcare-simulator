@@ -6,7 +6,9 @@ import {
   computeCreditGardeHorsDomicileAnnual,
   readCreditGardeHorsDomicileParams,
 } from "../../shared/credit-garde-hors-domicile";
+import { normalizeChildrenCountForCredit, normalizeCustody } from "../../shared/household";
 import { getRulePack } from "../../shared/load-rules";
+import { monthlyCashflowAfterAides } from "../../shared/monthly-cashflow-after-aides";
 import type { ScenarioResultBase } from "../types";
 
 /**
@@ -73,8 +75,8 @@ export function computeCrecheBerceauEmployeur(
 
   const monthlyParticipationEur = raw;
   const monthlyCmgStructureEur = Math.max(0, input.monthlyCmgStructureEur ?? 0);
-  const childrenCount = Math.max(1, Math.floor(input.childrenCount ?? 1));
-  const custody = input.custody === "shared" ? "shared" : "full";
+  const childrenCount = normalizeChildrenCountForCredit(input.childrenCount);
+  const custody = normalizeCustody(input.custody);
   const annualEmployerChildcareAidEur = Math.max(0, input.annualEmployerChildcareAidEur ?? 0);
   const employerThresholdChildrenCount = Math.max(
     1,
@@ -91,9 +93,12 @@ export function computeCrecheBerceauEmployeur(
       })
     : { annualEligibleExpenseEur: 0, annualCreditEur: 0 };
 
-  const monthlyCreditEquivalentEur = creditAnnual.annualCreditEur / 12;
-  const netMonthlyCashAfterCmgEur = monthlyParticipationEur - monthlyCmgStructureEur;
-  const netMonthlyBurdenAfterCreditEur = netMonthlyCashAfterCmgEur - monthlyCreditEquivalentEur;
+  const { monthlyCreditEquivalentEur, netMonthlyCashAfterCmgEur, netMonthlyBurdenAfterCreditEur } =
+    monthlyCashflowAfterAides({
+      monthlyGrossCostEur: monthlyParticipationEur,
+      monthlyCmgEur: monthlyCmgStructureEur,
+      annualCreditImpotEur: creditAnnual.annualCreditEur,
+    });
 
   const avantageParams = readAvantageEmployeurCrecheParams(pack);
   const exemptPerChild = avantageParams?.exemptAnnualAmountPerChildEur ?? 1830;

@@ -147,6 +147,8 @@ Ce que désigne **E3** dans ce plan : modules **transverses** au périmètre « 
 
 **Review des simulateurs** (dépendances, duplication, ordre d’implémentation) : [`E3-scenario-review.md`](./E3-scenario-review.md). Story porteuse : **GARDE-013**.
 
+**État** : factorisation **phase 2a** livrée (`monthly-cashflow-after-aides`, `cmg-from-employment-input`, `household`). Couche **IR / barème / TMI** : pas encore (phase 2b).
+
 ---
 
 ## Backlog (stories) — à affiner

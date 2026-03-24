@@ -63,7 +63,7 @@ Ces modules ne remplacent pas les scénarios : ils **consomment** une sortie (ex
 
 ## 5. Ordre de travail recommandé
 
-1. **Factorisation légère** (réduction duplication assmat/nounou + helpers cashflow à 3 lignes) — **hors IR**, fichier type `src/shared/monthly-cashflow-after-aides.ts` ou équivalent.
+1. **Factorisation légère** (réduction duplication assmat/nounou + helpers cashflow à 3 lignes) — **hors IR**, fichier type `src/shared/monthly-cashflow-after-aides.ts` ou équivalent. **Fait** (2026-03-24) : modules [`monthly-cashflow-after-aides.ts`](../src/shared/monthly-cashflow-after-aides.ts), [`cmg-from-employment-input.ts`](../src/shared/cmg-from-employment-input.ts), [`household.ts`](../src/shared/household.ts), tests associés ; les quatre `compute*` les utilisent.
 2. **Paramètres IR dans le pack** + lecture Zod (comme les autres règles).
 3. **Barème + TMI** puis option **disponible** ; tests sur cas DR-07 §3.
 
