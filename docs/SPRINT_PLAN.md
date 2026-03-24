@@ -65,6 +65,7 @@ Une story est **terminée** lorsque **tous** les points suivants sont vrais :
 | ------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **GARDE-001** | 2026-03-24       | Done. Reset dépôt + nouvelle [`INITIAL_SPEC.md`](./INITIAL_SPEC.md) agent-first ; ancien code dans `./trash/` (gitignored).                                                                                                |
 | **GARDE-002** | 2026-03-24       | Done. Toolchain Bun + TS strict + `bun test` + ESLint + Prettier + CI `bun run ci` ; `src/` minimal ; [`SPRINT_PLAN.md`](./SPRINT_PLAN.md), [`CONVENTIONS.md`](./CONVENTIONS.md), [`CONTRIBUTING.md`](../CONTRIBUTING.md). |
+| **GARDE-003** | 2026-03-24       | Done. Zod `rulePackSchema`, `parseRulePack`, `findRule` ; `config/rules.example.json` + `config/rules.fr-2026.json` (réimport) ; tests [`docs/stories/GARDE-003.md`](./stories/GARDE-003.md).                              |
 
 ---
 
@@ -135,14 +136,14 @@ Les prompts historiques sont récupérables dans **`./trash/docs/research/prompt
 
 ## Backlog (stories) — à affiner
 
-| ID            | Title                                                                 | Epic | Notes                           |
-| ------------- | --------------------------------------------------------------------- | ---- | ------------------------------- |
-| **GARDE-001** | Reset + `INITIAL_SPEC` agent-first                                    | E0   | Done                            |
-| **GARDE-002** | Bootstrap : Bun, TS, `bun test`, ESLint, Prettier, CI, `src/` minimal | E0   | Done                            |
-| **GARDE-003** | Schéma config règles + parse (Zod ou équivalent)                      | E1   | `[DEEP RESEARCH]` si nécessaire |
-| **GARDE-004** | Recherche packs DR-01… dans `docs/research/` (réimport ou rerun)      | E1   | Déléguer au propriétaire        |
-| **GARDE-005** | Squelette `src/scenarios/` : 4 scénarios + `renderBilanTableau` stub  | E2   |                                 |
-| **GARDE-006** | Skill : `SKILL.md`, script `simulate.mjs`, packaging                  | E4   | Après DR-05 ou équivalent       |
+| ID            | Title                                                                 | Epic | Notes                     |
+| ------------- | --------------------------------------------------------------------- | ---- | ------------------------- |
+| **GARDE-001** | Reset + `INITIAL_SPEC` agent-first                                    | E0   | Done                      |
+| **GARDE-002** | Bootstrap : Bun, TS, `bun test`, ESLint, Prettier, CI, `src/` minimal | E0   | Done                      |
+| **GARDE-003** | Schéma config règles + parse (Zod)                                    | E1   | Done                      |
+| **GARDE-004** | Recherche packs DR-01… dans `docs/research/` (réimport ou rerun)      | E1   | Déléguer au propriétaire  |
+| **GARDE-005** | Squelette `src/scenarios/` : 4 scénarios + `renderBilanTableau` stub  | E2   |                           |
+| **GARDE-006** | Skill : `SKILL.md`, script `simulate.mjs`, packaging                  | E4   | Après DR-05 ou équivalent |
 
 ---
 

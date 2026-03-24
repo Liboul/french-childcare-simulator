@@ -17,4 +17,4 @@ bun install
 bun run ci
 ```
 
-Prochaine story prioritaire : **`GARDE-003`** (schéma config + parse) — voir [`docs/SPRINT_PLAN.md`](docs/SPRINT_PLAN.md).
+Prochaine story prioritaire : **`GARDE-004`** (réintégrer `docs/research/` et prompts DR-\*) — voir [`docs/SPRINT_PLAN.md`](docs/SPRINT_PLAN.md).
