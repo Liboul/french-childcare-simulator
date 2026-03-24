@@ -36,6 +36,40 @@ describe("scenarios (GARDE-005 … GARDE-011)", () => {
     );
   });
 
+  it("creche publique stub si participation negative ou NaN", () => {
+    expect(computeCrechePublique({ monthlyParticipationEur: -1 }).status).toBe("stub");
+    expect(computeCrechePublique({ monthlyParticipationEur: Number.NaN }).status).toBe("stub");
+  });
+
+  it("creche publique partial avec participation 0", () => {
+    const r = computeCrechePublique({ monthlyParticipationEur: 0, monthlyCmgStructureEur: 0 });
+    expect(r.status).toBe("partial");
+    expect(r.trace?.monthlyParticipationEur).toBe(0);
+    expect(r.trace?.netMonthlyCashAfterCmgEur).toBe(0);
+  });
+
+  it("creche publique note coherence si participation et CMG structure non nuls", () => {
+    const r = computeCrechePublique({ monthlyParticipationEur: 200, monthlyCmgStructureEur: 30 });
+    expect(r.status).toBe("partial");
+    expect(r.notes.some((n) => n.includes("Contrôle saisie"))).toBe(true);
+  });
+
+  it("creche publique normalise childrenCount (decimal vers entier, min 1)", () => {
+    const r = computeCrechePublique({
+      monthlyParticipationEur: 100,
+      childrenCount: 2.7,
+    });
+    expect(r.trace?.childrenCount).toBe(2);
+  });
+
+  it("creche publique custody shared dans la trace", () => {
+    const r = computeCrechePublique({
+      monthlyParticipationEur: 400,
+      custody: "shared",
+    });
+    expect(r.trace?.custody).toBe("shared");
+  });
+
   it("creche publique : satellite crédit vs IR si RNI + parts", () => {
     const r = computeCrechePublique({
       monthlyParticipationEur: 300,
@@ -72,6 +106,30 @@ describe("scenarios (GARDE-005 … GARDE-011)", () => {
     expect(t.lignes.some((l) => l.libelle.includes("Seuil exonération employeur"))).toBe(true);
   });
 
+  it("creche berceau employeur stub si participation negative", () => {
+    expect(computeCrecheBerceauEmployeur({ monthlyParticipationEur: -1 }).status).toBe("stub");
+  });
+
+  it("creche berceau employeur seuil employeur: plus d enfants => plus de plafond exonere", () => {
+    const r = computeCrecheBerceauEmployeur({
+      monthlyParticipationEur: 200,
+      annualEmployerChildcareAidEur: 2000,
+      childrenCountForEmployerThreshold: 2,
+    });
+    expect(r.status).toBe("partial");
+    expect(r.trace?.employerThresholdChildrenCount).toBe(2);
+    expect(r.trace?.employerTaxableExcessAnnualEur).toBe(0);
+    expect(r.trace?.employerExemptPortionAnnualEur).toBe(2000);
+  });
+
+  it("creche berceau employeur note coherence participation + CMG", () => {
+    const r = computeCrecheBerceauEmployeur({
+      monthlyParticipationEur: 280,
+      monthlyCmgStructureEur: 40,
+    });
+    expect(r.notes.some((n) => n.includes("Contrôle saisie"))).toBe(true);
+  });
+
   it("assistante maternelle stub sans coût", () => {
     const r = computeAssistanteMaternelle({});
     expect(r.status).toBe("stub");
@@ -92,6 +150,41 @@ describe("scenarios (GARDE-005 … GARDE-011)", () => {
     expect(r.trace?.monthlyCmgEur).toBeGreaterThan(0);
     const t = renderAssistanteMaternelle(r);
     expect(t.lignes.some((l) => l.libelle.includes("Coût employeur mensuel"))).toBe(true);
+  });
+
+  it("assistante maternelle stub si coût negatif", () => {
+    expect(computeAssistanteMaternelle({ monthlyEmploymentCostEur: -1 }).status).toBe("stub");
+  });
+
+  it("assistante maternelle stub sans CMG ni revenu (coût seul)", () => {
+    const r = computeAssistanteMaternelle({ monthlyEmploymentCostEur: 500 });
+    expect(r.status).toBe("stub");
+    expect(r.notes.some((n) => n.includes("monthlyCmgPaidEur") || n.includes("monthlyHouseholdIncomeForCmgEur"))).toBe(
+      true,
+    );
+  });
+
+  it("assistante maternelle CMG saisi prioritaire sur revenu si les deux fournis", () => {
+    const r = computeAssistanteMaternelle({
+      monthlyEmploymentCostEur: 800,
+      monthlyCmgPaidEur: 100,
+      monthlyHouseholdIncomeForCmgEur: 3000,
+      householdChildRank: 1,
+    });
+    expect(r.status).toBe("partial");
+    expect(r.trace?.cmgSource).toBe("saisie");
+    expect(r.trace?.monthlyCmgEur).toBe(100);
+    expect(r.notes.some((n) => n.includes("CMG saisi") && n.includes("revenu"))).toBe(true);
+  });
+
+  it("assistante maternelle partial avec monthlyCmgPaidEur 0 explicite (sans revenu)", () => {
+    const r = computeAssistanteMaternelle({
+      monthlyEmploymentCostEur: 600,
+      monthlyCmgPaidEur: 0,
+    });
+    expect(r.status).toBe("partial");
+    expect(r.trace?.cmgSource).toBe("saisie");
+    expect(r.trace?.monthlyCmgEur).toBe(0);
   });
 
   it("nounou domicile stub sans coût", () => {
@@ -115,5 +208,54 @@ describe("scenarios (GARDE-005 … GARDE-011)", () => {
     expect(r.trace?.annualCreditEmploiDomicileEur).toBeGreaterThan(0);
     const t = renderNounou(r);
     expect(t.lignes.some((l) => l.libelle.includes("Crédit d’impôt emploi à domicile"))).toBe(true);
+  });
+
+  it("nounou domicile stub si coût negatif", () => {
+    expect(computeNounouDomicile({ monthlyEmploymentCostEur: -1 }).status).toBe("stub");
+  });
+
+  it("nounou domicile stub sans CMG ni revenu", () => {
+    const r = computeNounouDomicile({ monthlyEmploymentCostEur: 900 });
+    expect(r.status).toBe("stub");
+  });
+
+  it("nounou domicile childrenCountForCreditCeiling 0 => plafond annuel sans majoration enfant", () => {
+    const base = {
+      monthlyEmploymentCostEur: 1200,
+      monthlyHouseholdIncomeForCmgEur: 3500,
+      householdChildRank: 1,
+    };
+    const r0 = computeNounouDomicile({ ...base, childrenCountForCreditCeiling: 0 });
+    const r1 = computeNounouDomicile({ ...base, childrenCountForCreditCeiling: 1 });
+    expect(r0.status).toBe("partial");
+    expect(r1.status).toBe("partial");
+    expect(r0.trace?.annualCeilingExpenseForCreditEur).toBe(12000);
+    expect(r1.trace?.annualCeilingExpenseForCreditEur).toBe(13500);
+  });
+
+  it("nounou domicile custody shared reduit les majorations de plafond credit", () => {
+    const base = {
+      monthlyEmploymentCostEur: 1200,
+      monthlyHouseholdIncomeForCmgEur: 3500,
+      householdChildRank: 1,
+      childrenCountForCreditCeiling: 1,
+    };
+    const rFull = computeNounouDomicile({ ...base, custody: "full" });
+    const rShared = computeNounouDomicile({ ...base, custody: "shared" });
+    expect(rFull.trace!.annualCeilingExpenseForCreditEur).toBeGreaterThan(
+      rShared.trace!.annualCeilingExpenseForCreditEur,
+    );
+  });
+
+  it("nounou domicile CMG saisi prioritaire sur revenu", () => {
+    const r = computeNounouDomicile({
+      monthlyEmploymentCostEur: 1000,
+      monthlyCmgPaidEur: 80,
+      monthlyHouseholdIncomeForCmgEur: 4000,
+      householdChildRank: 1,
+    });
+    expect(r.status).toBe("partial");
+    expect(r.trace?.cmgSource).toBe("saisie");
+    expect(r.trace?.monthlyCmgEur).toBe(80);
   });
 });
