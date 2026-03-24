@@ -36,6 +36,13 @@ export {
 } from "./household";
 export { getRulePack, resetRulePackCacheForTests } from "./load-rules";
 export {
+  appendCreditVsIrSatellite,
+  computeCreditVsIrBrutSatellite,
+  creditImpotVsIrBrutIndicatif,
+  fiscalContextOptional,
+} from "./credit-vs-ir-brut";
+export type { CreditVsIrBrutSatellite, FiscalContextForCreditVsIr } from "./credit-vs-ir-brut";
+export {
   computeIrFoyerSimplifie,
   computeIrProgressiveParPart,
   computeQuotientFamilial,

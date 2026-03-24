@@ -2,6 +2,8 @@ import {
   type CmgAssmatComputed,
   computeCmgAssmatEmploiDirectMonthly,
 } from "../../shared/cmg-assmat-emploi-direct";
+import { appendCreditVsIrSatellite } from "../../shared/credit-vs-ir-brut";
+import type { CreditVsIrBrutSatellite } from "../../shared/credit-vs-ir-brut";
 import { resolveCmgFromEmploymentInput } from "../../shared/cmg-from-employment-input";
 import {
   computeCreditGardeHorsDomicileAnnual,
@@ -27,6 +29,8 @@ export type AssistanteMaternelleInput = {
   monthlyCmgPaidEur?: number;
   childrenCount?: number;
   custody?: "full" | "shared";
+  revenuNetImposableEur?: number;
+  nombreParts?: number;
 };
 
 export type AssistanteMaternelleTrace = {
@@ -39,6 +43,7 @@ export type AssistanteMaternelleTrace = {
   monthlyCreditEquivalentEur: number;
   netMonthlyCashAfterCmgEur: number;
   netMonthlyBurdenAfterCreditEur: number;
+  creditVsIrBrutSatellite?: CreditVsIrBrutSatellite;
 };
 
 export type AssistanteMaternelleResult = ScenarioResultBase & {
@@ -142,6 +147,15 @@ export function computeAssistanteMaternelle(
     );
   }
 
+  const { satellite, extraNotes } = appendCreditVsIrSatellite(
+    pack,
+    creditAnnual.annualCreditEur,
+    input,
+  );
+  if (extraNotes.length > 0) {
+    notes.push(...extraNotes);
+  }
+
   return {
     scenarioSlug: "assistante-maternelle",
     status: "partial",
@@ -157,6 +171,7 @@ export function computeAssistanteMaternelle(
       monthlyCreditEquivalentEur,
       netMonthlyCashAfterCmgEur,
       netMonthlyBurdenAfterCreditEur,
+      ...(satellite ? { creditVsIrBrutSatellite: satellite } : {}),
     },
   };
 }

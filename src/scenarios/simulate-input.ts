@@ -1,7 +1,25 @@
-import { z } from "zod";
+import { type RefinementCtx, z } from "zod";
 
 const nn = z.number().finite().nonnegative();
 const posInt = z.number().int().positive();
+
+const fiscalSatelliteKeys = ["revenuNetImposableEur", "nombreParts"] as const;
+
+/** Contrôle satellite : les deux champs ou aucun (IR brut indicatif vs crédit d’impôt). */
+export function fiscalPairRefine(data: Record<string, unknown>, ctx: RefinementCtx): void {
+  const r = data.revenuNetImposableEur;
+  const n = data.nombreParts;
+  const hasR = r !== undefined && r !== null && !Number.isNaN(r as number);
+  const hasN = n !== undefined && n !== null && !Number.isNaN(n as number);
+  if (hasR !== hasN) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message:
+        "Fournir `revenuNetImposableEur` et `nombreParts` ensemble (contrôle satellite crédit vs IR brut indicatif).",
+      path: hasR ? ["nombreParts"] : ["revenuNetImposableEur"],
+    });
+  }
+}
 
 /** Champs autorisés par slug (objet JSON) — clés inconnues = erreur de validation (aide l’agent). */
 export const simulateInputAllowedKeysBySlug: Record<string, readonly string[]> = {
@@ -10,6 +28,7 @@ export const simulateInputAllowedKeysBySlug: Record<string, readonly string[]> =
     "monthlyCmgStructureEur",
     "childrenCount",
     "custody",
+    ...fiscalSatelliteKeys,
   ],
   "creche-berceau-employeur": [
     "monthlyParticipationEur",
@@ -18,6 +37,7 @@ export const simulateInputAllowedKeysBySlug: Record<string, readonly string[]> =
     "custody",
     "annualEmployerChildcareAidEur",
     "childrenCountForEmployerThreshold",
+    ...fiscalSatelliteKeys,
   ],
   "assistante-maternelle": [
     "monthlyEmploymentCostEur",
@@ -26,6 +46,7 @@ export const simulateInputAllowedKeysBySlug: Record<string, readonly string[]> =
     "monthlyCmgPaidEur",
     "childrenCount",
     "custody",
+    ...fiscalSatelliteKeys,
   ],
   "nounou-domicile": [
     "monthlyEmploymentCostEur",
@@ -34,7 +55,13 @@ export const simulateInputAllowedKeysBySlug: Record<string, readonly string[]> =
     "monthlyCmgPaidEur",
     "childrenCountForCreditCeiling",
     "custody",
+    ...fiscalSatelliteKeys,
   ],
+};
+
+const fiscalSatelliteFields = {
+  revenuNetImposableEur: nn.optional(),
+  nombreParts: z.number().finite().positive().optional(),
 };
 
 const crechePubliqueInputSchema = z
@@ -43,8 +70,10 @@ const crechePubliqueInputSchema = z
     monthlyCmgStructureEur: nn.optional(),
     childrenCount: posInt.optional(),
     custody: z.enum(["full", "shared"]).optional(),
+    ...fiscalSatelliteFields,
   })
-  .strict();
+  .strict()
+  .superRefine(fiscalPairRefine);
 
 const crecheBerceauEmployeurInputSchema = z
   .object({
@@ -54,8 +83,10 @@ const crecheBerceauEmployeurInputSchema = z
     custody: z.enum(["full", "shared"]).optional(),
     annualEmployerChildcareAidEur: nn.optional(),
     childrenCountForEmployerThreshold: posInt.optional(),
+    ...fiscalSatelliteFields,
   })
-  .strict();
+  .strict()
+  .superRefine(fiscalPairRefine);
 
 const assistanteMaternelleInputSchema = z
   .object({
@@ -65,8 +96,10 @@ const assistanteMaternelleInputSchema = z
     monthlyCmgPaidEur: nn.optional(),
     childrenCount: posInt.optional(),
     custody: z.enum(["full", "shared"]).optional(),
+    ...fiscalSatelliteFields,
   })
-  .strict();
+  .strict()
+  .superRefine(fiscalPairRefine);
 
 const nounouDomicileInputSchema = z
   .object({
@@ -76,8 +109,10 @@ const nounouDomicileInputSchema = z
     monthlyCmgPaidEur: nn.optional(),
     childrenCountForCreditCeiling: z.number().int().nonnegative().optional(),
     custody: z.enum(["full", "shared"]).optional(),
+    ...fiscalSatelliteFields,
   })
-  .strict();
+  .strict()
+  .superRefine(fiscalPairRefine);
 
 const schemaBySlug: Record<string, z.ZodType<object>> = {
   "creche-publique": crechePubliqueInputSchema,

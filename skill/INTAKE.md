@@ -3,6 +3,7 @@
 1. **Slug** : `creche-publique` \| `creche-berceau-employeur` \| `assistante-maternelle` \| `nounou-domicile`.
 2. **Paramètres** : pour **chaque** champ, lire `src/scenarios/<slug>/params.md` (noms exacts, unités).
 3. **Lancer le calculateur** avec un **objet JSON** contenant **uniquement** ces champs (types : nombres finis, entiers positifs où indiqué, `custody` = `"full"` \| `"shared"`).
+4. **Optionnel (tous slugs)** : `revenuNetImposableEur` + `nombreParts` **ensemble** — active un bloc `creditVsIrBrutSatellite` dans `result.trace` : cohérence **crédit d’impôt garde** vs **IR brut indicatif** (pas de double comptage avec `netMonthlyBurdenAfterCreditEur`, qui intègre déjà le crédit).
 
 ## Passer les paramètres à `simulate.mjs`
 

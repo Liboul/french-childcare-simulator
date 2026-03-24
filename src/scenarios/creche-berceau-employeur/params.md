@@ -8,14 +8,16 @@ En plus, l’**aide employeur** annuelle permet d’appliquer le **seuil d’exo
 
 ## Entrées (`CrecheBerceauEmployeurInput`)
 
-| Champ                               | Obligatoire          | Sens                                                                         |
-| ----------------------------------- | -------------------- | ---------------------------------------------------------------------------- |
-| `monthlyParticipationEur`           | Oui pour **partial** | € / mois — part payée par le foyer (comme crèche publique).                  |
-| `monthlyCmgStructureEur`            | Non                  | CMG structure (mensuel).                                                     |
-| `childrenCount`                     | Non (défaut `1`)     | Pour plafonds F8.                                                            |
-| `custody`                           | Non                  | `full` \| `shared`.                                                          |
-| `annualEmployerChildcareAidEur`     | Non                  | € / an — aide employeur pour cette garde (0 si inconnue).                    |
-| `childrenCountForEmployerThreshold` | Non                  | Nombre d’enfants pour le plafond **1 830 € × n** (défaut = `childrenCount`). |
+| Champ                               | Obligatoire                        | Sens                                                                                            |
+| ----------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `monthlyParticipationEur`           | Oui pour **partial**               | € / mois — part payée par le foyer (comme crèche publique).                                     |
+| `monthlyCmgStructureEur`            | Non                                | CMG structure (mensuel).                                                                        |
+| `childrenCount`                     | Non (défaut `1`)                   | Pour plafonds F8.                                                                               |
+| `custody`                           | Non                                | `full` \| `shared`.                                                                             |
+| `annualEmployerChildcareAidEur`     | Non                                | € / an — aide employeur pour cette garde (0 si inconnue).                                       |
+| `childrenCountForEmployerThreshold` | Non                                | Nombre d’enfants pour le plafond **1 830 € × n** (défaut = `childrenCount`).                    |
+| `revenuNetImposableEur`             | Non (avec `nombreParts`)           | € / an — avec `nombreParts` : `trace.creditVsIrBrutSatellite` (crédit F8 vs IR brut indicatif). |
+| `nombreParts`                       | Non (avec `revenuNetImposableEur`) | Parts — **toujours** avec `revenuNetImposableEur`.                                              |
 
 ## Limites
 

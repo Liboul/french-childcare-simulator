@@ -34,6 +34,7 @@ Exemples :
 Autres modes d’entrée : variable **`SIMULATE_INPUT`** (JSON), ou **stdin** avec le 3ᵉ argument `-`. Voir [`INTAKE.md`](./INTAKE.md).
 
 - **Sortie** : JSON avec `result` (état moteur), `tableau` (lignes du bilan), `meta` (versions). En cas d’erreur d’appel : `error` = `json_parse` ou `validation` avec `issues` et `allowedKeys`.
+- Si l’utilisateur fournit **`revenuNetImposableEur`** et **`nombreParts`** (voir `INTAKE.md`), `result.trace` peut inclure **`creditVsIrBrutSatellite`** : comparaison indicative crédit d’impôt garde vs IR brut simplifié. Le **reste à charge** (`netMonthlyBurdenAfterCreditEur`) intègre **déjà** le crédit — ne pas le retrancher une deuxième fois d’un « disponible » dérivé de l’IR. Détail : [`DISTILLAT.md`](./DISTILLAT.md).
 - Tant que le moteur est en **stub** (`result.status === "stub"`), dis-le clairement et n’invente pas de barèmes : les **montants encodés** viennent du **`config/`** versionné.
 
 ## Tableau de bilan (obligatoire)

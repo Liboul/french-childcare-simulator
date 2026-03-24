@@ -7,14 +7,16 @@
 
 ## Entrées (`NounouDomicileInput`)
 
-| Champ                             | Obligatoire           | Sens                                                                              |
-| --------------------------------- | --------------------- | --------------------------------------------------------------------------------- |
-| `monthlyEmploymentCostEur`        | Oui pour **partial**  | € / mois — coût employeur (salaire + cotisations).                                |
-| `monthlyCmgPaidEur`               | Conditionnel          | € / mois — CMG si connue ; sinon `monthlyHouseholdIncomeForCmgEur` pour calculer. |
-| `monthlyHouseholdIncomeForCmgEur` | Conditionnel          | Revenu pour le barème CMG.                                                        |
-| `householdChildRank`              | Non (défaut `1`)      | Rang de l’enfant pour les taux d’effort CMG.                                      |
-| `childrenCountForCreditCeiling`   | Non (défaut `1`)      | Nombre d’enfants pour les **majorations** du plafond du crédit emploi à domicile. |
-| `custody`                         | Non (défaut `"full"`) | Garde alternée : majorations **réduites** (moitié par enfant dans le moteur).     |
+| Champ                             | Obligatoire                        | Sens                                                                                             |
+| --------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `monthlyEmploymentCostEur`        | Oui pour **partial**               | € / mois — coût employeur (salaire + cotisations).                                               |
+| `monthlyCmgPaidEur`               | Conditionnel                       | € / mois — CMG si connue ; sinon `monthlyHouseholdIncomeForCmgEur` pour calculer.                |
+| `monthlyHouseholdIncomeForCmgEur` | Conditionnel                       | Revenu pour le barème CMG.                                                                       |
+| `householdChildRank`              | Non (défaut `1`)                   | Rang de l’enfant pour les taux d’effort CMG.                                                     |
+| `childrenCountForCreditCeiling`   | Non (défaut `1`)                   | Nombre d’enfants pour les **majorations** du plafond du crédit emploi à domicile.                |
+| `custody`                         | Non (défaut `"full"`)              | Garde alternée : majorations **réduites** (moitié par enfant dans le moteur).                    |
+| `revenuNetImposableEur`           | Non (avec `nombreParts`)           | € / an — avec `nombreParts` : `trace.creditVsIrBrutSatellite` (crédit 199 vs IR brut indicatif). |
+| `nombreParts`                     | Non (avec `revenuNetImposableEur`) | — **toujours** avec `revenuNetImposableEur`.                                                     |
 
 ## Limites
 

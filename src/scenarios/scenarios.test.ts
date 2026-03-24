@@ -36,6 +36,21 @@ describe("scenarios (GARDE-005 … GARDE-011)", () => {
     );
   });
 
+  it("creche publique : satellite crédit vs IR si RNI + parts", () => {
+    const r = computeCrechePublique({
+      monthlyParticipationEur: 300,
+      monthlyCmgStructureEur: 50,
+      revenuNetImposableEur: 30_000,
+      nombreParts: 1,
+    });
+    expect(r.status).toBe("partial");
+    expect(r.trace?.creditVsIrBrutSatellite).toBeDefined();
+    expect(r.trace?.creditVsIrBrutSatellite?.irBrutEur).toBeGreaterThan(0);
+    expect(r.trace?.creditVsIrBrutSatellite?.annualCreditImpotEur).toBe(
+      r.trace?.annualCreditGardeHorsDomicileEur,
+    );
+  });
+
   it("creche berceau employeur stub sans participation", () => {
     const r = computeCrecheBerceauEmployeur({});
     expect(r.status).toBe("stub");

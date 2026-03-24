@@ -6,14 +6,16 @@ La garde **chez l’assistante maternelle agréée** est traitée comme des **fr
 
 ## Entrées (`AssistanteMaternelleInput`)
 
-| Champ                             | Obligatoire                    | Sens                                                                                                         |
-| --------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------ |
-| `monthlyEmploymentCostEur`        | Oui pour un calcul **partial** | € / mois — coût employeur (salaire + cotisations salariales et patronales) pour la garde.                    |
-| `monthlyCmgPaidEur`               | Conditionnel                   | € / mois — CMG emploi direct **déjà connu** (avis CAF). Si renseigné, le moteur **ne recalcule pas** le CMG. |
-| `monthlyHouseholdIncomeForCmgEur` | Conditionnel                   | € / mois — revenu pris en compte pour le **barème CMG** (si pas de `monthlyCmgPaidEur`).                     |
-| `householdChildRank`              | Non (défaut `1`)               | Rang de l’enfant dans le foyer pour le **taux d’effort** (1er, 2e, 3e enfant à charge dans le barème pack).  |
-| `childrenCount`                   | Non (défaut `1`)               | Nombre d’enfants pour les **plafonds** du crédit d’impôt hors domicile.                                      |
-| `custody`                         | Non (défaut `"full"`)          | `"full"` \| `"shared"` — plafonds crédit d’impôt.                                                            |
+| Champ                             | Obligatoire                        | Sens                                                                                                         |
+| --------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `monthlyEmploymentCostEur`        | Oui pour un calcul **partial**     | € / mois — coût employeur (salaire + cotisations salariales et patronales) pour la garde.                    |
+| `monthlyCmgPaidEur`               | Conditionnel                       | € / mois — CMG emploi direct **déjà connu** (avis CAF). Si renseigné, le moteur **ne recalcule pas** le CMG. |
+| `monthlyHouseholdIncomeForCmgEur` | Conditionnel                       | € / mois — revenu pris en compte pour le **barème CMG** (si pas de `monthlyCmgPaidEur`).                     |
+| `householdChildRank`              | Non (défaut `1`)                   | Rang de l’enfant dans le foyer pour le **taux d’effort** (1er, 2e, 3e enfant à charge dans le barème pack).  |
+| `childrenCount`                   | Non (défaut `1`)                   | Nombre d’enfants pour les **plafonds** du crédit d’impôt hors domicile.                                      |
+| `custody`                         | Non (défaut `"full"`)              | `"full"` \| `"shared"` — plafonds crédit d’impôt.                                                            |
+| `revenuNetImposableEur`           | Non (avec `nombreParts`)           | € / an — avec `nombreParts` : `trace.creditVsIrBrutSatellite`.                                               |
+| `nombreParts`                     | Non (avec `revenuNetImposableEur`) | — **toujours** avec `revenuNetImposableEur`.                                                                 |
 
 ## Comportement
 

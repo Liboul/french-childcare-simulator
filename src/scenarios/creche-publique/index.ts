@@ -1,3 +1,5 @@
+import { appendCreditVsIrSatellite } from "../../shared/credit-vs-ir-brut";
+import type { CreditVsIrBrutSatellite } from "../../shared/credit-vs-ir-brut";
 import {
   computeCreditGardeHorsDomicileAnnual,
   readCreditGardeHorsDomicileParams,
@@ -16,6 +18,9 @@ export type CrechePubliqueInput = {
   monthlyCmgStructureEur?: number;
   childrenCount?: number;
   custody?: "full" | "shared";
+  /** Optionnel : IR brut indicatif (pack) vs crédit annuel — les deux avec `nombreParts`. */
+  revenuNetImposableEur?: number;
+  nombreParts?: number;
 };
 
 export type CrechePubliqueTrace = {
@@ -28,6 +33,8 @@ export type CrechePubliqueTrace = {
   monthlyCreditEquivalentEur: number;
   netMonthlyCashAfterCmgEur: number;
   netMonthlyBurdenAfterCreditEur: number;
+  /** Si `revenuNetImposableEur` + `nombreParts` fournis : cohérence crédit vs IR brut (pas de double comptage avec le reste à charge). */
+  creditVsIrBrutSatellite?: CreditVsIrBrutSatellite;
 };
 
 export type CrechePubliqueResult = ScenarioResultBase & {
@@ -91,6 +98,15 @@ export function computeCrechePublique(input: CrechePubliqueInput): CrechePubliqu
     );
   }
 
+  const { satellite, extraNotes } = appendCreditVsIrSatellite(
+    pack,
+    creditAnnual.annualCreditEur,
+    input,
+  );
+  if (extraNotes.length > 0) {
+    notes.push(...extraNotes);
+  }
+
   return {
     scenarioSlug: "creche-publique",
     status: "partial",
@@ -106,6 +122,7 @@ export function computeCrechePublique(input: CrechePubliqueInput): CrechePubliqu
       monthlyCreditEquivalentEur,
       netMonthlyCashAfterCmgEur,
       netMonthlyBurdenAfterCreditEur,
+      ...(satellite ? { creditVsIrBrutSatellite: satellite } : {}),
     },
   };
 }

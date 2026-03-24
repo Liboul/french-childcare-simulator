@@ -2,6 +2,8 @@ import {
   computeEmployerChildcareAidTaxableExcessAnnual,
   readAvantageEmployeurCrecheParams,
 } from "../../shared/avantage-employeur-creche";
+import { appendCreditVsIrSatellite } from "../../shared/credit-vs-ir-brut";
+import type { CreditVsIrBrutSatellite } from "../../shared/credit-vs-ir-brut";
 import {
   computeCreditGardeHorsDomicileAnnual,
   readCreditGardeHorsDomicileParams,
@@ -24,6 +26,8 @@ export type CrecheBerceauEmployeurInput = {
   annualEmployerChildcareAidEur?: number;
   /** Enfants couverts par le seuil 1 830 € / an (défaut = `childrenCount`). */
   childrenCountForEmployerThreshold?: number;
+  revenuNetImposableEur?: number;
+  nombreParts?: number;
 };
 
 export type CrecheBerceauEmployeurTrace = {
@@ -40,6 +44,7 @@ export type CrecheBerceauEmployeurTrace = {
   employerExemptPortionAnnualEur: number;
   employerTaxableExcessAnnualEur: number;
   employerThresholdChildrenCount: number;
+  creditVsIrBrutSatellite?: CreditVsIrBrutSatellite;
 };
 
 export type CrecheBerceauEmployeurResult = ScenarioResultBase & {
@@ -119,6 +124,15 @@ export function computeCrecheBerceauEmployeur(
     );
   }
 
+  const { satellite, extraNotes } = appendCreditVsIrSatellite(
+    pack,
+    creditAnnual.annualCreditEur,
+    input,
+  );
+  if (extraNotes.length > 0) {
+    notes.push(...extraNotes);
+  }
+
   return {
     scenarioSlug: "creche-berceau-employeur",
     status: "partial",
@@ -138,6 +152,7 @@ export function computeCrecheBerceauEmployeur(
       employerExemptPortionAnnualEur: exemptPortionAnnualEur,
       employerTaxableExcessAnnualEur: taxableExcessAnnualEur,
       employerThresholdChildrenCount,
+      ...(satellite ? { creditVsIrBrutSatellite: satellite } : {}),
     },
   };
 }

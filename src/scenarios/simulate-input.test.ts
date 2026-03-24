@@ -19,4 +19,19 @@ describe("simulate-input", () => {
     const r = validateSimulateInput("creche-publique", { monthlyParticipationEur: "300" });
     expect(r.ok).toBe(false);
   });
+
+  it("rejects fiscal satellite incomplet (un seul des deux champs)", () => {
+    const r = validateSimulateInput("creche-publique", {
+      revenuNetImposableEur: 30_000,
+    });
+    expect(r.ok).toBe(false);
+  });
+
+  it("accepte paire revenuNetImposableEur + nombreParts", () => {
+    const r = validateSimulateInput("creche-publique", {
+      revenuNetImposableEur: 30_000,
+      nombreParts: 1,
+    });
+    expect(r.ok).toBe(true);
+  });
 });

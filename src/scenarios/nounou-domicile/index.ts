@@ -3,6 +3,8 @@ import {
   computeCmgGardeDomicileEmploiDirectMonthly,
 } from "../../shared/cmg-garde-domicile-emploi-direct";
 import { resolveCmgFromEmploymentInput } from "../../shared/cmg-from-employment-input";
+import { appendCreditVsIrSatellite } from "../../shared/credit-vs-ir-brut";
+import type { CreditVsIrBrutSatellite } from "../../shared/credit-vs-ir-brut";
 import {
   computeCreditEmploiDomicileAnnual,
   readCreditEmploiDomicileParams,
@@ -24,6 +26,8 @@ export type NounouDomicileInput = {
   /** Enfants pris en compte pour les majorations de plafond du crédit emploi à domicile. */
   childrenCountForCreditCeiling?: number;
   custody?: "full" | "shared";
+  revenuNetImposableEur?: number;
+  nombreParts?: number;
 };
 
 export type NounouDomicileTrace = {
@@ -37,6 +41,7 @@ export type NounouDomicileTrace = {
   monthlyCreditEquivalentEur: number;
   netMonthlyCashAfterCmgEur: number;
   netMonthlyBurdenAfterCreditEur: number;
+  creditVsIrBrutSatellite?: CreditVsIrBrutSatellite;
 };
 
 export type NounouDomicileResult = ScenarioResultBase & {
@@ -142,6 +147,15 @@ export function computeNounouDomicile(input: NounouDomicileInput): NounouDomicil
     );
   }
 
+  const { satellite, extraNotes } = appendCreditVsIrSatellite(
+    pack,
+    creditAnnual.annualCreditEur,
+    input,
+  );
+  if (extraNotes.length > 0) {
+    notes.push(...extraNotes);
+  }
+
   return {
     scenarioSlug: "nounou-domicile",
     status: "partial",
@@ -158,6 +172,7 @@ export function computeNounouDomicile(input: NounouDomicileInput): NounouDomicil
       monthlyCreditEquivalentEur,
       netMonthlyCashAfterCmgEur,
       netMonthlyBurdenAfterCreditEur,
+      ...(satellite ? { creditVsIrBrutSatellite: satellite } : {}),
     },
   };
 }
