@@ -28,4 +28,4 @@ Sources des instructions : dossier **`skill/`** (`SKILL.md`, `INTAKE.md`, `REFER
 bun run package:skill
 ```
 
-Produit `dist/skill-stage/comparatif-modes-garde-fr-2026/` et **`dist/comparatif-modes-garde-fr-2026-skill.zip`**. L’archive contient notamment **`scripts/simulate.mjs`** (Node, bundle) et **`src/scenarios/`**, mais **pas** `docs/research/`.
+Produit `dist/skill-stage/comparatif-modes-garde-fr-2026/` et **`dist/comparatif-modes-garde-fr-2026-skill.zip`**. L’archive contient notamment **`scripts/simulate.mjs`** (Node, bundle), **`src/scenarios/`**, **`src/config/`** (parse / schéma) et **`src/shared/`** (chargement du pack), mais **pas** `docs/research/`.

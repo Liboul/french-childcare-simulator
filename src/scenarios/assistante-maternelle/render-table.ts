@@ -1,17 +1,13 @@
+import { getRulePack } from "../../shared/load-rules";
 import type { BilanTableau } from "../bilan-table";
+import { baseBilanLignes } from "../render-common";
 import type { AssistanteMaternelleResult } from "./index";
 
 export function renderBilanTableau(result: AssistanteMaternelleResult): BilanTableau {
+  const pack = getRulePack();
   return {
     scenarioSlug: result.scenarioSlug,
     periode: "mois",
-    lignes: [
-      {
-        libelle: "Placeholder — reste à charge (stub)",
-        montantEur: 0,
-        calcul: "0 (moteur non branché)",
-        sources: [],
-      },
-    ],
+    lignes: baseBilanLignes(result, pack),
   };
 }

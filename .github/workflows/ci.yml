@@ -34,3 +34,4 @@ jobs:
           TMP=$(mktemp -d)
           unzip -q dist/comparatif-modes-garde-fr-2026-skill.zip -d "$TMP"
           node "$TMP/comparatif-modes-garde-fr-2026/scripts/simulate.mjs" creche-publique | grep -q '"scenarioSlug": "creche-publique"'
+          node "$TMP/comparatif-modes-garde-fr-2026/scripts/simulate.mjs" creche-publique | grep -q '"rulePackVersion"'

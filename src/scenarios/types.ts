@@ -1,6 +1,13 @@
-/** Résultat commun tant que le moteur métier n’est pas branché (GARDE-005). */
-export type ScenarioStubResult = {
+/** Métadonnées communes à tous les scénarios (traçabilité du pack). */
+export type ScenarioEngineMeta = {
+  rulePackVersion: string;
+  effectiveFrom: string;
+};
+
+/** Résultat scénario : `stub` tant que le calcul métier complet n’est pas implémenté. */
+export type ScenarioResultBase = {
   scenarioSlug: string;
-  status: "stub";
+  status: "stub" | "partial";
   notes: readonly string[];
+  meta: ScenarioEngineMeta;
 };

@@ -30,19 +30,33 @@ if (slug === undefined || slug === "-h" || slug === "--help") {
   process.exit(slug === undefined ? 1 : 0);
 }
 
-type Out = { result: unknown; tableau: unknown; meta: { engineVersion: string } };
+type Out = {
+  result: unknown;
+  tableau: unknown;
+  meta: { engineVersion: string; rulePackVersion: string; effectiveFrom: string };
+};
+
+function metaFromResult(result: {
+  meta: { rulePackVersion: string; effectiveFrom: string };
+}): Out["meta"] {
+  return {
+    engineVersion: pkg.version,
+    rulePackVersion: result.meta.rulePackVersion,
+    effectiveFrom: result.meta.effectiveFrom,
+  };
+}
 
 let out: Out;
 
 switch (slug) {
   case "creche-publique": {
     const result = computeCrechePublique({});
-    out = { result, tableau: renderCrechePublique(result), meta: { engineVersion: pkg.version } };
+    out = { result, tableau: renderCrechePublique(result), meta: metaFromResult(result) };
     break;
   }
   case "creche-berceau-employeur": {
     const result = computeCrecheBerceauEmployeur({});
-    out = { result, tableau: renderCrecheBerceau(result), meta: { engineVersion: pkg.version } };
+    out = { result, tableau: renderCrecheBerceau(result), meta: metaFromResult(result) };
     break;
   }
   case "assistante-maternelle": {
@@ -50,13 +64,13 @@ switch (slug) {
     out = {
       result,
       tableau: renderAssistanteMaternelle(result),
-      meta: { engineVersion: pkg.version },
+      meta: metaFromResult(result),
     };
     break;
   }
   case "nounou-domicile": {
     const result = computeNounouDomicile({});
-    out = { result, tableau: renderNounou(result), meta: { engineVersion: pkg.version } };
+    out = { result, tableau: renderNounou(result), meta: metaFromResult(result) };
     break;
   }
   default:

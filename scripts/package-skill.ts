@@ -51,6 +51,16 @@ await copyFile(
   join(outDir, "config", "rules.example.json"),
 );
 
+await cp(join(root, "src", "config"), join(outDir, "src", "config"), { recursive: true });
+await unlink(join(outDir, "src", "config", "schema.test.ts")).catch((e: unknown) => {
+  const err = e as { code?: string };
+  if (err.code !== "ENOENT") throw e;
+});
+await cp(join(root, "src", "shared"), join(outDir, "src", "shared"), { recursive: true });
+await unlink(join(outDir, "src", "shared", "load-rules.test.ts")).catch((e: unknown) => {
+  const err = e as { code?: string };
+  if (err.code !== "ENOENT") throw e;
+});
 await cp(join(root, "src", "scenarios"), join(outDir, "src", "scenarios"), { recursive: true });
 await unlink(join(outDir, "src", "scenarios", "scenarios.test.ts")).catch((e: unknown) => {
   const err = e as { code?: string };

@@ -2,4 +2,5 @@
 export const projectId = "french-childcare-costs";
 
 export * from "./config/index";
+export * from "./shared/index";
 export * from "./scenarios/index";
