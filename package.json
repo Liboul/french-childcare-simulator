@@ -16,7 +16,8 @@
     "scenario:creche-berceau-employeur": "bun run scripts/scenarios/creche-berceau-employeur.ts",
     "scenario:assistante-maternelle": "bun run scripts/scenarios/assistante-maternelle.ts",
     "scenario:nounou-domicile": "bun run scripts/scenarios/nounou-domicile.ts",
-    "package:skill": "bun run scripts/package-skill.ts"
+    "package:skill": "bun run scripts/package-skill.ts",
+    "link:cursor-skill": "bun run scripts/link-cursor-skill-local.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
