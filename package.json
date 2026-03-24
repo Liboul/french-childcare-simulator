@@ -8,10 +8,14 @@
     "typecheck": "tsc --noEmit",
     "test": "bun test ./src",
     "test:watch": "bun test --watch ./src",
-    "lint": "eslint src",
+    "lint": "eslint src scripts/scenarios",
     "format": "prettier --check .",
     "format:write": "prettier --write .",
-    "ci": "bun run typecheck && bun run lint && bun run format && bun run test"
+    "ci": "bun run typecheck && bun run lint && bun run format && bun run test",
+    "scenario:creche-publique": "bun run scripts/scenarios/creche-publique.ts",
+    "scenario:creche-berceau-employeur": "bun run scripts/scenarios/creche-berceau-employeur.ts",
+    "scenario:assistante-maternelle": "bun run scripts/scenarios/assistante-maternelle.ts",
+    "scenario:nounou-domicile": "bun run scripts/scenarios/nounou-domicile.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

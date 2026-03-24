@@ -18,4 +18,6 @@ bun install
 bun run ci
 ```
 
-Prochaine story prioritaire : **`GARDE-005`** (squelette `src/scenarios/`) — voir [`docs/SPRINT_PLAN.md`](docs/SPRINT_PLAN.md).
+Scénarios (stub) : `bun run scenario:creche-publique` (ou `creche-berceau-employeur`, `assistante-maternelle`, `nounou-domicile`).
+
+Prochaine story prioritaire : **`GARDE-006`** (skill, `SKILL.md`, packaging ZIP distillat) — voir [`docs/SPRINT_PLAN.md`](docs/SPRINT_PLAN.md).
