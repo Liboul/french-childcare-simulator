@@ -96,5 +96,15 @@ describe("rulePackSchema", () => {
       maxAnnualAidPerBeneficiaryEur: 2540,
       previousMaxAnnualAidPerBeneficiaryEurUntil2024: 2421,
     });
+
+    const irBareme = findRule(data, "ir-bareme-revenus-2025-imposition-2026");
+    expect(irBareme?.category).toBe("impot_revenu");
+    expect(irBareme?.parameters).toMatchObject({
+      incomeYear: 2025,
+      taxYear: 2026,
+    });
+    expect(
+      (irBareme?.parameters as { progressiveSlices?: unknown }).progressiveSlices,
+    ).toHaveLength(5);
   });
 });

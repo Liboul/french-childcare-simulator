@@ -35,5 +35,13 @@ export {
   normalizeHouseholdChildRank,
 } from "./household";
 export { getRulePack, resetRulePackCacheForTests } from "./load-rules";
+export {
+  computeIrFoyerSimplifie,
+  computeIrProgressiveParPart,
+  computeQuotientFamilial,
+  computeTmiMarginalQuotient,
+  readIrBaremeParams,
+} from "./ir-impot-revenu";
+export type { IrBaremeParams, IrFoyerSimplifieResult, IrProgressiveSlice } from "./ir-impot-revenu";
 export { monthlyCashflowAfterAides } from "./monthly-cashflow-after-aides";
 export type { MonthlyCashflowAfterAides } from "./monthly-cashflow-after-aides";

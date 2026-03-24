@@ -46,6 +46,11 @@
       "id": "legi-css-d531",
       "title": "Légifrance — Code de la sécurité sociale, art. D531-1 à D531-24 (CMG)",
       "url": "https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006073189/LEGISCTA000006155866"
+    },
+    {
+      "id": "legi-cgi-197",
+      "title": "Légifrance — CGI art. 197 (barème de l'impôt sur le revenu)",
+      "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000051212954"
     }
   ],
   "rules": [
@@ -527,6 +532,34 @@
       },
       "notes": "Fourchette citée dans DR-04 ; lien municipal non validé dans ce dépôt.",
       "todoVerify": true
+    },
+    {
+      "id": "ir-bareme-revenus-2025-imposition-2026",
+      "label": "IR — barème progressif (revenus 2025, imposition 2026) — quotient familial",
+      "category": "impot_revenu",
+      "sources": [
+        {
+          "id": "legi-cgi-197",
+          "title": "Légifrance — CGI art. 197 (barème de l'impôt sur le revenu)",
+          "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000051212954"
+        }
+      ],
+      "parameters": {
+        "incomeYear": 2025,
+        "taxYear": 2026,
+        "legalRef": "CGI art. 197 I-1 — LOI n° 2026-103 art. 4 (revalorisation +0,9 %)",
+        "progressiveSlices": [
+          { "upToQuotientEur": 11600, "marginalRate": 0 },
+          { "upToQuotientEur": 29579, "marginalRate": 0.11 },
+          { "upToQuotientEur": 84577, "marginalRate": 0.3 },
+          { "upToQuotientEur": 181917, "marginalRate": 0.41 },
+          { "upToQuotientEur": null, "marginalRate": 0.45 }
+        ],
+        "decoteSeuilImpotBrutIndividuelEur": 1982,
+        "decoteSeuilImpotBrutCoupleEur": 3277,
+        "notesDecote": "Décote et plafonnement QF non modélisés — voir docs/research/DR-07-IR-TMI-DISPONIBLE.md"
+      },
+      "notes": "Tranches et taux alignés sur DR-07 §3.1 ; TMI = taux marginal de la tranche où tombe le quotient (pas le PAS)."
     }
   ]
 }

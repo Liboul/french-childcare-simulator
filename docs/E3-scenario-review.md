@@ -48,14 +48,13 @@ Aucun besoin de « ré-extraire » ces fichiers pour E3 ; E3 s’ajoute **après
 
 ## 4. Cible E3 « fiscal transversal » (nouveaux modules)
 
-Aligné [`DR-07`](./research/DR-07-IR-TMI-DISPONIBLE.md) et l’epic **E3** du sprint plan — **pas encore dans les simulateurs** :
+Aligné [`DR-07`](./research/DR-07-IR-TMI-DISPONIBLE.md) et l’epic **E3** du sprint plan — **non branché** sur les `compute*` garde (satellite / import libre) :
 
-| Module (proposition)                 | Rôle                                                                                                                        | Dépendance config                             |
-| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
-| `ir-bareme.ts` (ou données JSON)     | Barème progressif par parts / quotient                                                                                      | Seuils + taux 2026 dans `config/rules.*.json` |
-| `ir-tmi.ts`                          | TMI **marginale** (tranche du quotient) + garde-fous PAS ≠ TMI                                                              | DR-07 §2–3                                    |
-| `disponible-apres-ir.ts` (optionnel) | À partir d’un revenu net imposable saisi (ou stub) : IR approximatif, restitution partielle crédits, **disponible mensuel** | Simplifications explicites (`todoVerify`)     |
-| Types / façade                       | Entrée satellite : `revenuNetImposableEur`, `nombreParts`, pas de double comptage avec crédits garde déjà en trace          | Spec INITIAL                                  |
+| Module (proposition)                                     | Rôle                                                                                                                                                  | Dépendance config                                           |
+| -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| [`ir-impot-revenu.ts`](../src/shared/ir-impot-revenu.ts) | **Fait** : barème progressif, TMI marginale, `computeIrFoyerSimplifie` (hors décote / plaf. QF) — règle pack `ir-bareme-revenus-2025-imposition-2026` | [`config/rules.fr-2026.json`](../config/rules.fr-2026.json) |
+| `disponible-apres-ir.ts` (optionnel)                     | À partir d’un revenu net imposable saisi (ou stub) : restitution partielle crédits, **disponible mensuel** — non branché sur `simulate.mjs`           | DR-07 §4                                                    |
+| Types / façade                                           | Entrée satellite : `revenuNetImposableEur`, `nombreParts`, pas de double comptage avec crédits garde déjà en trace                                    | Spec INITIAL                                                |
 
 Ces modules ne remplacent pas les scénarios : ils **consomment** une sortie (ex. `netMonthlyBurdenAfterCreditEur` × 12) ou des hypothèses foyer pour un **comparatif « après IR »** pédagogique.
 
@@ -64,7 +63,7 @@ Ces modules ne remplacent pas les scénarios : ils **consomment** une sortie (ex
 ## 5. Ordre de travail recommandé
 
 1. **Factorisation légère** (réduction duplication assmat/nounou + helpers cashflow à 3 lignes) — **hors IR**, fichier type `src/shared/monthly-cashflow-after-aides.ts` ou équivalent. **Fait** (2026-03-24) : modules [`monthly-cashflow-after-aides.ts`](../src/shared/monthly-cashflow-after-aides.ts), [`cmg-from-employment-input.ts`](../src/shared/cmg-from-employment-input.ts), [`household.ts`](../src/shared/household.ts), tests associés ; les quatre `compute*` les utilisent.
-2. **Paramètres IR dans le pack** + lecture Zod (comme les autres règles).
-3. **Barème + TMI** puis option **disponible** ; tests sur cas DR-07 §3.
+2. **Paramètres IR dans le pack** + lecture — **fait** : règle `ir-bareme-revenus-2025-imposition-2026`, [`ir-impot-revenu.ts`](../src/shared/ir-impot-revenu.ts).
+3. Option **disponible mensuel** / liaison `simulate` : à cadrer (éviter double imputation crédits garde).
 
 Document maintenu pour la story [`GARDE-013`](./stories/GARDE-013.md).

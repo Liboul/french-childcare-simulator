@@ -15,6 +15,7 @@ export const ruleCategorySchema = z.enum([
   "tarif",
   "cotisation",
   "avantage_employeur",
+  "impot_revenu",
   "autre",
 ]);
 

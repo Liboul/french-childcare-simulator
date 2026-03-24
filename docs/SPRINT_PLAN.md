@@ -75,6 +75,7 @@ Une story est **terminée** lorsque **tous** les points suivants sont vrais :
 | **GARDE-010** | 2026-03-24       | Done. Nounou à domicile **partial** ; [`cmg-garde-domicile-emploi-direct`](../../src/shared/cmg-garde-domicile-emploi-direct.ts) + [`credit-emploi-domicile`](../../src/shared/credit-emploi-domicile.ts) ; [`docs/stories/GARDE-010.md`](./stories/GARDE-010.md). |
 | **GARDE-011** | 2026-03-24       | Done. Berceau employeur **partial** ; F8 + [`avantage-employeur-creche`](../../src/shared/avantage-employeur-creche.ts) ; [`docs/stories/GARDE-011.md`](./stories/GARDE-011.md).                                                                                   |
 | **GARDE-012** | 2026-03-24       | Done. `simulate.mjs` : JSON par slug + validation Zod (`simulate-input.ts`) ; INTAKE/SKILL ; ZIP sans `*.test.ts` sous `src/` ; [`docs/stories/GARDE-012.md`](./stories/GARDE-012.md).                                                                             |
+| **GARDE-013** | 2026-03-24       | Done. E3 : `monthly-cashflow-after-aides`, `cmg-from-employment-input`, `household` ; IR barème + TMI [`ir-impot-revenu.ts`](../../src/shared/ir-impot-revenu.ts) + règle pack ; [`docs/stories/GARDE-013.md`](./stories/GARDE-013.md).                            |
 
 ---
 
@@ -147,7 +148,7 @@ Ce que désigne **E3** dans ce plan : modules **transverses** au périmètre « 
 
 **Review des simulateurs** (dépendances, duplication, ordre d’implémentation) : [`E3-scenario-review.md`](./E3-scenario-review.md). Story porteuse : **GARDE-013**.
 
-**État** : factorisation **phase 2a** livrée (`monthly-cashflow-after-aides`, `cmg-from-employment-input`, `household`). Couche **IR / barème / TMI** : pas encore (phase 2b).
+**État** : factorisation **phase 2a** + **barème IR / TMI** dans [`ir-impot-revenu.ts`](../src/shared/ir-impot-revenu.ts) (règle pack `ir-bareme-revenus-2025-imposition-2026`). Branchement **simulate** ou « disponible après IR » global : optionnel.
 
 ---
 
@@ -167,7 +168,7 @@ Ce que désigne **E3** dans ce plan : modules **transverses** au périmètre « 
 | **GARDE-010** | Nounou à domicile : CMG garde à domicile + crédit emploi à domicile (199) | E2   | Done  |
 | **GARDE-011** | Crèche berceau employeur : F8 + seuil aide employeur (1830 €/enfant)      | E2   | Done  |
 | **GARDE-012** | `simulate.mjs` : entrées JSON par slug + validation Zod + doc INTAKE      | E4   | Done  |
-| **GARDE-013** | E3 : helpers cashflow communs + couche IR / disponible (voir review)      | E3   | WIP   |
+| **GARDE-013** | E3 : helpers cashflow + IR barème / TMI (`ir-impot-revenu`) — voir review | E3   | Done  |
 
 ---
 
