@@ -30,6 +30,17 @@ export function buildCrechePubliqueLignes(
     sources: [],
   });
 
+  if (t.childcareProviderAcceptsCesu !== undefined) {
+    lignes.push({
+      libelle: "Paiement par CESU accepté par la crèche",
+      montantEur: 0,
+      calcul: t.childcareProviderAcceptsCesu
+        ? "Oui — information trésorerie (hors F8)."
+        : "Non — autre moyen pour la participation.",
+      sources: [],
+    });
+  }
+
   lignes.push({
     libelle: "Complément mode de garde (CMG) — structure",
     montantEur: -t.monthlyCmgStructureEur,

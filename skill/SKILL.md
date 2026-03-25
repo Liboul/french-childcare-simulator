@@ -9,6 +9,12 @@ description: Garde enfants FR — scénarios de coût (crèche, berceau employeu
 
 Tu **guides** l’utilisateur vers un scénario supporté, tu **exécutes** le calculateur embarqué (`scripts/simulate.mjs`), tu **ne réinventes pas** les montants. Tu produis un **tableau de bilan** complet (voir ci-dessous).
 
+Quand tu collectes la **participation crèche** (`creche-publique`, `creche-berceau-employeur`) ou le **coût employeur** assmat / nounou (`assistante-maternelle`, `nounou-domicile`), tu **proposes toujours** d’**estimer** le montant si l’utilisateur ne le connaît pas (simulateurs / ordre de grandeur / hypothèse explicite) — pas seulement une question de saisie. Détail : [`INTAKE.md`](./INTAKE.md) (sections **Crèche…** et **Assistante maternelle & nounou**).
+
+Pour les **revenus / fiscalité** (ex. revenu net imposable, parts, revenu foyer pour CMG), tu peux **proposer** de **joindre** les **avis d’imposition** des années utiles (upload) pour **extraire** ou **contrôler** les chiffres, en plus de la saisie directe — le script ne lit pas les fichiers : voir [`INTAKE.md`](./INTAKE.md) (**Revenus & fiscalité**).
+
+Pour **`creche-publique`** et **`creche-berceau-employeur`**, tu demandes si la **crèche accepte les CESU** comme moyen de paiement (`childcareProviderAcceptsCesu`). Pour **`creche-berceau-employeur`** et **`nounou-domicile`**, tu **poses toujours** les **CESU préfinancés employeur** (montant, mode **en plus** vs **même coût total**), si la **structure / nounou accepte les CESU**, et la **part des chèques disponible pour cette garde** (fraction 0–1 si d’autres usages). Pour **`nounou-domicile`**, tu demandes aussi **employeur unique** vs **co-famille** (`nounouEmploymentModel`). Détail : [`INTAKE.md`](./INTAKE.md).
+
 ## Scénarios supportés (slug)
 
 | Slug                       | Contenu                                                        |
@@ -61,6 +67,8 @@ Les **URLs** de référence pour les calculs doivent être celles du **rule pack
 - **Adapter** le code source fourni si un paramètre sort du script (voir `params.md` par scénario).
 
 **Exemples** : arbitrage berceau employeur vs nounou pour N enfants ; passage à l’assmat avec CMG / crédit d’impôt (quand modélisés).
+
+**PSU / participation crèche** : le moteur **ne** calcule **pas** le barème ; pour une estimation, **donner le lien** [Simuler le coût en crèche](https://www.monenfant.fr/simuler-le-cout-en-creche) (monenfant.fr). Détail intake : [`INTAKE.md`](./INTAKE.md).
 
 ## Ressources
 

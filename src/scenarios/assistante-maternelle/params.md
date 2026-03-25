@@ -40,6 +40,7 @@ Même logique que pour les crèches en structure : taux, plafonds par enfant et 
 
 ## Comportement
 
+- **Agent (intake)** : pour `monthlyEmploymentCostEur`, ne pas seulement demander le montant — **proposer** d’estimer (simulateur Urssaf / emploi à domicile, ordre de grandeur salaire + cotisations, ou hypothèse explicite) si l’utilisateur ne le connaît pas ; voir `INTAKE.md` du skill.
 - **CMG** : soit **saisie** directe, soit **calcul** via la règle `cmg-emploi-direct-assistante-maternelle-2026-04` (formule DR-01 dans le pack).
 - **Crédit d’impôt** : règle `credit-impot-garde-hors-domicile` (déduction CMG sur l’assiette si `deductCmgFromBase` dans le pack).
 - Indemnités d’entretien / repas, plafonds journaliers de salaire, non-cumuls PreParE : **pas** intégrés exhaustivement dans cette story — voir règles `todoVerify` du pack et `docs/research/`.

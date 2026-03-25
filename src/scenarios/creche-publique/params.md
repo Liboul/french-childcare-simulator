@@ -17,6 +17,7 @@
 | `custody`                 | Non (défaut `"full"`)              | `"full"` \| `"shared"` | Garde alternée : plafonds **réduits** pour le crédit d’impôt (paramètres du pack).                                                                                                                                         |
 | `revenuNetImposableEur`   | Non (avec `nombreParts`)           | € / an                 | Revenu net imposable du foyer (hypothèse) — **uniquement** avec `nombreParts` : active `trace.creditVsIrBrutSatellite` (crédit vs IR brut indicatif).                                                                      |
 | `nombreParts`             | Non (avec `revenuNetImposableEur`) | parts                  | Nombre de parts du quotient familial — **uniquement** avec `revenuNetImposableEur`.                                                                                                                                        |
+| `childcareProviderAcceptsCesu` | Non                           | booléen                | La crèche **accepte-t-elle** le paiement par chèques CESU ? Information trésorerie — **ne modifie pas** le calcul F8. **Agent** : toujours poser la question. |
 
 ## Cohérence participation / CMG
 
@@ -44,6 +45,6 @@ L’agent et les humains doivent **lire la valeur réelle** dans le pack pour le
 
 ## Comportement moteur (GARDE-008)
 
-- Ne **recalcule pas** le barème PSU : la participation est une **saisie** (ou une estimation externe, ex. monenfant.fr).
+- Ne **recalcule pas** le barème PSU : la participation est une **saisie** (ou une estimation externe). **Simulateur PSU (part familiale)** côté officiel : [Simuler le coût en crèche](https://www.monenfant.fr/simuler-le-cout-en-creche) (monenfant.fr) — à ne pas confondre avec « Estimer vos droits » CAF (aides). **Agent (intake)** : **fournir ce lien** en proposant d’estimer ; sinon hypothèse explicite ; voir `INTAKE.md` du skill.
 - **Crédit d’impôt** : taux, plafonds par enfant et traitement CMG sur la base éligible selon la règle `credit-impot-garde-hors-domicile` du pack.
 - **Non-cumuls** (CESU, autres modes) : voir règles qualitatives dans le pack et `docs/research/` — pas d’arbitrage automatique ici.

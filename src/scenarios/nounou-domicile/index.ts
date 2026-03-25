@@ -16,13 +16,19 @@ import {
 import { normalizeCustody, normalizeHouseholdChildRank } from "../../shared/household";
 import { getRulePack } from "../../shared/load-rules";
 import { monthlyCashflowAfterAides } from "../../shared/monthly-cashflow-after-aides";
-import type { ScenarioResultBase } from "../types";
+import type { NounouEmploymentModel, PrefinancedCesuMode, ScenarioResultBase } from "../types";
+
+function clamp01(x: number): number {
+  return Math.min(1, Math.max(0, x));
+}
 
 /**
  * Garde à domicile par employeur direct (Pajemploi) : CMG « emploi direct garde à domicile »
  * et crédit d’impôt **emploi à domicile** (CGI 199 sexdecies), pas le crédit « garde hors domicile ».
  * CMG : saisie prioritaire sur le revenu si les deux sont fournis.
  */
+export type { NounouEmploymentModel, PrefinancedCesuMode };
+
 export type NounouDomicileInput = {
   /** Coût employeur mensuel — même assiette approximative pour CMG et base crédit 199 ; voir `params.md`. */
   monthlyEmploymentCostEur?: number;
@@ -34,6 +40,18 @@ export type NounouDomicileInput = {
   custody?: "full" | "shared";
   revenuNetImposableEur?: number;
   nombreParts?: number;
+  /** Chèques CESU préfinancés pris en charge par l’employeur — voir `params.md` (intake). */
+  prefinancedCesuEmployerUses?: boolean;
+  /** Montant mensuel de CESU préfinancé employeur (si `prefinancedCesuEmployerUses`). */
+  prefinancedCesuMonthlyEur?: number;
+  /** `on_top` : en plus du coût employeur saisi pour CMG/crédit ; `substitutes_constant_employer_cost` : arbitrage pour garder le même coût employeur total (la saisie représente déjà l’enveloppe). */
+  prefinancedCesuMode?: PrefinancedCesuMode;
+  /** La nounou / l’emploi accepte-t-il le paiement par CESU ? */
+  childcareProviderAcceptsCesu?: boolean;
+  /** Part du CESU employeur utilisable pour cette garde (0–1) si une partie sert à d’autres services. Défaut 1. */
+  prefinancedCesuAvailableForChildcareFraction?: number;
+  /** Employeur unique pour ce contrat vs co-famille (plusieurs foyers). */
+  nounouEmploymentModel?: NounouEmploymentModel;
 };
 
 export type NounouDomicileTrace = {
@@ -48,6 +66,15 @@ export type NounouDomicileTrace = {
   netMonthlyCashAfterCmgEur: number;
   netMonthlyBurdenAfterCreditEur: number;
   creditVsIrBrutSatellite?: CreditVsIrBrutSatellite;
+  prefinancedCesuEmployerUses: boolean;
+  prefinancedCesuMode?: PrefinancedCesuMode;
+  prefinancedCesuMonthlyEur: number;
+  /** Coût employeur total côté employeur : coût saisi + CESU effectif si mode `on_top`, sinon égal au coût saisi. */
+  totalEmployerOutlayMonthlyEur: number;
+  childcareProviderAcceptsCesu?: boolean;
+  prefinancedCesuAvailableForChildcareFraction: number;
+  effectivePrefinancedCesuMonthlyEur: number;
+  nounouEmploymentModel?: NounouEmploymentModel;
 };
 
 export type NounouDomicileResult = ScenarioResultBase & {
@@ -143,12 +170,26 @@ export function computeNounouDomicile(input: NounouDomicileInput): NounouDomicil
       annualCreditImpotEur: creditAnnual.annualCreditEur,
     });
 
+  const cesuUses = input.prefinancedCesuEmployerUses === true;
+  const cesuMonthly = Math.max(0, input.prefinancedCesuMonthlyEur ?? 0);
+  const cesuMode = input.prefinancedCesuMode;
+  const cesuFrac = clamp01(input.prefinancedCesuAvailableForChildcareFraction ?? 1);
+  const effectivePrefinancedCesuMonthlyEur = cesuMonthly * cesuFrac;
+  const totalEmployerOutlayMonthlyEur =
+    cesuUses && cesuMode === "on_top"
+      ? monthlyEmploymentCostEur + effectivePrefinancedCesuMonthlyEur
+      : monthlyEmploymentCostEur;
+
   const notes: string[] = [
     "Crédit d’impôt **emploi à domicile** (CGI art. 199 sexdecies) — **non cumulable** avec le crédit « frais de garde hors du domicile » (CGI art. 200 quater B) pour les mêmes dépenses.",
     "Calcul partiel : prise en charge partielle des cotisations (50 % dans le pack CMG) et plafonds détaillés non intégrés ligne à ligne — voir `docs/research/`.",
     "Même montant `monthlyEmploymentCostEur` pour CMG et base du crédit 199 — approximation ; base annuelle = coût − CMG puis plafond (voir params.md, Assiette unique).",
-    "Co-gardes / co-employeurs : pas de répartition automatique — saisir la part du foyer ou simuler par foyer (voir params.md, Limites).",
   ];
+  if (input.nounouEmploymentModel === "co_famille") {
+    notes.push(
+      "Co-famille / plusieurs employeurs : le moteur ne répartit pas automatiquement entre foyers — saisir la **part** de coût et de CMG **de ce foyer**, ou simuler par foyer (voir params.md, Limites).",
+    );
+  }
   if (
     isExplicitMonthlyCmgProvided(input.monthlyCmgPaidEur) &&
     isIncomeProvidedForCmgFormula(input.monthlyHouseholdIncomeForCmgEur)
@@ -160,6 +201,25 @@ export function computeNounouDomicile(input: NounouDomicileInput): NounouDomicil
   if (!creditParams) {
     notes.push(
       "Avertissement : règle `credit-impot-emploi-domicile-plafonds` absente du pack — crédit d’impôt à 0.",
+    );
+  }
+
+  if (cesuUses) {
+    notes.push(
+      "CESU préfinancé employeur : les lignes CMG / crédit d’impôt restent calculées sur `monthlyEmploymentCostEur` (assiette unique). Le **total charge employeur** inclut le CESU **effectif** (pondéré) en plus uniquement si le mode est `on_top` — voir tableau et `params.md`.",
+    );
+    notes.push(
+      "Non-cumuls / déclaratif : règle qualitative `cesu-cmg-non-cumul` dans le pack — ne pas cumuler abusivement avec d’autres dispositifs pour la même dépense.",
+    );
+  }
+  if (input.childcareProviderAcceptsCesu === false) {
+    notes.push(
+      "Paiement par CESU : la garde indiquée **n’accepte pas** les CESU — prévoir un autre moyen pour le salaire / remboursements.",
+    );
+  }
+  if (cesuUses && cesuFrac < 1) {
+    notes.push(
+      "Part du CESU employeur pour cette garde : `prefinancedCesuAvailableForChildcareFraction` < 1 — montant CESU utile **pondéré** (autres usages des chèques).",
     );
   }
 
@@ -188,6 +248,18 @@ export function computeNounouDomicile(input: NounouDomicileInput): NounouDomicil
       monthlyCreditEquivalentEur,
       netMonthlyCashAfterCmgEur,
       netMonthlyBurdenAfterCreditEur,
+      prefinancedCesuEmployerUses: cesuUses,
+      ...(cesuMode !== undefined ? { prefinancedCesuMode: cesuMode } : {}),
+      prefinancedCesuMonthlyEur: cesuMonthly,
+      totalEmployerOutlayMonthlyEur,
+      prefinancedCesuAvailableForChildcareFraction: cesuFrac,
+      effectivePrefinancedCesuMonthlyEur,
+      ...(input.nounouEmploymentModel !== undefined
+        ? { nounouEmploymentModel: input.nounouEmploymentModel }
+        : {}),
+      ...(input.childcareProviderAcceptsCesu !== undefined
+        ? { childcareProviderAcceptsCesu: input.childcareProviderAcceptsCesu }
+        : {}),
       ...(satellite ? { creditVsIrBrutSatellite: satellite } : {}),
     },
   };

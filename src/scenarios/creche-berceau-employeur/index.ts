@@ -11,7 +11,11 @@ import {
 import { normalizeChildrenCountForCredit, normalizeCustody } from "../../shared/household";
 import { getRulePack } from "../../shared/load-rules";
 import { monthlyCashflowAfterAides } from "../../shared/monthly-cashflow-after-aides";
-import type { ScenarioResultBase } from "../types";
+import type { PrefinancedCesuMode, ScenarioResultBase } from "../types";
+
+function clamp01(x: number): number {
+  return Math.min(1, Math.max(0, x));
+}
 
 /**
  * Place en crèche avec participation employeur (berceau, convention, etc.) : même logique **F8** que la crèche publique
@@ -29,6 +33,13 @@ export type CrecheBerceauEmployeurInput = {
   childrenCountForEmployerThreshold?: number;
   revenuNetImposableEur?: number;
   nombreParts?: number;
+  /** Chèques CESU préfinancés employeur liés à la garde — voir `params.md`. */
+  prefinancedCesuEmployerUses?: boolean;
+  prefinancedCesuAnnualEur?: number;
+  prefinancedCesuMode?: PrefinancedCesuMode;
+  childcareProviderAcceptsCesu?: boolean;
+  /** Part du CESU employeur utilisable pour cette garde (0–1) si une partie sert à d’autres services. Défaut 1. */
+  prefinancedCesuAvailableForChildcareFraction?: number;
 };
 
 export type CrecheBerceauEmployeurTrace = {
@@ -46,6 +57,14 @@ export type CrecheBerceauEmployeurTrace = {
   employerTaxableExcessAnnualEur: number;
   employerThresholdChildrenCount: number;
   creditVsIrBrutSatellite?: CreditVsIrBrutSatellite;
+  prefinancedCesuEmployerUses: boolean;
+  prefinancedCesuMode?: PrefinancedCesuMode;
+  prefinancedCesuAnnualEur: number;
+  /** Aide employeur annuelle + CESU si mode `on_top`. */
+  totalEmployerChildcareSupportAnnualEur: number;
+  childcareProviderAcceptsCesu?: boolean;
+  prefinancedCesuAvailableForChildcareFraction: number;
+  effectivePrefinancedCesuAnnualEur: number;
 };
 
 export type CrecheBerceauEmployeurResult = ScenarioResultBase & {
@@ -115,6 +134,16 @@ export function computeCrecheBerceauEmployeur(
       employerThresholdChildrenCount,
     );
 
+  const cesuUses = input.prefinancedCesuEmployerUses === true;
+  const cesuAnnual = Math.max(0, input.prefinancedCesuAnnualEur ?? 0);
+  const cesuMode = input.prefinancedCesuMode;
+  const cesuFrac = clamp01(input.prefinancedCesuAvailableForChildcareFraction ?? 1);
+  const effectivePrefinancedCesuAnnualEur = cesuAnnual * cesuFrac;
+  const totalEmployerChildcareSupportAnnualEur =
+    cesuUses && cesuMode === "on_top"
+      ? annualEmployerChildcareAidEur + effectivePrefinancedCesuAnnualEur
+      : annualEmployerChildcareAidEur;
+
   const notes: string[] = [
     "Calcul partiel : crédit d’impôt garde **hors domicile** (F8) sur la **part familiale** ; l’aide employeur ne réduit pas ce crédit si la participation saisie est déjà la part nette à payer.",
     "Seuil d’exonération employeur : paramètre `avantage-employeur-creche-seuil-exoneration` (jurisprudence, `todoVerify` dans le pack) — excédent potentiellement imposable en salaire.",
@@ -127,6 +156,22 @@ export function computeCrecheBerceauEmployeur(
   if (!creditParams) {
     notes.push(
       "Avertissement : règle `credit-impot-garde-hors-domicile` absente du pack — crédit d’impôt à 0.",
+    );
+  }
+
+  if (cesuUses) {
+    notes.push(
+      "CESU préfinancé employeur : le seuil d’exonération / excédent imposable reste calculé sur `annualEmployerChildcareAidEur` seul. Le **total soutien employeur** (aide déclarée + CESU effectif si « en plus ») figure en trace — voir `params.md`.",
+    );
+  }
+  if (input.childcareProviderAcceptsCesu === false) {
+    notes.push(
+      "Paiement par CESU : la structure indiquée **n’accepte pas** les CESU — le règlement des frais de garde doit s’envisager autrement pour la trésorerie.",
+    );
+  }
+  if (cesuUses && cesuFrac < 1) {
+    notes.push(
+      "Part du CESU employeur affectée à cette garde : `prefinancedCesuAvailableForChildcareFraction` < 1 — le montant CESU utile pour la trace est **pondéré** (autres usages des chèques).",
     );
   }
 
@@ -158,6 +203,15 @@ export function computeCrecheBerceauEmployeur(
       employerExemptPortionAnnualEur: exemptPortionAnnualEur,
       employerTaxableExcessAnnualEur: taxableExcessAnnualEur,
       employerThresholdChildrenCount,
+      prefinancedCesuEmployerUses: cesuUses,
+      ...(cesuMode !== undefined ? { prefinancedCesuMode: cesuMode } : {}),
+      prefinancedCesuAnnualEur: cesuAnnual,
+      totalEmployerChildcareSupportAnnualEur,
+      prefinancedCesuAvailableForChildcareFraction: cesuFrac,
+      effectivePrefinancedCesuAnnualEur,
+      ...(input.childcareProviderAcceptsCesu !== undefined
+        ? { childcareProviderAcceptsCesu: input.childcareProviderAcceptsCesu }
+        : {}),
       ...(satellite ? { creditVsIrBrutSatellite: satellite } : {}),
     },
   };

@@ -79,4 +79,41 @@ describe("simulate-input", () => {
     });
     expect(r.ok).toBe(false);
   });
+
+  it("rejects prefinancedCesuEmployerUses true without mode (nounou / berceau)", () => {
+    for (const slug of ["nounou-domicile", "creche-berceau-employeur"] as const) {
+      const r = validateSimulateInput(slug, { prefinancedCesuEmployerUses: true });
+      expect(r.ok).toBe(false);
+    }
+  });
+
+  it("accepts CESU prefinancé with mode", () => {
+    const n = validateSimulateInput("nounou-domicile", {
+      prefinancedCesuEmployerUses: true,
+      prefinancedCesuMode: "on_top",
+      prefinancedCesuMonthlyEur: 100,
+    });
+    expect(n.ok).toBe(true);
+    const b = validateSimulateInput("creche-berceau-employeur", {
+      prefinancedCesuEmployerUses: true,
+      prefinancedCesuMode: "substitutes_constant_employer_cost",
+      prefinancedCesuAnnualEur: 500,
+    });
+    expect(b.ok).toBe(true);
+  });
+
+  it("rejects prefinancedCesuAvailableForChildcareFraction out of 0–1", () => {
+    const r = validateSimulateInput("nounou-domicile", {
+      prefinancedCesuAvailableForChildcareFraction: 1.1,
+    });
+    expect(r.ok).toBe(false);
+  });
+
+  it("accepts nounouEmploymentModel and childcareProviderAcceptsCesu", () => {
+    const r = validateSimulateInput("nounou-domicile", {
+      nounouEmploymentModel: "co_famille",
+      childcareProviderAcceptsCesu: true,
+    });
+    expect(r.ok).toBe(true);
+  });
 });

@@ -17,6 +17,12 @@
 | `custody`                         | Non (défaut `"full"`)              | **Garde alternée** entre parents : l’incrément de plafond par enfant est **divisé par deux** dans le moteur (`shared`). **Pas** un paramètre de co-famille / co-employeurs. |
 | `revenuNetImposableEur`           | Non (avec `nombreParts`)           | € / an — avec `nombreParts` : `trace.creditVsIrBrutSatellite` (crédit 199 vs IR brut indicatif).                                     |
 | `nombreParts`                     | Non (avec `revenuNetImposableEur`) | — **toujours** avec `revenuNetImposableEur`.                                                                                        |
+| `prefinancedCesuEmployerUses`     | Non (défaut `false`)               | L’employeur verse-t-il des **CESU préfinancés** ? Si `true`, **`prefinancedCesuMode` obligatoire**.                                 |
+| `prefinancedCesuMonthlyEur`       | Non                                | € / mois — montant de CESU employeur (indicatif pour la trace).                                                                     |
+| `prefinancedCesuMode`             | Si CESU oui                        | `on_top` \| `substitutes_constant_employer_cost` — en plus du coût saisi, ou arbitrage pour **même** coût employeur total.          |
+| `childcareProviderAcceptsCesu`    | Non                                | La nounou / l’emploi accepte-t-il le paiement par CESU ? **Agent** : poser la question. |
+| `prefinancedCesuAvailableForChildcareFraction` | Non (défaut 1)      | Entre **0** et **1** — part du CESU employeur **utilisable pour cette garde** si une partie sert à d’autres services. |
+| `nounouEmploymentModel`           | Non                                | `full_single_employer` \| `co_famille` — un employeur pour ce contrat vs co-famille. **Agent** : **toujours** demander. |
 
 ## Priorité saisie / revenu (CMG)
 
@@ -47,6 +53,17 @@ La **base éligible** annuelle est `min(max(0, coût annuel − CMG annuelle), p
 ## Trace (`partial`) — équivalents mensuels
 
 - `monthlyCreditEquivalentEur` = crédit d’impôt annuel ÷ **12** : mensualisation **pédagogique**, pas calendrier réel des avances / restitutions. Voir `src/shared/monthly-cashflow-after-aides.ts`.
+
+## Agent (intake)
+
+- Pour `monthlyEmploymentCostEur`, ne pas seulement demander le montant — **proposer** d’estimer (simulateur Urssaf / emploi à domicile, ordre de grandeur salaire + cotisations, ou hypothèse explicite) si l’utilisateur ne le connaît pas ; voir `INTAKE.md` du skill.
+- **Toujours** demander les **CESU préfinancés employeur** : présence, montant mensuel si utile, mode **en plus** vs **arbitrage même coût total**, **acceptation des CESU par la nounou**, **fraction disponible pour la garde** si autres usages — voir `INTAKE.md` du skill (**CESU**).
+- **Toujours** demander **`nounouEmploymentModel`** : employeur unique (`full_single_employer`) vs **co-famille** (`co_famille`).
+
+## CESU préfinancé et moteur
+
+- **CMG / crédit 199** : calculés sur `monthlyEmploymentCostEur` (assiette unique). Le **total charge employeur** (`trace.totalEmployerOutlayMonthlyEur`) ajoute le CESU uniquement si `prefinancedCesuMode` = `on_top`.
+- Non-cumuls déclaratifs : règle qualitative `cesu-cmg-non-cumul` dans le pack ; plafonds employeur : `cesu-prefinance-plafond-aide-financiere-employeur`.
 
 ## Limites
 

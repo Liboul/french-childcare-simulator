@@ -10,7 +10,7 @@ En plus, l’**aide employeur** annuelle permet d’appliquer le **seuil d’exo
 
 | Champ                               | Obligatoire                        | Sens                                                                                            |
 | ----------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `monthlyParticipationEur`           | Oui pour **partial**               | € / mois — part payée par le foyer (comme crèche publique).                                     |
+| `monthlyParticipationEur`           | Oui pour **partial**               | € / mois — part payée par le foyer (comme crèche publique). **Agent** : proposer d’estimer si inconnu (voir `INTAKE.md` du skill, `params.md` crèche publique). |
 | `monthlyCmgStructureEur`            | Non                                | CMG structure (mensuel).                                                                         |
 | `childrenCount`                     | Non (défaut `1`)                   | Enfants pour lesquels **ces dépenses de garde en structure** ouvrent le plafond F8 (multiplicateur des plafonds « par enfant ») — pas forcément tous les enfants du foyer. |
 | `custody`                           | Non                                | `full` \| `shared`.                                                                             |
@@ -18,6 +18,11 @@ En plus, l’**aide employeur** annuelle permet d’appliquer le **seuil d’exo
 | `childrenCountForEmployerThreshold` | Non                                | Nombre d’enfants pour le plafond **1 830 € × n** (défaut = `childrenCount`).                    |
 | `revenuNetImposableEur`             | Non (avec `nombreParts`)           | € / an — avec `nombreParts` : `trace.creditVsIrBrutSatellite` (crédit F8 vs IR brut indicatif). |
 | `nombreParts`                       | Non (avec `revenuNetImposableEur`) | Parts — **toujours** avec `revenuNetImposableEur`.                                              |
+| `prefinancedCesuEmployerUses`       | Non (défaut `false`)               | CESU préfinancés employeur pour la garde ? Si `true`, **`prefinancedCesuMode` obligatoire**.      |
+| `prefinancedCesuAnnualEur`          | Non                                | € / an — montant CESU employeur (trace).                                                         |
+| `prefinancedCesuMode`               | Si CESU oui                        | `on_top` \| `substitutes_constant_employer_cost` — en plus de `annualEmployerChildcareAidEur`, ou même enveloppe. |
+| `childcareProviderAcceptsCesu`      | Non                              | La crèche accepte-t-elle les CESU ? **Agent** : poser la question. |
+| `prefinancedCesuAvailableForChildcareFraction` | Non (défaut 1)      | Entre **0** et **1** — part du volume CESU employeur **utilisable pour cette garde** si une partie sert à d’autres services. |
 
 ## Cohérence participation / CMG (identique crèche publique)
 
@@ -37,3 +42,8 @@ Même lecture que pour la crèche publique : `rate`, plafonds par enfant et gard
 
 - Impact sur le **brut / avantages en nature** côté paie au-delà du seuil : **estimation** d’imposition, pas calcul de bulletin.
 - Prise en charge employeur **non** déduite du crédit F8 si la **participation** saisie est **déjà** la part nette famille (cohérent avec BOFiP : assiette des frais réellement payés par le contribuable).
+
+## CESU préfinancé employeur
+
+- Le **seuil d’exonération / excédent** sur l’aide employeur reste calculé sur **`annualEmployerChildcareAidEur`** seul. Le **total soutien employeur** (`trace.totalEmployerChildcareSupportAnnualEur`) = aide annuelle + CESU si `prefinancedCesuMode` = `on_top`.
+- **Agent (intake)** : toujours poser la question CESU et le mode **en plus** vs **même enveloppe** — `INTAKE.md` du skill.

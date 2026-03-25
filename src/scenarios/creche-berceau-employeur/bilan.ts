@@ -22,6 +22,7 @@ export function buildCrecheBerceauEmployeurLignes(
   const creditRule = findRule(pack, "credit-impot-garde-hors-domicile");
   const cmgRule = findRule(pack, "cmg-structure-montants-mensuels-jusquau-2026-03-31");
   const avantageRule = findRule(pack, "avantage-employeur-creche-seuil-exoneration");
+  const cesuRule = findRule(pack, "cesu-prefinance-plafond-aide-financiere-employeur");
 
   lignes.push({
     libelle: "Participation familiale (facture / mois)",
@@ -48,12 +49,46 @@ export function buildCrecheBerceauEmployeurLignes(
     sources: [],
   });
 
+  if (t.childcareProviderAcceptsCesu !== undefined) {
+    lignes.push({
+      libelle: "Paiement par CESU accepté par la crèche",
+      montantEur: 0,
+      calcul: t.childcareProviderAcceptsCesu
+        ? "Oui — information trésorerie (hors F8)."
+        : "Non — autre moyen pour la participation.",
+      sources: [],
+    });
+  }
+
   lignes.push({
     libelle: "Aide employeur (annuelle, saisie)",
     montantEur: 0,
     calcul: `${String(t.annualEmployerChildcareAidEur)} € / an — prise en charge par l’employeur pour la garde (montant 0 € sur la ligne : information ; voir seuil ci-dessous).`,
     sources: [],
   });
+
+  if (t.prefinancedCesuEmployerUses) {
+    const modeLabel =
+      t.prefinancedCesuMode === "on_top"
+        ? "CESU en plus de l’aide annuelle saisie"
+        : "arbitrage : l’aide saisie reflète déjà l’enveloppe (CESU inclus dans la convention)";
+    const fracNote =
+      t.prefinancedCesuAvailableForChildcareFraction < 1
+        ? ` Part garde ${String(Math.round(t.prefinancedCesuAvailableForChildcareFraction * 1000) / 10)} %.`
+        : "";
+    lignes.push({
+      libelle: "Chèques CESU préfinancés employeur (annuel, effectif garde)",
+      montantEur: 0,
+      calcul: `${String(t.effectivePrefinancedCesuAnnualEur)} € / an effectifs — ${modeLabel}${fracNote} Brut saisi : ${String(t.prefinancedCesuAnnualEur)} €. Seuil social : lignes ci-dessous sur ` + "`annualEmployerChildcareAidEur` seul.",
+      sources: cesuRule ? sourcesFromRule(cesuRule) : [],
+    });
+    lignes.push({
+      libelle: "Total soutien employeur estimé (aide déclarée + CESU si « en plus »)",
+      montantEur: 0,
+      calcul: `${String(t.totalEmployerChildcareSupportAnnualEur)} € / an — lecture ; ne modifie pas le crédit F8 famille.`,
+      sources: [],
+    });
+  }
 
   lignes.push({
     libelle: "Seuil exonération employeur (part non imposable, annuel)",

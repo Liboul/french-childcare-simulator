@@ -2,8 +2,21 @@ import { type RefinementCtx, z } from "zod";
 
 const nn = z.number().finite().nonnegative();
 const posInt = z.number().int().positive();
+const fraction01 = z.number().finite().min(0).max(1);
 
 const fiscalSatelliteKeys = ["revenuNetImposableEur", "nombreParts"] as const;
+
+/** Si CESU préfinancé employeur : le mode est obligatoire. */
+export function prefinancedCesuModeRequiredRefine(data: Record<string, unknown>, ctx: RefinementCtx): void {
+  if (data.prefinancedCesuEmployerUses === true && data.prefinancedCesuMode == null) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message:
+        "Si `prefinancedCesuEmployerUses` est true, fournir `prefinancedCesuMode` : `on_top` | `substitutes_constant_employer_cost`.",
+      path: ["prefinancedCesuMode"],
+    });
+  }
+}
 
 /** Contrôle satellite : les deux champs ou aucun (IR brut indicatif vs crédit d’impôt). */
 export function fiscalPairRefine(data: Record<string, unknown>, ctx: RefinementCtx): void {
@@ -28,6 +41,7 @@ export const simulateInputAllowedKeysBySlug: Record<string, readonly string[]> =
     "monthlyCmgStructureEur",
     "childrenCount",
     "custody",
+    "childcareProviderAcceptsCesu",
     ...fiscalSatelliteKeys,
   ],
   "creche-berceau-employeur": [
@@ -37,6 +51,11 @@ export const simulateInputAllowedKeysBySlug: Record<string, readonly string[]> =
     "custody",
     "annualEmployerChildcareAidEur",
     "childrenCountForEmployerThreshold",
+    "prefinancedCesuEmployerUses",
+    "prefinancedCesuAnnualEur",
+    "prefinancedCesuMode",
+    "childcareProviderAcceptsCesu",
+    "prefinancedCesuAvailableForChildcareFraction",
     ...fiscalSatelliteKeys,
   ],
   "assistante-maternelle": [
@@ -55,6 +74,12 @@ export const simulateInputAllowedKeysBySlug: Record<string, readonly string[]> =
     "monthlyCmgPaidEur",
     "childrenCountForCreditCeiling",
     "custody",
+    "prefinancedCesuEmployerUses",
+    "prefinancedCesuMonthlyEur",
+    "prefinancedCesuMode",
+    "childcareProviderAcceptsCesu",
+    "prefinancedCesuAvailableForChildcareFraction",
+    "nounouEmploymentModel",
     ...fiscalSatelliteKeys,
   ],
 };
@@ -70,10 +95,13 @@ const crechePubliqueInputSchema = z
     monthlyCmgStructureEur: nn.optional(),
     childrenCount: posInt.optional(),
     custody: z.enum(["full", "shared"]).optional(),
+    childcareProviderAcceptsCesu: z.boolean().optional(),
     ...fiscalSatelliteFields,
   })
   .strict()
   .superRefine(fiscalPairRefine);
+
+const prefinancedCesuModeSchema = z.enum(["on_top", "substitutes_constant_employer_cost"]);
 
 const crecheBerceauEmployeurInputSchema = z
   .object({
@@ -83,10 +111,16 @@ const crecheBerceauEmployeurInputSchema = z
     custody: z.enum(["full", "shared"]).optional(),
     annualEmployerChildcareAidEur: nn.optional(),
     childrenCountForEmployerThreshold: posInt.optional(),
+    prefinancedCesuEmployerUses: z.boolean().optional(),
+    prefinancedCesuAnnualEur: nn.optional(),
+    prefinancedCesuMode: prefinancedCesuModeSchema.optional(),
+    childcareProviderAcceptsCesu: z.boolean().optional(),
+    prefinancedCesuAvailableForChildcareFraction: fraction01.optional(),
     ...fiscalSatelliteFields,
   })
   .strict()
-  .superRefine(fiscalPairRefine);
+  .superRefine(fiscalPairRefine)
+  .superRefine(prefinancedCesuModeRequiredRefine);
 
 const assistanteMaternelleInputSchema = z
   .object({
@@ -101,6 +135,8 @@ const assistanteMaternelleInputSchema = z
   .strict()
   .superRefine(fiscalPairRefine);
 
+const nounouEmploymentModelSchema = z.enum(["full_single_employer", "co_famille"]);
+
 const nounouDomicileInputSchema = z
   .object({
     monthlyEmploymentCostEur: nn.optional(),
@@ -109,10 +145,17 @@ const nounouDomicileInputSchema = z
     monthlyCmgPaidEur: nn.optional(),
     childrenCountForCreditCeiling: z.number().int().nonnegative().optional(),
     custody: z.enum(["full", "shared"]).optional(),
+    prefinancedCesuEmployerUses: z.boolean().optional(),
+    prefinancedCesuMonthlyEur: nn.optional(),
+    prefinancedCesuMode: prefinancedCesuModeSchema.optional(),
+    childcareProviderAcceptsCesu: z.boolean().optional(),
+    prefinancedCesuAvailableForChildcareFraction: fraction01.optional(),
+    nounouEmploymentModel: nounouEmploymentModelSchema.optional(),
     ...fiscalSatelliteFields,
   })
   .strict()
-  .superRefine(fiscalPairRefine);
+  .superRefine(fiscalPairRefine)
+  .superRefine(prefinancedCesuModeRequiredRefine);
 
 const schemaBySlug: Record<string, z.ZodType<object>> = {
   "creche-publique": crechePubliqueInputSchema,

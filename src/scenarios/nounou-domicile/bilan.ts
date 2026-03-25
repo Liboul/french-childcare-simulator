@@ -22,6 +22,7 @@ export function buildNounouDomicileLignes(
 
   const cmgRule = findRule(pack, "cmg-emploi-direct-garde-domicile-2026-04");
   const creditRule = findRule(pack, "credit-impot-emploi-domicile-plafonds");
+  const cesuRule = findRule(pack, "cesu-prefinance-plafond-aide-financiere-employeur");
   const creditPackParams = readCreditEmploiDomicileParams(pack);
   const creditRateLabel = creditPackParams
     ? `taux ${String(Math.round(creditPackParams.rate * 1000) / 10)} % (règle credit-impot-emploi-domicile-plafonds)`
@@ -30,9 +31,57 @@ export function buildNounouDomicileLignes(
   lignes.push({
     libelle: "Coût employeur mensuel (salaire + cotisations)",
     montantEur: t.monthlyEmploymentCostEur,
-    calcul: "Saisie utilisateur — Pajemploi / attestations fiscales.",
+    calcul: t.prefinancedCesuEmployerUses
+      ? "Saisie — assiette CMG / crédit 199 (voir mode CESU : en plus ou arbitrage même enveloppe)."
+      : "Saisie utilisateur — Pajemploi / attestations fiscales.",
     sources: [],
   });
+
+  if (t.nounouEmploymentModel !== undefined) {
+    lignes.push({
+      libelle: "Modèle d’emploi (nounou)",
+      montantEur: 0,
+      calcul:
+        t.nounouEmploymentModel === "co_famille"
+          ? "Co-famille / plusieurs employeurs — saisir la part de **ce** foyer (voir params.md)."
+          : "Un seul employeur pour ce contrat — coûts du foyer courant.",
+      sources: [],
+    });
+  }
+
+  if (t.childcareProviderAcceptsCesu !== undefined) {
+    lignes.push({
+      libelle: "Paiement par CESU accepté par l’employé / la garde",
+      montantEur: 0,
+      calcul: t.childcareProviderAcceptsCesu
+        ? "Oui — information trésorerie (hors assiette CMG / crédit)."
+        : "Non — autre moyen de paiement pour le salaire.",
+      sources: [],
+    });
+  }
+
+  if (t.prefinancedCesuEmployerUses) {
+    const modeLabel =
+      t.prefinancedCesuMode === "on_top"
+        ? "en plus du coût saisi (charge employeur totale = coût + CESU effectif)"
+        : "arbitrage : le coût saisi est l’enveloppe employeur totale (CESU compris dans la logique contractuelle)";
+    const fracNote =
+      t.prefinancedCesuAvailableForChildcareFraction < 1
+        ? ` — part garde ${String(Math.round(t.prefinancedCesuAvailableForChildcareFraction * 1000) / 10)} % (autres usages des chèques).`
+        : "";
+    lignes.push({
+      libelle: "Chèques CESU préfinancés (employeur, mois, effectif)",
+      montantEur: t.effectivePrefinancedCesuMonthlyEur,
+      calcul: `${modeLabel}${fracNote} Brut CESU saisi : ${String(t.prefinancedCesuMonthlyEur)} €.`,
+      sources: cesuRule ? sourcesFromRule(cesuRule) : [],
+    });
+    lignes.push({
+      libelle: "Total charge employeur estimée (avec CESU si « en plus »)",
+      montantEur: t.totalEmployerOutlayMonthlyEur,
+      calcul: `${String(t.monthlyEmploymentCostEur)} € + CESU effectif si mode on_top — sinon égal au coût saisi (substitutes).`,
+      sources: [],
+    });
+  }
 
   lignes.push({
     libelle: "Complément mode de garde (CMG) — emploi direct garde à domicile",
