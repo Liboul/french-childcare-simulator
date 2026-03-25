@@ -125,5 +125,19 @@ export function buildCrecheBerceauEmployeurLignes(
     sources: creditRule ? sourcesFromRule(creditRule) : [],
   });
 
+  lignes.push({
+    libelle: "Frais annexes (repas, transport, etc. — estimation)",
+    montantEur: t.monthlyAncillaryCostsEur,
+    calcul: "Saisie `monthlyAncillaryCostsEur` — hors F8 si non éligibles.",
+    sources: [],
+  });
+
+  lignes.push({
+    libelle: "Effort total estimé (ménage, après crédit + annexes)",
+    montantEur: t.estimatedMonthlyHouseholdCashOutEur,
+    calcul: `${String(t.netMonthlyBurdenAfterCreditEur)} € + ${String(t.monthlyAncillaryCostsEur)} €`,
+    sources: [],
+  });
+
   return lignes;
 }

@@ -49,6 +49,15 @@ export function buildNounouDomicileLignes(
     });
   }
 
+  if (t.coFamilleHouseholdCostSharePercent !== undefined) {
+    lignes.push({
+      libelle: "Part de coût de ce foyer (co-famille, %)",
+      montantEur: 0,
+      calcul: `${String(t.coFamilleHouseholdCostSharePercent)} % — information lecture ; pas de répartition automatique des montants.`,
+      sources: [],
+    });
+  }
+
   if (t.childcareProviderAcceptsCesu !== undefined) {
     lignes.push({
       libelle: "Paiement par CESU accepté par l’employé / la garde",
@@ -126,6 +135,20 @@ export function buildNounouDomicileLignes(
     montantEur: t.netMonthlyBurdenAfterCreditEur,
     calcul: `${String(t.netMonthlyCashAfterCmgEur)} € − ${String(t.monthlyCreditEquivalentEur)} €`,
     sources: creditRule ? sourcesFromRule(creditRule) : [],
+  });
+
+  lignes.push({
+    libelle: "Frais annexes (repas, transport, etc. — estimation)",
+    montantEur: t.monthlyAncillaryCostsEur,
+    calcul: "Saisie `monthlyAncillaryCostsEur` — hors plafond crédit 199 si non éligibles.",
+    sources: [],
+  });
+
+  lignes.push({
+    libelle: "Effort total estimé (ménage, après crédit + annexes)",
+    montantEur: t.estimatedMonthlyHouseholdCashOutEur,
+    calcul: `${String(t.netMonthlyBurdenAfterCreditEur)} € + ${String(t.monthlyAncillaryCostsEur)} €`,
+    sources: [],
   });
 
   return lignes;

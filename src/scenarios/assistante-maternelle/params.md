@@ -16,6 +16,8 @@ La garde **chez l’assistante maternelle agréée** est traitée comme des **fr
 | `custody`                         | Non (défaut `"full"`)              | `"full"` \| `"shared"` — plafonds crédit d’impôt.                                                                                    |
 | `revenuNetImposableEur`           | Non (avec `nombreParts`)           | € / an — avec `nombreParts` : `trace.creditVsIrBrutSatellite`.                                                                        |
 | `nombreParts`                     | Non (avec `revenuNetImposableEur`) | — **toujours** avec `revenuNetImposableEur`.                                                                                         |
+| `prefinancedCesuEmployerUses`     | Non                                | booléen — l’employeur propose-t-il des **CESU préfinancés** pour cette garde ? **Sans** montant ni mode dans ce scénario : sert aux **notes** (non-cumul documenté avec CMG si CMG > 0 — règle pack `cesu-cmg-non-cumul`). |
+| `monthlyAncillaryCostsEur`        | Non (défaut `0`)                   | € / mois — repas, transport, etc. ; ajoutés au reste à charge après crédit (`estimatedMonthlyHouseholdCashOutEur`). |
 
 ## Priorité saisie / revenu (CMG)
 

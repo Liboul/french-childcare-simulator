@@ -13,6 +13,7 @@ import {
   computeCreditEmploiDomicileAnnual,
   readCreditEmploiDomicileParams,
 } from "../../shared/credit-emploi-domicile";
+import { appendCesuPrefinanceCmgCompatibilityNotes } from "../../shared/cesu-cmg-compatibility-notes";
 import { normalizeCustody, normalizeHouseholdChildRank } from "../../shared/household";
 import { getRulePack } from "../../shared/load-rules";
 import { monthlyCashflowAfterAides } from "../../shared/monthly-cashflow-after-aides";
@@ -52,6 +53,10 @@ export type NounouDomicileInput = {
   prefinancedCesuAvailableForChildcareFraction?: number;
   /** Employeur unique pour ce contrat vs co-famille (plusieurs foyers). */
   nounouEmploymentModel?: NounouEmploymentModel;
+  /** Repas, transport, etc. — ajoutés au reste à charge après crédit (hors base F8 si non éligible). */
+  monthlyAncillaryCostsEur?: number;
+  /** Part du coût / CMG attribuée à ce foyer en co-famille (0–100) — information ; pas de répartition auto. */
+  coFamilleHouseholdCostSharePercent?: number;
 };
 
 export type NounouDomicileTrace = {
@@ -75,6 +80,9 @@ export type NounouDomicileTrace = {
   prefinancedCesuAvailableForChildcareFraction: number;
   effectivePrefinancedCesuMonthlyEur: number;
   nounouEmploymentModel?: NounouEmploymentModel;
+  monthlyAncillaryCostsEur: number;
+  estimatedMonthlyHouseholdCashOutEur: number;
+  coFamilleHouseholdCostSharePercent?: number;
 };
 
 export type NounouDomicileResult = ScenarioResultBase & {
@@ -170,6 +178,9 @@ export function computeNounouDomicile(input: NounouDomicileInput): NounouDomicil
       annualCreditImpotEur: creditAnnual.annualCreditEur,
     });
 
+  const monthlyAncillaryCostsEur = Math.max(0, input.monthlyAncillaryCostsEur ?? 0);
+  const estimatedMonthlyHouseholdCashOutEur = netMonthlyBurdenAfterCreditEur + monthlyAncillaryCostsEur;
+
   const cesuUses = input.prefinancedCesuEmployerUses === true;
   const cesuMonthly = Math.max(0, input.prefinancedCesuMonthlyEur ?? 0);
   const cesuMode = input.prefinancedCesuMode;
@@ -191,6 +202,15 @@ export function computeNounouDomicile(input: NounouDomicileInput): NounouDomicil
     );
   }
   if (
+    input.nounouEmploymentModel === "co_famille" &&
+    input.coFamilleHouseholdCostSharePercent !== undefined &&
+    input.coFamilleHouseholdCostSharePercent !== null
+  ) {
+    notes.push(
+      `Part de coût de ce foyer (co-famille) : ${String(input.coFamilleHouseholdCostSharePercent)} % — lecture seule ; les montants du calcul restent ceux saisis pour ce foyer.`,
+    );
+  }
+  if (
     isExplicitMonthlyCmgProvided(input.monthlyCmgPaidEur) &&
     isIncomeProvidedForCmgFormula(input.monthlyHouseholdIncomeForCmgEur)
   ) {
@@ -204,12 +224,24 @@ export function computeNounouDomicile(input: NounouDomicileInput): NounouDomicil
     );
   }
 
+  notes.push(
+    ...appendCesuPrefinanceCmgCompatibilityNotes(pack, {
+      prefinancedCesuEmployerUses: cesuUses,
+      monthlyCmgEur,
+    }),
+  );
+
   if (cesuUses) {
     notes.push(
       "CESU préfinancé employeur : les lignes CMG / crédit d’impôt restent calculées sur `monthlyEmploymentCostEur` (assiette unique). Le **total charge employeur** inclut le CESU **effectif** (pondéré) en plus uniquement si le mode est `on_top` — voir tableau et `params.md`.",
     );
     notes.push(
-      "Non-cumuls / déclaratif : règle qualitative `cesu-cmg-non-cumul` dans le pack — ne pas cumuler abusivement avec d’autres dispositifs pour la même dépense.",
+      "Déclaration fiscale : le crédit 199 (emploi à domicile) suit la **dépense réelle** déclarée (ex. case 7DR) — ne pas confondre avec un CESU **déclaratif** sur une autre ligne ; le moteur ne substitue pas automatiquement préfinancé vs base crédit.",
+    );
+  }
+  if (monthlyAncillaryCostsEur > 0) {
+    notes.push(
+      "Frais annexes : effort total mensuel = reste à charge après crédit + `monthlyAncillaryCostsEur` (hors plafond crédit si non éligibles).",
     );
   }
   if (input.childcareProviderAcceptsCesu === false) {
@@ -256,6 +288,12 @@ export function computeNounouDomicile(input: NounouDomicileInput): NounouDomicil
       effectivePrefinancedCesuMonthlyEur,
       ...(input.nounouEmploymentModel !== undefined
         ? { nounouEmploymentModel: input.nounouEmploymentModel }
+        : {}),
+      monthlyAncillaryCostsEur,
+      estimatedMonthlyHouseholdCashOutEur,
+      ...(input.coFamilleHouseholdCostSharePercent !== undefined &&
+      input.coFamilleHouseholdCostSharePercent !== null
+        ? { coFamilleHouseholdCostSharePercent: input.coFamilleHouseholdCostSharePercent }
         : {}),
       ...(input.childcareProviderAcceptsCesu !== undefined
         ? { childcareProviderAcceptsCesu: input.childcareProviderAcceptsCesu }

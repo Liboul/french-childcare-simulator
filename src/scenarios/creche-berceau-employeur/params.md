@@ -23,6 +23,7 @@ En plus, l’**aide employeur** annuelle permet d’appliquer le **seuil d’exo
 | `prefinancedCesuMode`               | Si CESU oui                        | `on_top` \| `substitutes_constant_employer_cost` — en plus de `annualEmployerChildcareAidEur`, ou même enveloppe. |
 | `childcareProviderAcceptsCesu`      | Non                              | La crèche accepte-t-elle les CESU ? **Agent** : poser la question. |
 | `prefinancedCesuAvailableForChildcareFraction` | Non (défaut 1)      | Entre **0** et **1** — part du volume CESU employeur **utilisable pour cette garde** si une partie sert à d’autres services. |
+| `monthlyAncillaryCostsEur`    | Non (défaut `0`)              | € / mois               | Repas, transport, adhésion… hors F8 si non éligibles — ajoutés au reste à charge après crédit (`estimatedMonthlyHouseholdCashOutEur`). |
 
 ## Cohérence participation / CMG (identique crèche publique)
 

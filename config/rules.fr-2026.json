@@ -428,7 +428,8 @@
         }
       ],
       "parameters": {
-        "rule": "Garde d'enfants : pas de cumul CESU déclaratif avec aide CAF/MSA pour la même prise en charge selon DR-03 (vérifier cas par cas en GARDE-008)."
+        "rule": "Garde d'enfants : pas de cumul CESU déclaratif avec aide CAF/MSA pour la même prise en charge selon DR-03 (vérifier cas par cas en GARDE-008).",
+        "declarativeVersusPrefinanced": "Le non-cumul documenté par la CAF / Service-Public vise en pratique le **CESU déclaratif** (Pajemploi) pour la même dépense que le CMG. Le **CESU préfinancé par l'employeur** est une aide en nature / titre séparé : interaction avec CMG et crédit d'impôt (déclaration 7DB / 7DR) à valider au dossier — le moteur n'annule pas le CMG automatiquement."
       }
     },
     {

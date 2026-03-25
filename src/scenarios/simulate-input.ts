@@ -42,6 +42,7 @@ export const simulateInputAllowedKeysBySlug: Record<string, readonly string[]> =
     "childrenCount",
     "custody",
     "childcareProviderAcceptsCesu",
+    "monthlyAncillaryCostsEur",
     ...fiscalSatelliteKeys,
   ],
   "creche-berceau-employeur": [
@@ -56,6 +57,7 @@ export const simulateInputAllowedKeysBySlug: Record<string, readonly string[]> =
     "prefinancedCesuMode",
     "childcareProviderAcceptsCesu",
     "prefinancedCesuAvailableForChildcareFraction",
+    "monthlyAncillaryCostsEur",
     ...fiscalSatelliteKeys,
   ],
   "assistante-maternelle": [
@@ -65,6 +67,8 @@ export const simulateInputAllowedKeysBySlug: Record<string, readonly string[]> =
     "monthlyCmgPaidEur",
     "childrenCount",
     "custody",
+    "prefinancedCesuEmployerUses",
+    "monthlyAncillaryCostsEur",
     ...fiscalSatelliteKeys,
   ],
   "nounou-domicile": [
@@ -80,6 +84,8 @@ export const simulateInputAllowedKeysBySlug: Record<string, readonly string[]> =
     "childcareProviderAcceptsCesu",
     "prefinancedCesuAvailableForChildcareFraction",
     "nounouEmploymentModel",
+    "monthlyAncillaryCostsEur",
+    "coFamilleHouseholdCostSharePercent",
     ...fiscalSatelliteKeys,
   ],
 };
@@ -96,6 +102,7 @@ const crechePubliqueInputSchema = z
     childrenCount: posInt.optional(),
     custody: z.enum(["full", "shared"]).optional(),
     childcareProviderAcceptsCesu: z.boolean().optional(),
+    monthlyAncillaryCostsEur: nn.optional(),
     ...fiscalSatelliteFields,
   })
   .strict()
@@ -116,6 +123,7 @@ const crecheBerceauEmployeurInputSchema = z
     prefinancedCesuMode: prefinancedCesuModeSchema.optional(),
     childcareProviderAcceptsCesu: z.boolean().optional(),
     prefinancedCesuAvailableForChildcareFraction: fraction01.optional(),
+    monthlyAncillaryCostsEur: nn.optional(),
     ...fiscalSatelliteFields,
   })
   .strict()
@@ -130,6 +138,8 @@ const assistanteMaternelleInputSchema = z
     monthlyCmgPaidEur: nn.optional(),
     childrenCount: posInt.optional(),
     custody: z.enum(["full", "shared"]).optional(),
+    prefinancedCesuEmployerUses: z.boolean().optional(),
+    monthlyAncillaryCostsEur: nn.optional(),
     ...fiscalSatelliteFields,
   })
   .strict()
@@ -151,6 +161,8 @@ const nounouDomicileInputSchema = z
     childcareProviderAcceptsCesu: z.boolean().optional(),
     prefinancedCesuAvailableForChildcareFraction: fraction01.optional(),
     nounouEmploymentModel: nounouEmploymentModelSchema.optional(),
+    monthlyAncillaryCostsEur: nn.optional(),
+    coFamilleHouseholdCostSharePercent: z.number().finite().min(0).max(100).optional(),
     ...fiscalSatelliteFields,
   })
   .strict()

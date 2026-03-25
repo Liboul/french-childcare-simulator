@@ -23,6 +23,8 @@
 | `childcareProviderAcceptsCesu`    | Non                                | La nounou / l’emploi accepte-t-il le paiement par CESU ? **Agent** : poser la question. |
 | `prefinancedCesuAvailableForChildcareFraction` | Non (défaut 1)      | Entre **0** et **1** — part du CESU employeur **utilisable pour cette garde** si une partie sert à d’autres services. |
 | `nounouEmploymentModel`           | Non                                | `full_single_employer` \| `co_famille` — un employeur pour ce contrat vs co-famille. **Agent** : **toujours** demander. |
+| `monthlyAncillaryCostsEur`        | Non (défaut `0`)                   | € / mois — repas, transport, etc. ; ajoutés au reste à charge après crédit (`estimatedMonthlyHouseholdCashOutEur`). Hors plafond crédit 199 si non éligibles. |
+| `coFamilleHouseholdCostSharePercent` | Non (défaut absent)             | 0–100 — **part du coût / de la charge attribuée à ce foyer** en co-famille (information ; le moteur **ne** répartit pas automatiquement entre foyers). Utile si `nounouEmploymentModel` = `co_famille`. |
 
 ## Priorité saisie / revenu (CMG)
 
@@ -63,7 +65,7 @@ La **base éligible** annuelle est `min(max(0, coût annuel − CMG annuelle), p
 ## CESU préfinancé et moteur
 
 - **CMG / crédit 199** : calculés sur `monthlyEmploymentCostEur` (assiette unique). Le **total charge employeur** (`trace.totalEmployerOutlayMonthlyEur`) ajoute le CESU uniquement si `prefinancedCesuMode` = `on_top`.
-- Non-cumuls déclaratifs : règle qualitative `cesu-cmg-non-cumul` dans le pack ; plafonds employeur : `cesu-prefinance-plafond-aide-financiere-employeur`.
+- Non-cumuls CMG × CESU : notes automatiques si CESU préfinancé **et** CMG > 0 (règle pack `cesu-cmg-non-cumul`) — pas d’annulation du CMG dans le moteur ; vérification dossier. Plafonds employeur : `cesu-prefinance-plafond-aide-financiere-employeur`. **Déclaration fiscale** : base du crédit 199 = dépenses réelles déclarées (ex. case **7DR**) — ne pas confondre avec CESU **déclaratif** sur d’autres lignes.
 
 ## Limites
 

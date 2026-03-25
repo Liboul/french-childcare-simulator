@@ -3,6 +3,15 @@
 1. **Slug** : `creche-publique` \| `creche-berceau-employeur` \| `assistante-maternelle` \| `nounou-domicile`.
 2. **Paramètres** : pour **chaque** champ, lire `src/scenarios/<slug>/params.md` (noms exacts, unités).
 
+### Aides CAF / MSA — complément mode de garde (CMG)
+
+Dès que tu collectes un montant de **CMG** (`monthlyCmgStructureEur` en structure, `monthlyCmgPaidEur` ou revenu pour barème en emploi direct) :
+
+- **Ne pas** présenter le montant comme garanti sans contexte : rappeler que l’**éligibilité** (ressources, mode de garde, structure / agrément, etc.) relève du **dossier** CAF ou MSA — le moteur **applique** la saisie, il **ne** valide **pas** les droits.
+- **Proposer** de prendre le montant sur l’**avis d’allocations** ou l’**espace personnel** plutôt qu’une estimation si l’utilisateur hésite.
+- **Outil officiel** pour une **première estimation** des aides (dont CMG selon cas) : **[Estimer vos droits](https://wwwd.caf.fr/redirect/estimer-vos-droits)** (CAF) ; pour les régimes MSA, l’équivalent sur le site MSA. Ce n’est **pas** le simulateur PSU crèche (voir section crèche ci-dessous).
+- Si l’utilisateur utilise des **CESU préfinancés employeur** **et** une CMG **> 0** (berceau, nounou, ou assmat avec l’indicateur `prefinancedCesuEmployerUses`), le résultat peut inclure une **note** sur le **non-cumul** documenté (règle pack `cesu-cmg-non-cumul`) : **pas** d’effacement automatique du CMG — renvoi vers le dossier et la déclaration (cases **7DB / 7DR** selon situation).
+
 ### Crèche publique & berceau employeur — `monthlyParticipationEur`
 
 Le moteur **ne calcule pas** le barème PSU : la participation est une **saisie** (voir `params.md`). Dès que tu dois collecter ce montant :
@@ -25,9 +34,17 @@ Ce champ est le **coût employeur mensuel** (salaire + cotisations) **avant** ai
 Pour **`nounou-domicile`** uniquement, **demander systématiquement** : la nounou est-elle employée **par votre foyer seul à 100 %** pour ce contrat, ou en **co-famille** (plusieurs foyers employeurs) ?
 
 - **`full_single_employer`** : un seul employeur pour ce contrat — les coûts saisis sont ceux du foyer.
-- **`co_famille`** : plusieurs employeurs — **saisir la part** de coût et de CMG **de ce foyer** (ou simuler par foyer) ; le moteur ne répartit pas entre foyers.
+- **`co_famille`** : plusieurs employeurs — **saisir la part** de coût et de CMG **de ce foyer** (ou simuler par foyer) ; le moteur ne répartit pas entre foyers. Optionnel : indiquer la **part % de ce foyer** pour la lisibilité du bilan : `coFamilleHouseholdCostSharePercent` (0–100) — **information** ; les montants calculés restent ceux saisis pour ce foyer.
 
 Champ JSON : `nounouEmploymentModel` (`"full_single_employer"` \| `"co_famille"`).
+
+### Assistante maternelle — CESU préfinancé employeur (indicateur)
+
+Pour **`assistante-maternelle`** : **poser** si l’employeur propose des **CESU préfinancés** pour cette garde. Champ booléen **`prefinancedCesuEmployerUses`** (pas de montant ni mode dans ce slug) — sert aux **notes** si CMG > 0 (interaction documentée dans le pack).
+
+### Frais annexes (tous les slugs)
+
+**Demander** si l’utilisateur a des **frais en plus** du coût de garde modélisé (repas, transport, adhésion, etc.) : champ commun **`monthlyAncillaryCostsEur`** (€ / mois, défaut 0). Ils sont **ajoutés** au reste à charge après crédit pour un **effort total** estimé (`estimatedMonthlyHouseholdCashOutEur` dans la trace) — **hors** plafond F8 ou crédit 199 si la facture ne les intègre pas ou s’ils ne sont pas éligibles (voir `params.md`).
 
 ### Berceau employeur & nounou — chèques CESU préfinancés (employeur)
 

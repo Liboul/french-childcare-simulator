@@ -18,6 +18,7 @@ import {
   normalizeCustody,
   normalizeHouseholdChildRank,
 } from "../../shared/household";
+import { appendCesuPrefinanceCmgCompatibilityNotes } from "../../shared/cesu-cmg-compatibility-notes";
 import { getRulePack } from "../../shared/load-rules";
 import { monthlyCashflowAfterAides } from "../../shared/monthly-cashflow-after-aides";
 import type { ScenarioResultBase } from "../types";
@@ -37,6 +38,9 @@ export type AssistanteMaternelleInput = {
   custody?: "full" | "shared";
   revenuNetImposableEur?: number;
   nombreParts?: number;
+  /** CESU préfinancé employeur (information) — interaction CMG : voir règle pack si CMG > 0. */
+  prefinancedCesuEmployerUses?: boolean;
+  monthlyAncillaryCostsEur?: number;
 };
 
 export type AssistanteMaternelleTrace = {
@@ -50,6 +54,10 @@ export type AssistanteMaternelleTrace = {
   netMonthlyCashAfterCmgEur: number;
   netMonthlyBurdenAfterCreditEur: number;
   creditVsIrBrutSatellite?: CreditVsIrBrutSatellite;
+  monthlyAncillaryCostsEur: number;
+  estimatedMonthlyHouseholdCashOutEur: number;
+  /** Présent si l’utilisateur a répondu sur le CESU préfinancé employeur (alerte non-cumul CMG). */
+  prefinancedCesuEmployerUses?: boolean;
 };
 
 export type AssistanteMaternelleResult = ScenarioResultBase & {
@@ -143,6 +151,9 @@ export function computeAssistanteMaternelle(
       annualCreditImpotEur: creditAnnual.annualCreditEur,
     });
 
+  const monthlyAncillaryCostsEur = Math.max(0, input.monthlyAncillaryCostsEur ?? 0);
+  const estimatedMonthlyHouseholdCashOutEur = netMonthlyBurdenAfterCreditEur + monthlyAncillaryCostsEur;
+
   const notes: string[] = [
     "Garde chez une assistante maternelle agréée : crédit d’impôt **frais de garde hors du domicile** (CGI art. 200 quater B), pas le crédit emploi à domicile — aligné BOFiP / Service-Public pour ce mode.",
     "Calcul partiel : plafonds salaire / indemnités d’entretien et non-cumuls (PreParE, etc.) ne sont pas tous intégrés — voir pack et `docs/research/`.",
@@ -159,6 +170,17 @@ export function computeAssistanteMaternelle(
   if (!creditParams) {
     notes.push(
       "Avertissement : règle `credit-impot-garde-hors-domicile` absente du pack — crédit d’impôt à 0.",
+    );
+  }
+  notes.push(
+    ...appendCesuPrefinanceCmgCompatibilityNotes(pack, {
+      prefinancedCesuEmployerUses: input.prefinancedCesuEmployerUses === true,
+      monthlyCmgEur,
+    }),
+  );
+  if (monthlyAncillaryCostsEur > 0) {
+    notes.push(
+      "Frais annexes : effort total mensuel = reste à charge après crédit + `monthlyAncillaryCostsEur`.",
     );
   }
 
@@ -186,6 +208,11 @@ export function computeAssistanteMaternelle(
       monthlyCreditEquivalentEur,
       netMonthlyCashAfterCmgEur,
       netMonthlyBurdenAfterCreditEur,
+      monthlyAncillaryCostsEur,
+      estimatedMonthlyHouseholdCashOutEur,
+      ...(input.prefinancedCesuEmployerUses !== undefined
+        ? { prefinancedCesuEmployerUses: input.prefinancedCesuEmployerUses === true }
+        : {}),
       ...(satellite ? { creditVsIrBrutSatellite: satellite } : {}),
     },
   };

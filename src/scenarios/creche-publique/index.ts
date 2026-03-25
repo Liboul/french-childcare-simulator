@@ -24,6 +24,8 @@ export type CrechePubliqueInput = {
   /** Optionnel : IR brut indicatif (pack) vs crédit annuel — les deux avec `nombreParts`. */
   revenuNetImposableEur?: number;
   nombreParts?: number;
+  /** Repas, transport, adhésion… hors base crédit F8 — effort trésorerie additionnel. */
+  monthlyAncillaryCostsEur?: number;
 };
 
 export type CrechePubliqueTrace = {
@@ -40,6 +42,8 @@ export type CrechePubliqueTrace = {
   creditVsIrBrutSatellite?: CreditVsIrBrutSatellite;
   /** Information : acceptation des CESU par la crèche (voir `params.md`). */
   childcareProviderAcceptsCesu?: boolean;
+  monthlyAncillaryCostsEur: number;
+  estimatedMonthlyHouseholdCashOutEur: number;
 };
 
 export type CrechePubliqueResult = ScenarioResultBase & {
@@ -93,6 +97,9 @@ export function computeCrechePublique(input: CrechePubliqueInput): CrechePubliqu
       annualCreditImpotEur: creditAnnual.annualCreditEur,
     });
 
+  const monthlyAncillaryCostsEur = Math.max(0, input.monthlyAncillaryCostsEur ?? 0);
+  const estimatedMonthlyHouseholdCashOutEur = netMonthlyBurdenAfterCreditEur + monthlyAncillaryCostsEur;
+
   const notes: string[] = [
     "Calcul partiel : crédit d’impôt — taux et plafonds dans la règle `credit-impot-garde-hors-domicile` du pack (souvent 50 % de la base éligible plafonnée ; garde alternée si `custody: shared`). Base éligible : voir `deductCmgFromBase` dans `params.md`.",
     "Barème PSU / reste à charge structure non recalculé ici : la participation doit refléter la facture réelle ou une estimation (monenfant.fr, etc.).",
@@ -110,6 +117,11 @@ export function computeCrechePublique(input: CrechePubliqueInput): CrechePubliqu
   if (!creditParams) {
     notes.push(
       "Avertissement : règle `credit-impot-garde-hors-domicile` absente du pack — crédit d’impôt à 0.",
+    );
+  }
+  if (monthlyAncillaryCostsEur > 0) {
+    notes.push(
+      "Frais annexes : `monthlyAncillaryCostsEur` est **ajouté** au reste à charge après crédit pour un **effort total** estimé — hors plafond F8 si non éligible (voir facture).",
     );
   }
 
@@ -137,6 +149,8 @@ export function computeCrechePublique(input: CrechePubliqueInput): CrechePubliqu
       monthlyCreditEquivalentEur,
       netMonthlyCashAfterCmgEur,
       netMonthlyBurdenAfterCreditEur,
+      monthlyAncillaryCostsEur,
+      estimatedMonthlyHouseholdCashOutEur,
       ...(input.childcareProviderAcceptsCesu !== undefined
         ? { childcareProviderAcceptsCesu: input.childcareProviderAcceptsCesu }
         : {}),

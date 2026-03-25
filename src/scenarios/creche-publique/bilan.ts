@@ -79,5 +79,20 @@ export function buildCrechePubliqueLignes(
     sources: creditRule ? sourcesFromRule(creditRule) : [],
   });
 
+  lignes.push({
+    libelle: "Frais annexes (repas, transport, etc. — estimation)",
+    montantEur: t.monthlyAncillaryCostsEur,
+    calcul:
+      "Saisie `monthlyAncillaryCostsEur` — hors plafond F8 si la facture ne les intègre pas ou s’ils ne sont pas éligibles.",
+    sources: [],
+  });
+
+  lignes.push({
+    libelle: "Effort total estimé (ménage, après crédit + annexes)",
+    montantEur: t.estimatedMonthlyHouseholdCashOutEur,
+    calcul: `${String(t.netMonthlyBurdenAfterCreditEur)} € + ${String(t.monthlyAncillaryCostsEur)} €`,
+    sources: [],
+  });
+
   return lignes;
 }

@@ -2,6 +2,7 @@ import {
   computeEmployerChildcareAidTaxableExcessAnnual,
   readAvantageEmployeurCrecheParams,
 } from "../../shared/avantage-employeur-creche";
+import { appendCesuPrefinanceCmgCompatibilityNotes } from "../../shared/cesu-cmg-compatibility-notes";
 import { appendCreditVsIrSatellite } from "../../shared/credit-vs-ir-brut";
 import type { CreditVsIrBrutSatellite } from "../../shared/credit-vs-ir-brut";
 import {
@@ -40,6 +41,7 @@ export type CrecheBerceauEmployeurInput = {
   childcareProviderAcceptsCesu?: boolean;
   /** Part du CESU employeur utilisable pour cette garde (0–1) si une partie sert à d’autres services. Défaut 1. */
   prefinancedCesuAvailableForChildcareFraction?: number;
+  monthlyAncillaryCostsEur?: number;
 };
 
 export type CrecheBerceauEmployeurTrace = {
@@ -65,6 +67,8 @@ export type CrecheBerceauEmployeurTrace = {
   childcareProviderAcceptsCesu?: boolean;
   prefinancedCesuAvailableForChildcareFraction: number;
   effectivePrefinancedCesuAnnualEur: number;
+  monthlyAncillaryCostsEur: number;
+  estimatedMonthlyHouseholdCashOutEur: number;
 };
 
 export type CrecheBerceauEmployeurResult = ScenarioResultBase & {
@@ -125,6 +129,9 @@ export function computeCrecheBerceauEmployeur(
       annualCreditImpotEur: creditAnnual.annualCreditEur,
     });
 
+  const monthlyAncillaryCostsEur = Math.max(0, input.monthlyAncillaryCostsEur ?? 0);
+  const estimatedMonthlyHouseholdCashOutEur = netMonthlyBurdenAfterCreditEur + monthlyAncillaryCostsEur;
+
   const avantageParams = readAvantageEmployeurCrecheParams(pack);
   const exemptPerChild = avantageParams?.exemptAnnualAmountPerChildEur ?? 1830;
   const { exemptPortionAnnualEur, taxableExcessAnnualEur } =
@@ -159,6 +166,13 @@ export function computeCrecheBerceauEmployeur(
     );
   }
 
+  notes.push(
+    ...appendCesuPrefinanceCmgCompatibilityNotes(pack, {
+      prefinancedCesuEmployerUses: cesuUses,
+      monthlyCmgEur: monthlyCmgStructureEur,
+    }),
+  );
+
   if (cesuUses) {
     notes.push(
       "CESU préfinancé employeur : le seuil d’exonération / excédent imposable reste calculé sur `annualEmployerChildcareAidEur` seul. Le **total soutien employeur** (aide déclarée + CESU effectif si « en plus ») figure en trace — voir `params.md`.",
@@ -172,6 +186,11 @@ export function computeCrecheBerceauEmployeur(
   if (cesuUses && cesuFrac < 1) {
     notes.push(
       "Part du CESU employeur affectée à cette garde : `prefinancedCesuAvailableForChildcareFraction` < 1 — le montant CESU utile pour la trace est **pondéré** (autres usages des chèques).",
+    );
+  }
+  if (monthlyAncillaryCostsEur > 0) {
+    notes.push(
+      "Frais annexes : effort total mensuel = reste à charge après crédit + `monthlyAncillaryCostsEur` (hors F8 si non éligible).",
     );
   }
 
@@ -212,6 +231,8 @@ export function computeCrecheBerceauEmployeur(
       ...(input.childcareProviderAcceptsCesu !== undefined
         ? { childcareProviderAcceptsCesu: input.childcareProviderAcceptsCesu }
         : {}),
+      monthlyAncillaryCostsEur,
+      estimatedMonthlyHouseholdCashOutEur,
       ...(satellite ? { creditVsIrBrutSatellite: satellite } : {}),
     },
   };

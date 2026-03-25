@@ -67,5 +67,29 @@ export function buildAssistanteMaternelleLignes(
     sources: creditRule ? sourcesFromRule(creditRule) : [],
   });
 
+  if (t.prefinancedCesuEmployerUses === true) {
+    lignes.push({
+      libelle: "CESU préfinancé employeur (information)",
+      montantEur: 0,
+      calcul:
+        "Saisie utilisateur — si CMG > 0, vérifier non-cumul / dossier CAF (règle pack `cesu-cmg-non-cumul`, voir notes du résultat).",
+      sources: [],
+    });
+  }
+
+  lignes.push({
+    libelle: "Frais annexes (repas, transport, etc. — estimation)",
+    montantEur: t.monthlyAncillaryCostsEur,
+    calcul: "Saisie `monthlyAncillaryCostsEur`.",
+    sources: [],
+  });
+
+  lignes.push({
+    libelle: "Effort total estimé (ménage, après crédit + annexes)",
+    montantEur: t.estimatedMonthlyHouseholdCashOutEur,
+    calcul: `${String(t.netMonthlyBurdenAfterCreditEur)} € + ${String(t.monthlyAncillaryCostsEur)} €`,
+    sources: [],
+  });
+
   return lignes;
 }
