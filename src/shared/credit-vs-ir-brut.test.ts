@@ -1,8 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import {
-  computeCreditVsIrBrutSatellite,
-  creditImpotVsIrBrutIndicatif,
-} from "./credit-vs-ir-brut";
+import { computeCreditVsIrBrutSatellite, creditImpotVsIrBrutIndicatif } from "./credit-vs-ir-brut";
 import { getRulePack } from "./load-rules";
 
 describe("creditImpotVsIrBrutIndicatif", () => {

@@ -109,10 +109,14 @@ describe("scenarios (GARDE-005 … GARDE-011)", () => {
     expect(r.trace?.employerAidSalaryTaxableExcessApplies).toBe(true);
     const t = renderCrecheBerceau(r);
     expect(t.lignes.some((l) => l.libelle.includes("Seuil exonération employeur"))).toBe(true);
-    expect(t.lignes.some((l) => l.libelle.includes("Excédent imposable salaire (modèle seuil désactivé)"))).toBe(
-      false,
-    );
-    expect(t.lignes.some((l) => l.libelle.includes("Excédent d’aide employeur (imposable en salaire"))).toBe(true);
+    expect(
+      t.lignes.some((l) =>
+        l.libelle.includes("Excédent imposable salaire (modèle seuil désactivé)"),
+      ),
+    ).toBe(false);
+    expect(
+      t.lignes.some((l) => l.libelle.includes("Excédent d’aide employeur (imposable en salaire")),
+    ).toBe(true);
     expect(r.notes.some((n) => n.includes("cotisations patronales"))).toBe(false);
   });
 
@@ -128,11 +132,15 @@ describe("scenarios (GARDE-005 … GARDE-011)", () => {
     expect(r.trace?.employerAidSalaryTaxableExcessApplies).toBe(false);
     expect(r.trace?.annualEmployerNetCostAfterCifEur).toBe(4000);
     const t = renderCrecheBerceau(r);
-    expect(t.lignes.some((l) => l.libelle.includes("Excédent imposable salaire (modèle seuil désactivé)"))).toBe(
-      true,
-    );
+    expect(
+      t.lignes.some((l) =>
+        l.libelle.includes("Excédent imposable salaire (modèle seuil désactivé)"),
+      ),
+    ).toBe(true);
     expect(t.lignes.some((l) => l.libelle.includes("Coût employeur après CIF"))).toBe(true);
-    expect(t.lignes.some((l) => l.libelle.includes("Arbitrage brut / cotisations patronales"))).toBe(true);
+    expect(
+      t.lignes.some((l) => l.libelle.includes("Arbitrage brut / cotisations patronales")),
+    ).toBe(true);
     expect(r.notes.some((n) => n.includes("cotisations patronales"))).toBe(true);
     expect(r.notes.some((n) => n.includes("gain d’IR"))).toBe(true);
   });
@@ -148,7 +156,9 @@ describe("scenarios (GARDE-005 … GARDE-011)", () => {
     expect(r.trace?.annualEmployerNetCostAfterCifEur).toBeUndefined();
     const t = renderCrecheBerceau(r);
     expect(t.lignes.some((l) => l.libelle.includes("Coût employeur après CIF"))).toBe(false);
-    expect(t.lignes.some((l) => l.libelle.includes("Arbitrage brut / cotisations patronales"))).toBe(true);
+    expect(
+      t.lignes.some((l) => l.libelle.includes("Arbitrage brut / cotisations patronales")),
+    ).toBe(true);
     expect(r.notes.some((n) => n.includes("cotisations patronales"))).toBe(true);
   });
 
@@ -163,7 +173,9 @@ describe("scenarios (GARDE-005 … GARDE-011)", () => {
     expect(r.status).toBe("partial");
     expect(r.trace?.employerAidSalaryTaxableExcessApplies).toBe(true);
     const t = renderCrecheBerceau(r);
-    expect(t.lignes.some((l) => l.libelle.includes("Arbitrage brut / cotisations patronales"))).toBe(true);
+    expect(
+      t.lignes.some((l) => l.libelle.includes("Arbitrage brut / cotisations patronales")),
+    ).toBe(true);
     expect(r.notes.some((n) => n.includes("cotisations patronales"))).toBe(true);
   });
 
@@ -190,7 +202,9 @@ describe("scenarios (GARDE-005 … GARDE-011)", () => {
     expect(r.status).toBe("partial");
     expect(r.notes.some((n) => n.includes("cotisations patronales"))).toBe(true);
     const t = renderNounou(r);
-    expect(t.lignes.some((l) => l.libelle.includes("Arbitrage brut / cotisations patronales"))).toBe(true);
+    expect(
+      t.lignes.some((l) => l.libelle.includes("Arbitrage brut / cotisations patronales")),
+    ).toBe(true);
     expect(r.notes.some((n) => n.includes("gain d’IR"))).toBe(true);
   });
 
@@ -274,9 +288,11 @@ describe("scenarios (GARDE-005 … GARDE-011)", () => {
   it("assistante maternelle stub sans CMG ni revenu (coût seul)", () => {
     const r = computeAssistanteMaternelle({ monthlyEmploymentCostEur: 500 });
     expect(r.status).toBe("stub");
-    expect(r.notes.some((n) => n.includes("monthlyCmgPaidEur") || n.includes("monthlyHouseholdIncomeForCmgEur"))).toBe(
-      true,
-    );
+    expect(
+      r.notes.some(
+        (n) => n.includes("monthlyCmgPaidEur") || n.includes("monthlyHouseholdIncomeForCmgEur"),
+      ),
+    ).toBe(true);
   });
 
   it("assistante maternelle CMG saisi prioritaire sur revenu si les deux fournis", () => {
@@ -428,9 +444,9 @@ describe("scenarios (GARDE-005 … GARDE-011)", () => {
       const net = r.trace!.netMonthlyBurdenAfterCreditEur;
       expect(r.trace!.monthlyAncillaryCostsEur).toBe(40);
       expect(r.trace!.estimatedMonthlyHouseholdCashOutEur).toBe(net + 40);
-      expect(r.notes.some((n) => n.includes("Frais annexes") && n.includes("monthlyAncillaryCostsEur"))).toBe(
-        true,
-      );
+      expect(
+        r.notes.some((n) => n.includes("Frais annexes") && n.includes("monthlyAncillaryCostsEur")),
+      ).toBe(true);
       const t = renderCrechePublique(r);
       expect(t.lignes.some((l) => l.libelle.includes("Frais annexes"))).toBe(true);
       expect(t.lignes.some((l) => l.libelle.includes("Effort total estimé"))).toBe(true);
@@ -445,9 +461,9 @@ describe("scenarios (GARDE-005 … GARDE-011)", () => {
         prefinancedCesuAnnualEur: 400,
       });
       expect(r.status).toBe("partial");
-      expect(
-        r.notes.some((n) => n.includes("CMG et CESU préfinancé") && n.includes("7DR")),
-      ).toBe(true);
+      expect(r.notes.some((n) => n.includes("CMG et CESU préfinancé") && n.includes("7DR"))).toBe(
+        true,
+      );
     });
 
     it("creche berceau : pas de note append CESU×CMG si CMG structure = 0", () => {
@@ -491,9 +507,9 @@ describe("scenarios (GARDE-005 … GARDE-011)", () => {
         r.trace!.netMonthlyBurdenAfterCreditEur + 25,
       );
       const t = renderAssistanteMaternelle(r);
-      expect(t.lignes.some((l) => l.libelle.includes("CESU préfinancé employeur (information)"))).toBe(
-        true,
-      );
+      expect(
+        t.lignes.some((l) => l.libelle.includes("CESU préfinancé employeur (information)")),
+      ).toBe(true);
     });
 
     it("nounou : note 7DR / crédit 199 vs CESU déclaratif si CESU préfinancé", () => {
@@ -505,9 +521,9 @@ describe("scenarios (GARDE-005 … GARDE-011)", () => {
         prefinancedCesuMonthlyEur: 50,
       });
       expect(r.status).toBe("partial");
-      expect(
-        r.notes.some((n) => n.includes("Déclaration fiscale") && n.includes("7DR")),
-      ).toBe(true);
+      expect(r.notes.some((n) => n.includes("Déclaration fiscale") && n.includes("7DR"))).toBe(
+        true,
+      );
       expect(r.notes.some((n) => n.includes("CMG et CESU préfinancé"))).toBe(true);
     });
 
@@ -533,16 +549,14 @@ describe("scenarios (GARDE-005 … GARDE-011)", () => {
       });
       expect(r.status).toBe("partial");
       expect(r.trace?.coFamilleHouseholdCostSharePercent).toBe(50);
-      expect(
-        r.notes.some((n) => n.includes("co-famille") && n.includes("50")),
-      ).toBe(true);
+      expect(r.notes.some((n) => n.includes("co-famille") && n.includes("50"))).toBe(true);
       expect(r.trace!.estimatedMonthlyHouseholdCashOutEur).toBe(
         r.trace!.netMonthlyBurdenAfterCreditEur + 20,
       );
       const t = renderNounou(r);
-      expect(t.lignes.some((l) => l.libelle.includes("Part de coût de ce foyer (co-famille, %)"))).toBe(
-        true,
-      );
+      expect(
+        t.lignes.some((l) => l.libelle.includes("Part de coût de ce foyer (co-famille, %)")),
+      ).toBe(true);
       expect(t.lignes.some((l) => l.libelle.includes("Frais annexes"))).toBe(true);
     });
   });

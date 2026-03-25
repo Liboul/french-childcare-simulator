@@ -152,7 +152,8 @@ export function computeAssistanteMaternelle(
     });
 
   const monthlyAncillaryCostsEur = Math.max(0, input.monthlyAncillaryCostsEur ?? 0);
-  const estimatedMonthlyHouseholdCashOutEur = netMonthlyBurdenAfterCreditEur + monthlyAncillaryCostsEur;
+  const estimatedMonthlyHouseholdCashOutEur =
+    netMonthlyBurdenAfterCreditEur + monthlyAncillaryCostsEur;
 
   const notes: string[] = [
     "Garde chez une assistante maternelle agréée : crédit d’impôt **frais de garde hors du domicile** (CGI art. 200 quater B), pas le crédit emploi à domicile — aligné BOFiP / Service-Public pour ce mode.",

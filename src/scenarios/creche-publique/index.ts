@@ -98,7 +98,8 @@ export function computeCrechePublique(input: CrechePubliqueInput): CrechePubliqu
     });
 
   const monthlyAncillaryCostsEur = Math.max(0, input.monthlyAncillaryCostsEur ?? 0);
-  const estimatedMonthlyHouseholdCashOutEur = netMonthlyBurdenAfterCreditEur + monthlyAncillaryCostsEur;
+  const estimatedMonthlyHouseholdCashOutEur =
+    netMonthlyBurdenAfterCreditEur + monthlyAncillaryCostsEur;
 
   const notes: string[] = [
     "Calcul partiel : crédit d’impôt — taux et plafonds dans la règle `credit-impot-garde-hors-domicile` du pack (souvent 50 % de la base éligible plafonnée ; garde alternée si `custody: shared`). Base éligible : voir `deductCmgFromBase` dans `params.md`.",

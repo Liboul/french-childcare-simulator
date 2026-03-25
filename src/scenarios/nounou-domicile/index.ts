@@ -126,7 +126,10 @@ function resolveHouseholdShareFraction(input: NounouDomicileInput): number {
   if (input.householdShareFraction !== undefined && input.householdShareFraction !== null) {
     return clamp01(input.householdShareFraction);
   }
-  if (input.coFamilleHouseholdCostSharePercent !== undefined && input.coFamilleHouseholdCostSharePercent !== null) {
+  if (
+    input.coFamilleHouseholdCostSharePercent !== undefined &&
+    input.coFamilleHouseholdCostSharePercent !== null
+  ) {
     return clamp01(input.coFamilleHouseholdCostSharePercent / 100);
   }
   return 1;
@@ -140,7 +143,12 @@ export function computeNounouDomicile(input: NounouDomicileInput): NounouDomicil
   const hasHourly =
     hourlyRate !== undefined && hourlyRate !== null && !Number.isNaN(hourlyRate) && hourlyRate > 0;
 
-  if (hourlyRate !== undefined && hourlyRate !== null && !Number.isNaN(hourlyRate) && hourlyRate <= 0) {
+  if (
+    hourlyRate !== undefined &&
+    hourlyRate !== null &&
+    !Number.isNaN(hourlyRate) &&
+    hourlyRate <= 0
+  ) {
     return {
       scenarioSlug: "nounou-domicile",
       status: "stub",
@@ -150,14 +158,11 @@ export function computeNounouDomicile(input: NounouDomicileInput): NounouDomicil
   }
 
   const rawCost = input.monthlyEmploymentCostEur;
-  const hasMonthly =
-    rawCost !== undefined && rawCost !== null && !Number.isNaN(rawCost as number);
+  const hasMonthly = rawCost !== undefined && rawCost !== null && !Number.isNaN(rawCost as number);
 
   let monthlyEmploymentCostEur: number;
   let costComputedFromHourly = false;
-  let hourlyComputed:
-    | ReturnType<typeof computeNounouEmployerCostFromHourly>
-    | undefined;
+  let hourlyComputed: ReturnType<typeof computeNounouEmployerCostFromHourly> | undefined;
 
   if (hasHourly) {
     const weeklyH = input.weeklyHoursFullTime ?? 40;
@@ -165,7 +170,9 @@ export function computeNounouDomicile(input: NounouDomicileInput): NounouDomicil
       return {
         scenarioSlug: "nounou-domicile",
         status: "stub",
-        notes: ["`weeklyHoursFullTime` doit être > 0 si vous estimez le coût depuis le brut horaire."],
+        notes: [
+          "`weeklyHoursFullTime` doit être > 0 si vous estimez le coût depuis le brut horaire.",
+        ],
         meta,
       };
     }
@@ -279,12 +286,17 @@ export function computeNounouDomicile(input: NounouDomicileInput): NounouDomicil
   let cesuSubstitutionDeltaBrutEur: number | undefined;
   let cesuSubstitutionNetSalaryImpactEur: number | undefined;
   let cesuNetGainVsSalaryEur: number | undefined;
-  if (cesuUses && cesuMode === "substitutes_constant_employer_cost" && effectivePrefinancedCesuMonthlyEur > 0) {
+  if (
+    cesuUses &&
+    cesuMode === "substitutes_constant_employer_cost" &&
+    effectivePrefinancedCesuMonthlyEur > 0
+  ) {
     const deltaBrut = effectivePrefinancedCesuMonthlyEur / (1 + patronalRateForCesuSubstitution);
     cesuSubstitutionDeltaBrutEur = Math.round(deltaBrut * 100) / 100;
     const netImpact = deltaBrut * (1 - TAUX_SALARIAL_APPROX_POUR_SUBSTITUTION_CESU);
     cesuSubstitutionNetSalaryImpactEur = Math.round(netImpact * 100) / 100;
-    cesuNetGainVsSalaryEur = Math.round((effectivePrefinancedCesuMonthlyEur - netImpact) * 100) / 100;
+    cesuNetGainVsSalaryEur =
+      Math.round((effectivePrefinancedCesuMonthlyEur - netImpact) * 100) / 100;
   }
 
   const totalEmployerOutlayMonthlyEur =

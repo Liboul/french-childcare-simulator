@@ -80,7 +80,9 @@ export function buildCrecheBerceauEmployeurLignes(
     lignes.push({
       libelle: "Chèques CESU préfinancés employeur (annuel, effectif garde)",
       montantEur: 0,
-      calcul: `${String(t.effectivePrefinancedCesuAnnualEur)} € / an effectifs — ${modeLabel}${fracNote} Brut saisi : ${String(t.prefinancedCesuAnnualEur)} €. Seuil social : lignes ci-dessous sur ` + "`annualEmployerChildcareAidEur` seul.",
+      calcul:
+        `${String(t.effectivePrefinancedCesuAnnualEur)} € / an effectifs — ${modeLabel}${fracNote} Brut saisi : ${String(t.prefinancedCesuAnnualEur)} €. Seuil social : lignes ci-dessous sur ` +
+        "`annualEmployerChildcareAidEur` seul.",
       sources: cesuRule ? sourcesFromRule(cesuRule) : [],
     });
     lignes.push({
@@ -127,7 +129,8 @@ export function buildCrecheBerceauEmployeurLignes(
   const brutPatronalBilanApplies =
     !t.employerAidSalaryTaxableExcessApplies ||
     t.annualEmployerNetCostAfterCifEur !== undefined ||
-    (t.prefinancedCesuEmployerUses && t.prefinancedCesuMode === "substitutes_constant_employer_cost");
+    (t.prefinancedCesuEmployerUses &&
+      t.prefinancedCesuMode === "substitutes_constant_employer_cost");
   if (brutPatronalBilanApplies) {
     lignes.push({
       libelle: "Arbitrage brut / cotisations patronales (information)",

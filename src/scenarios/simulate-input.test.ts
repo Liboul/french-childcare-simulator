@@ -118,18 +118,18 @@ describe("simulate-input", () => {
   });
 
   it("accepts monthlyAncillaryCostsEur on all slugs", () => {
-    expect(
-      validateSimulateInput("creche-publique", { monthlyAncillaryCostsEur: 40 }).ok,
-    ).toBe(true);
+    expect(validateSimulateInput("creche-publique", { monthlyAncillaryCostsEur: 40 }).ok).toBe(
+      true,
+    );
     expect(
       validateSimulateInput("creche-berceau-employeur", { monthlyAncillaryCostsEur: 20 }).ok,
     ).toBe(true);
     expect(
       validateSimulateInput("assistante-maternelle", { monthlyAncillaryCostsEur: 15 }).ok,
     ).toBe(true);
-    expect(
-      validateSimulateInput("nounou-domicile", { monthlyAncillaryCostsEur: 30 }).ok,
-    ).toBe(true);
+    expect(validateSimulateInput("nounou-domicile", { monthlyAncillaryCostsEur: 30 }).ok).toBe(
+      true,
+    );
   });
 
   it("accepts coFamilleHouseholdCostSharePercent on nounou-domicile", () => {

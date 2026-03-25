@@ -43,7 +43,8 @@ export function computeNounouEmployerCostFromHourly(input: {
   const monthlyHoursForHousehold =
     (input.weeklyHoursFullTime * input.householdShareFraction * 52) / 12;
   const brutMensuel = Math.round(input.hourlyGrossRateEur * monthlyHoursForHousehold * 100) / 100;
-  const { chargesEur, effectivePatronalRateApplied } = computePatronalChargesFromGrossMonthlyEur(brutMensuel);
+  const { chargesEur, effectivePatronalRateApplied } =
+    computePatronalChargesFromGrossMonthlyEur(brutMensuel);
   const icp = input.includeIcp ? Math.round(brutMensuel * 0.1 * 100) / 100 : 0;
   const meal = Math.max(0, input.monthlyMealAllowanceEur);
   const monthlyEmploymentCostEur = Math.round((brutMensuel + chargesEur + icp + meal) * 100) / 100;

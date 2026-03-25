@@ -7,7 +7,10 @@ const fraction01 = z.number().finite().min(0).max(1);
 const fiscalSatelliteKeys = ["revenuNetImposableEur", "nombreParts"] as const;
 
 /** Si CESU préfinancé employeur : le mode est obligatoire. */
-export function prefinancedCesuModeRequiredRefine(data: Record<string, unknown>, ctx: RefinementCtx): void {
+export function prefinancedCesuModeRequiredRefine(
+  data: Record<string, unknown>,
+  ctx: RefinementCtx,
+): void {
   if (data.prefinancedCesuEmployerUses === true && data.prefinancedCesuMode == null) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,

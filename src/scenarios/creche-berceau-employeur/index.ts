@@ -142,11 +142,13 @@ export function computeCrecheBerceauEmployeur(
     });
 
   const monthlyAncillaryCostsEur = Math.max(0, input.monthlyAncillaryCostsEur ?? 0);
-  const estimatedMonthlyHouseholdCashOutEur = netMonthlyBurdenAfterCreditEur + monthlyAncillaryCostsEur;
+  const estimatedMonthlyHouseholdCashOutEur =
+    netMonthlyBurdenAfterCreditEur + monthlyAncillaryCostsEur;
 
   const avantageParams = readAvantageEmployeurCrecheParams(pack);
   const exemptPerChild = avantageParams?.exemptAnnualAmountPerChildEur ?? 1830;
-  const employerAidSalaryTaxableExcessApplies = input.employerAidSalaryTaxableExcessApplies !== false;
+  const employerAidSalaryTaxableExcessApplies =
+    input.employerAidSalaryTaxableExcessApplies !== false;
   const annualEmployerNetCostAfterCifEur =
     input.annualEmployerNetCostAfterCifEur !== undefined &&
     input.annualEmployerNetCostAfterCifEur !== null &&
