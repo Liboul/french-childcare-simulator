@@ -374,6 +374,49 @@ describe("scenarios (GARDE-005 … GARDE-011)", () => {
     expect(r.trace?.monthlyCmgEur).toBe(80);
   });
 
+  it("nounou — coût depuis brut horaire + Navigo + crédit (validation terrain, ±1,5 €)", () => {
+    const r = computeNounouDomicile({
+      hourlyGrossRateEur: 15,
+      weeklyHoursFullTime: 40,
+      householdShareFraction: 0.4444,
+      includeIcp: true,
+      nounouEmploymentModel: "co_famille",
+      coFamilleHouseholdCostSharePercent: 44.44,
+      monthlyNavigoShareEur: 20,
+      monthlyHouseholdIncomeForCmgEur: 10000,
+      childrenCountForCreditCeiling: 1,
+      revenuNetImposableEur: 120_000,
+      nombreParts: 2.5,
+    });
+    expect(r.status).toBe("partial");
+    const t = r.trace!;
+    expect(t.monthlyEmploymentCostComputedFromHourly).toBe(true);
+    expect(Math.abs(t.computedMonthlyGrossSalaryEur! - 1156)).toBeLessThanOrEqual(1);
+    expect(Math.abs(t.computedMonthlyPatronalChargesEur! - 521)).toBeLessThanOrEqual(1);
+    expect(Math.abs(t.computedMonthlyIcpEur! - 116)).toBeLessThanOrEqual(1);
+    expect(Math.abs(t.monthlyEmploymentCostEur - 1793)).toBeLessThanOrEqual(1);
+    expect(t.annualCreditEmploiDomicileEur).toBe(6750);
+    expect(Math.abs(t.netMonthlyBurdenAfterCreditEur - 1230)).toBeLessThanOrEqual(1.5);
+    expect(t.monthlyNavigoShareEur).toBe(20);
+    expect(Math.abs(t.estimatedMonthlyHouseholdCashOutEur - 1251)).toBeLessThanOrEqual(1.5);
+  });
+
+  it("nounou — CESU substitutes : trace delta brut ≠ montant CESU", () => {
+    const r = computeNounouDomicile({
+      monthlyEmploymentCostEur: 900,
+      monthlyCmgPaidEur: 100,
+      prefinancedCesuEmployerUses: true,
+      prefinancedCesuMonthlyEur: 200,
+      prefinancedCesuMode: "substitutes_constant_employer_cost",
+    });
+    expect(r.status).toBe("partial");
+    const t = r.trace!;
+    expect(t.cesuSubstitutionDeltaBrutEur).toBeDefined();
+    expect(t.cesuSubstitutionDeltaBrutEur!).not.toBe(200);
+    expect(t.cesuSubstitutionNetSalaryImpactEur).toBeDefined();
+    expect(t.cesuNetGainVsSalaryEur).toBeDefined();
+  });
+
   describe("CMG × CESU préfinancé, frais annexes, co-famille (couverture conversation)", () => {
     it("creche publique : frais annexes dans trace, note et tableau de bilan", () => {
       const r = computeCrechePublique({

@@ -30,13 +30,49 @@ export function buildNounouDomicileLignes(
     : "taux du pack";
 
   lignes.push({
-    libelle: "Coût employeur mensuel (salaire + cotisations)",
+    libelle: "Coût employeur mensuel (salaire + cotisations + ICP éventuel)",
     montantEur: t.monthlyEmploymentCostEur,
-    calcul: t.prefinancedCesuEmployerUses
-      ? "Saisie — assiette CMG / crédit 199 (voir mode CESU : en plus ou arbitrage même enveloppe)."
-      : "Saisie utilisateur — Pajemploi / attestations fiscales.",
+    calcul:
+      t.monthlyEmploymentCostComputedFromHourly === true
+        ? "Estimé depuis brut horaire × heures (part foyer) + cotisations Urssaf (min 44,696 % + 5 € vs 47,396 %) + ICP 10 % si activé (+ repas) — voir trace."
+        : t.prefinancedCesuEmployerUses
+          ? "Saisie — assiette CMG / crédit 199 (voir mode CESU : en plus ou arbitrage même enveloppe)."
+          : "Saisie utilisateur — Pajemploi / attestations fiscales.",
     sources: [],
   });
+
+  if (
+    t.monthlyEmploymentCostComputedFromHourly &&
+    t.computedMonthlyGrossSalaryEur !== undefined &&
+    t.computedMonthlyPatronalChargesEur !== undefined
+  ) {
+    lignes.push({
+      libelle: "Brut mensuel (foyer, dérivé du contrat)",
+      montantEur: t.computedMonthlyGrossSalaryEur,
+      calcul:
+        t.monthlyHoursForHousehold !== undefined
+          ? `Heures mensuelles foyer ≈ ${String(t.monthlyHoursForHousehold)} h — voir params.md.`
+          : "Décomposition coût horaire.",
+      sources: [],
+    });
+    lignes.push({
+      libelle: "Cotisations patronales Urssaf (estimation)",
+      montantEur: t.computedMonthlyPatronalChargesEur,
+      calcul:
+        t.effectivePatronalRateApplied !== undefined
+          ? `Taux effectif ≈ ${String(Math.round(t.effectivePatronalRateApplied * 10000) / 100)} % du brut — min(brut × 44,696 % + 5 €, brut × 47,396 %).`
+          : "Voir params.md (Pajemploi 2026).",
+      sources: [],
+    });
+    if ((t.computedMonthlyIcpEur ?? 0) > 0) {
+      lignes.push({
+        libelle: "Indemnités congés payés (10 % du brut, inclus dans coût employeur)",
+        montantEur: t.computedMonthlyIcpEur ?? 0,
+        calcul: "Option `includeIcp` — sinon congés réels hors modèle.",
+        sources: [],
+      });
+    }
+  }
 
   if (t.nounouEmploymentModel !== undefined) {
     lignes.push({
@@ -98,6 +134,24 @@ export function buildNounouDomicileLignes(
         calcul: NOTE_ARBITRAGE_BRUT_CHARGES_PATRONALES,
         sources: [],
       });
+      if (
+        t.cesuSubstitutionDeltaBrutEur !== undefined &&
+        t.cesuSubstitutionNetSalaryImpactEur !== undefined &&
+        t.cesuNetGainVsSalaryEur !== undefined
+      ) {
+        lignes.push({
+          libelle: "Substitution CESU — baisse de brut équivalente (indicatif)",
+          montantEur: t.cesuSubstitutionDeltaBrutEur,
+          calcul: "CESU effectif ÷ (1 + τ patronal) — pas euro pour euro sur le brut.",
+          sources: [],
+        });
+        lignes.push({
+          libelle: "Substitution CESU — impact net salarial approx.",
+          montantEur: t.cesuSubstitutionNetSalaryImpactEur,
+          calcul: "× (1 − 22 %) — hypothèse documentée, hors paie réelle.",
+          sources: [],
+        });
+      }
     }
   }
 
@@ -153,10 +207,20 @@ export function buildNounouDomicileLignes(
     sources: [],
   });
 
+  if (t.monthlyNavigoShareEur > 0) {
+    lignes.push({
+      libelle: "Pass Navigo — part employeur (hors crédit 199)",
+      montantEur: t.monthlyNavigoShareEur,
+      calcul:
+        "Obligation Île-de-France (50 % abonnement) — **non** éligible au crédit emploi à domicile ; effort cash uniquement.",
+      sources: [],
+    });
+  }
+
   lignes.push({
-    libelle: "Effort total estimé (ménage, après crédit + annexes)",
+    libelle: "Effort total estimé (ménage, après crédit + annexes + Navigo)",
     montantEur: t.estimatedMonthlyHouseholdCashOutEur,
-    calcul: `${String(t.netMonthlyBurdenAfterCreditEur)} € + ${String(t.monthlyAncillaryCostsEur)} €`,
+    calcul: `${String(t.netMonthlyBurdenAfterCreditEur)} € + ${String(t.monthlyAncillaryCostsEur)} € + ${String(t.monthlyNavigoShareEur)} €`,
     sources: [],
   });
 

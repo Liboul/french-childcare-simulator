@@ -75,6 +75,12 @@ export const simulateInputAllowedKeysBySlug: Record<string, readonly string[]> =
   ],
   "nounou-domicile": [
     "monthlyEmploymentCostEur",
+    "hourlyGrossRateEur",
+    "weeklyHoursFullTime",
+    "householdShareFraction",
+    "includeIcp",
+    "monthlyMealAllowanceEur",
+    "monthlyNavigoShareEur",
     "monthlyHouseholdIncomeForCmgEur",
     "householdChildRank",
     "monthlyCmgPaidEur",
@@ -154,6 +160,12 @@ const nounouEmploymentModelSchema = z.enum(["full_single_employer", "co_famille"
 const nounouDomicileInputSchema = z
   .object({
     monthlyEmploymentCostEur: nn.optional(),
+    hourlyGrossRateEur: nn.optional(),
+    weeklyHoursFullTime: z.number().finite().positive().optional(),
+    householdShareFraction: fraction01.optional(),
+    includeIcp: z.boolean().optional(),
+    monthlyMealAllowanceEur: nn.optional(),
+    monthlyNavigoShareEur: nn.optional(),
     monthlyHouseholdIncomeForCmgEur: nn.optional(),
     householdChildRank: posInt.optional(),
     monthlyCmgPaidEur: nn.optional(),

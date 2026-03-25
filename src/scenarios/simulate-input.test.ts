@@ -139,6 +139,18 @@ describe("simulate-input", () => {
     expect(r.ok).toBe(true);
   });
 
+  it("accepts nounou brut horaire + Navigo + ICP", () => {
+    const r = validateSimulateInput("nounou-domicile", {
+      hourlyGrossRateEur: 15,
+      weeklyHoursFullTime: 40,
+      householdShareFraction: 0.4444,
+      includeIcp: true,
+      monthlyNavigoShareEur: 20,
+      monthlyHouseholdIncomeForCmgEur: 5000,
+    });
+    expect(r.ok).toBe(true);
+  });
+
   it("accepts assistante prefinancedCesuEmployerUses without CESU mode", () => {
     const r = validateSimulateInput("assistante-maternelle", {
       prefinancedCesuEmployerUses: true,
