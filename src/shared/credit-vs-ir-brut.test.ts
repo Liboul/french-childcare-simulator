@@ -1,5 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import { creditImpotVsIrBrutIndicatif } from "./credit-vs-ir-brut";
+import {
+  computeCreditVsIrBrutSatellite,
+  creditImpotVsIrBrutIndicatif,
+} from "./credit-vs-ir-brut";
+import { getRulePack } from "./load-rules";
 
 describe("creditImpotVsIrBrutIndicatif", () => {
   test("crédit inférieur à l’IR : tout imputable, pas d’excédent remboursable", () => {
@@ -14,5 +18,20 @@ describe("creditImpotVsIrBrutIndicatif", () => {
     expect(r.creditImputableCommeReductionIrEur).toBe(2100);
     expect(r.excedentRemboursableEur).toBe(900);
     expect(r.notes.length).toBeGreaterThan(0);
+  });
+});
+
+describe("computeCreditVsIrBrutSatellite — notes agent (RNI figé, coût réel global)", () => {
+  test("notes mentionnent baisse de brut, IR non recalculé et diminution d’IR hors lignes garde", () => {
+    const pack = getRulePack();
+    const sat = computeCreditVsIrBrutSatellite(pack, 1750, {
+      revenuNetImposableEur: 45_000,
+      nombreParts: 2,
+    });
+    expect(sat).not.toBeNull();
+    const text = sat!.notes.join(" ");
+    expect(text).toContain("baisse de brut");
+    expect(text).toContain("diminution d’IR");
+    expect(text).toContain("coût réel global");
   });
 });

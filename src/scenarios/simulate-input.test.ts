@@ -145,4 +145,41 @@ describe("simulate-input", () => {
     });
     expect(r.ok).toBe(true);
   });
+
+  it("accepts creche-berceau-employeur CIF / excédent salaire fields", () => {
+    const r = validateSimulateInput("creche-berceau-employeur", {
+      monthlyParticipationEur: 400,
+      annualEmployerChildcareAidEur: 12000,
+      employerAidSalaryTaxableExcessApplies: false,
+      annualEmployerNetCostAfterCifEur: 3500,
+      revenuNetImposableEur: 80_000,
+      nombreParts: 2,
+    });
+    expect(r.ok).toBe(true);
+  });
+
+  it("accepts employerAidSalaryTaxableExcessApplies false without annualEmployerNetCostAfterCifEur", () => {
+    const r = validateSimulateInput("creche-berceau-employeur", {
+      monthlyParticipationEur: 500,
+      employerAidSalaryTaxableExcessApplies: false,
+    });
+    expect(r.ok).toBe(true);
+  });
+
+  it("rejects negative annualEmployerNetCostAfterCifEur on creche-berceau-employeur", () => {
+    const r = validateSimulateInput("creche-berceau-employeur", {
+      monthlyParticipationEur: 300,
+      annualEmployerNetCostAfterCifEur: -100,
+    });
+    expect(r.ok).toBe(false);
+  });
+
+  it("rejects coFamilleHouseholdCostSharePercent out of 0–100", () => {
+    expect(
+      validateSimulateInput("nounou-domicile", { coFamilleHouseholdCostSharePercent: -1 }).ok,
+    ).toBe(false);
+    expect(
+      validateSimulateInput("nounou-domicile", { coFamilleHouseholdCostSharePercent: 101 }).ok,
+    ).toBe(false);
+  });
 });
