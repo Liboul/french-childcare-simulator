@@ -1,3 +1,4 @@
+import { NOTE_ARBITRAGE_BRUT_CHARGES_PATRONALES } from "../../shared/employer-brut-vs-charges-patronales-note";
 import { findRule } from "../../config/find-rule";
 import type { RulePack } from "../../config/schema";
 import { readCreditEmploiDomicileParams } from "../../shared/credit-emploi-domicile";
@@ -90,6 +91,14 @@ export function buildNounouDomicileLignes(
       calcul: `${String(t.monthlyEmploymentCostEur)} € + CESU effectif si mode on_top — sinon égal au coût saisi (substitutes).`,
       sources: [],
     });
+    if (t.prefinancedCesuMode === "substitutes_constant_employer_cost") {
+      lignes.push({
+        libelle: "Arbitrage brut / cotisations patronales (information)",
+        montantEur: 0,
+        calcul: NOTE_ARBITRAGE_BRUT_CHARGES_PATRONALES,
+        sources: [],
+      });
+    }
   }
 
   lignes.push({

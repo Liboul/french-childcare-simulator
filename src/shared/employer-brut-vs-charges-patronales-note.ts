@@ -1,0 +1,6 @@
+/**
+ * Rappel métier : arbitrage salaire ↔ avantage / CESU / prise en charge directe.
+ * Non utilisé pour un calcul numérique — uniquement notes et doc agent.
+ */
+export const NOTE_ARBITRAGE_BRUT_CHARGES_PATRONALES =
+  "Arbitrage brut / avantage employeur : une « neutralité » de **coût employeur total** (super-brut / masse salariale + avantage) ne se traduit **pas** par une baisse de **brut** égale, euro pour euro, au montant du CESU, de la prise en charge crèche ou de l’avantage défiscalisé — l’employeur **économise aussi** les **cotisations patronales** sur la portion de rémunération non versée. Le coefficient relève de la **paie / RH** ; ce moteur ne l’estime pas. Côté salarié, une baisse de **brut** tend à **réduire** le **revenu net imposable** et donc l’**IR** : le satellite **crédit vs IR** (`creditVsIrBrutSatellite`) utilise le **RNI saisi** sans le **recalculer** après cet arbitrage — pour une lecture cohérente, saisir un RNI **déjà** conforme à la situation **réelle** (bulletin) ou une hypothèse **révisée**. **Coût réel pour le ménage** : les lignes « effort » / reste à charge **garde** du moteur **ne** comptabilisent **pas** automatiquement ce **gain d’IR** (ni baisse de précompte, etc.) — pour un ordre de grandeur **global**, le **mentionner** ou repasser une simulation avec **`revenuNetImposableEur`** adapté.";

@@ -88,6 +88,8 @@ export function computeCreditVsIrBrutSatellite(
     ...foyer.warnings,
     ...cmp.notes,
     "Invariant : `netMonthlyBurdenAfterCreditEur` intègre déjà le crédit d’impôt garde dans ce scénario — ne pas le soustraire à nouveau d’un revenu ou d’un « disponible » dérivé de l’IR.",
+    "Le **revenu net imposable** et les **parts** sont ceux **saisis** : une **baisse de brut** (arbitrage employeur, CESU, berceau, etc.) modifierait en principe le RNI et l’**IR** — ce satellite **ne recalcule pas** cette chaîne ; utiliser un RNI **déjà** cohérent avec la situation réelle ou une **hypothèse** ajustée.",
+    "Pour un **coût réel global** côté foyer quand le brut baisse : le **reste à charge garde** (`netMonthlyBurdenAfterCreditEur`, etc.) **n’intègre pas** la **diminution d’IR** (ni autres effets fiscaux hors crédit garde) induite par ce RNI plus bas — les inclure **explicitement** dans l’analyse (deuxième simulation avec RNI révisé, ou commentaire) si l’utilisateur compare des situations avec / sans arbitrage salarial.",
   ];
   return {
     revenuNetImposableEur: fiscal.revenuNetImposableEur,

@@ -4,18 +4,20 @@
 
 Même **mode de garde en structure** que la crèche publique pour le **crédit d’impôt F8** et la **CMG structure** : la saisie `monthlyParticipationEur` est la **part familiale** (facture).
 
-En plus, l’**aide employeur** annuelle permet d’appliquer le **seuil d’exonération** par enfant (`avantage-employeur-creche-seuil-exoneration` dans le pack, DR-03 / jurisprudence — règle en `todoVerify`).
+En plus, l’**aide employeur** annuelle peut être ventilée avec un **seuil d’exonération** par enfant et un **excédent potentiellement imposable en salaire** (`avantage-employeur-creche-seuil-exoneration` dans le pack, DR-03 / jurisprudence — `todoVerify`). **Ce modèle ne convient pas** à toutes les conventions (voir **`employerAidSalaryTaxableExcessApplies`** ci-dessous — ex. **crédit d’impôt famille** entreprise).
 
 ## Entrées (`CrecheBerceauEmployeurInput`)
 
 | Champ                               | Obligatoire                        | Sens                                                                                            |
 | ----------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `monthlyParticipationEur`           | Oui pour **partial**               | € / mois — part payée par le foyer (comme crèche publique). **Agent** : proposer d’estimer si inconnu (voir `INTAKE.md` du skill, `params.md` crèche publique). |
+| `monthlyParticipationEur`           | Oui pour **partial**               | € / mois — part payée par le foyer (comme crèche publique). **Agent** : proposer d’estimer si inconnu ; **PSU vs PAJE** : voir section ci-dessous et `INTAKE.md` du skill. |
 | `monthlyCmgStructureEur`            | Non                                | CMG structure (mensuel).                                                                         |
 | `childrenCount`                     | Non (défaut `1`)                   | Enfants pour lesquels **ces dépenses de garde en structure** ouvrent le plafond F8 (multiplicateur des plafonds « par enfant ») — pas forcément tous les enfants du foyer. |
 | `custody`                           | Non                                | `full` \| `shared`.                                                                             |
-| `annualEmployerChildcareAidEur`     | Non                                | € / an — aide employeur pour cette garde (0 si inconnue).                                       |
-| `childrenCountForEmployerThreshold` | Non                                | Nombre d’enfants pour le plafond **1 830 € × n** (défaut = `childrenCount`).                    |
+| `annualEmployerChildcareAidEur`     | Non                                | € / an — montant versé / engagé par l’employeur pour cette garde (ex. facture crèche prise en charge), **0** si inconnue. |
+| `employerAidSalaryTaxableExcessApplies` | Non (défaut `true`)           | Si **`true`** : excédent au-delà du seuil pack → modélisation « imposable en salaire ». Si **`false`** : **ne pas** appliquer cette modélisation (ex. **CIF** entreprise : le salarié **ne** reçoit **pas** 16 000 € en revenu imposable — la prise en charge est réduite côté employeur par le crédit ; arbitrage **brut** pour coût employeur neutre). |
+| `annualEmployerNetCostAfterCifEur`   | Non                                | € / an — **information** : coût employeur **après** crédit d’impôt famille (ex. 4 000 € quand 16 000 € sont versés à la structure). Ne modifie pas le F8 ; sert au **bilan** et à l’**arbitrage** avec le brut. |
+| `childrenCountForEmployerThreshold` | Non                                | Nombre d’enfants pour le plafond **1 830 € × n** (défaut = `childrenCount`) — utilisé **seulement** si `employerAidSalaryTaxableExcessApplies` est `true`. |
 | `revenuNetImposableEur`             | Non (avec `nombreParts`)           | € / an — avec `nombreParts` : `trace.creditVsIrBrutSatellite` (crédit F8 vs IR brut indicatif). |
 | `nombreParts`                       | Non (avec `revenuNetImposableEur`) | Parts — **toujours** avec `revenuNetImposableEur`.                                              |
 | `prefinancedCesuEmployerUses`       | Non (défaut `false`)               | CESU préfinancés employeur pour la garde ? Si `true`, **`prefinancedCesuMode` obligatoire**.      |
@@ -24,6 +26,15 @@ En plus, l’**aide employeur** annuelle permet d’appliquer le **seuil d’exo
 | `childcareProviderAcceptsCesu`      | Non                              | La crèche accepte-t-elle les CESU ? **Agent** : poser la question. |
 | `prefinancedCesuAvailableForChildcareFraction` | Non (défaut 1)      | Entre **0** et **1** — part du volume CESU employeur **utilisable pour cette garde** si une partie sert à d’autres services. |
 | `monthlyAncillaryCostsEur`    | Non (défaut `0`)              | € / mois               | Repas, transport, adhésion… hors F8 si non éligibles — ajoutés au reste à charge après crédit (`estimatedMonthlyHouseholdCashOutEur`). |
+
+## Participation — PSU vs PAJE (berceau / inter-entreprise)
+
+Même clé **`monthlyParticipationEur`** que pour la crèche publique : **toujours** la part **famille** mensuelle (facture ou estimation), cohérente avec la CMG.
+
+- **Souvent** : crèche d’entreprise ou inter-entreprises **conventionnée PSU** → même **logique** de part familiale que les EAJE PSU (barème national). Estimation indicative : [Simuler le coût en crèche](https://www.monenfant.fr/simuler-le-cout-en-creche) (monenfant.fr), si le conventionnement PSU s’applique au cas réel.
+- **Crèche PAJE** ou structure **sans** barème PSU aligné sur le public : le montant **n’est pas** garanti identique au simulateur PSU ; **source fiable** : **crèche / gestionnaire** ou facture. Si l’utilisateur ignore le montant : l’**agent** peut **chercher sur Internet** pour une **estimation** (site de la structure, fourchettes, retours d’expérience), en précisant que seule la **structure** fait foi.
+
+L’**aide employeur** (`annualEmployerChildcareAidEur`, etc.) se comprend **en plus** de cette participation familiale ; elle ne remplace pas la définition de `monthlyParticipationEur` (voir `docs/research/` DR-04 / DR-08 sur le reliquat côté employeur).
 
 ## Cohérence participation / CMG (identique crèche publique)
 
@@ -39,12 +50,21 @@ Même lecture que pour la crèche publique : `rate`, plafonds par enfant et gard
 
 - `monthlyCreditEquivalentEur` = crédit annuel F8 ÷ **12** : mensualisation pédagogique (voir `params.md` crèche publique, **Trace**).
 
+## Aide employeur — crédit d’impôt famille (CIF) et excédent « salaire »
+
+- **Ne pas** confondre le **montant payé à la crèche** (`annualEmployerChildcareAidEur`, ex. 16 000 €) avec un **revenu imposable** pour le salarié : selon la **convention** et le **dispositif fiscal** (notamment **CIF** entreprise), la charge réelle employeur peut être bien inférieure (ex. 4 000 € après crédit), avec **neutralité** obtenue par **arbitrage sur le brut** — le moteur **ne** simule **pas** la paie ni le CIF.
+- **Brut ≠ montant de l’avantage (cotisations patronales)** : pour une **même** charge employeur totale (super-brut), la **réduction de salaire brut** qui compense une prise en charge ou un CESU **n’est pas** égale, en général, au montant nominal de l’avantage **en euros « salaire »**, parce que l’employeur **n’applique pas** les **cotisations patronales** sur la part de rémunération non versée. Coefficient = **paie / RH** ; le moteur ajoute une **note** et une **ligne d’information** dans le bilan dans ces contextes, **sans** coefficient numérique.
+- Si ce cas s’applique : **`employerAidSalaryTaxableExcessApplies: false`** pour **ne pas** afficher un faux « excédent imposable en salaire » basé sur le seuil 1 830 € × n. Utiliser **`annualEmployerNetCostAfterCifEur`** pour documenter le coût employeur après CIF (saisie utilisateur ou estimation).
+- **Agent** : si l’utilisateur décrit une prise en charge **directe** par l’employeur avec **CIF** et **sans** revenu imposable correspondant pour le salarié, **ne pas** laisser le défaut (`true`) — poser explicitement la question et passer **`employerAidSalaryTaxableExcessApplies: false`** avec les montants pertinents.
+- **Coût réel global foyer** : si l’arbitrage **baisse le brut**, l’**IR** du ménage peut **baisser** aussi — ce **gain** n’est **pas** ajouté aux lignes `netMonthlyBurdenAfterCreditEur` / effort garde ; l’**agent** doit le **rappeler** ou utiliser un **`revenuNetImposableEur`** **révisé** pour le satellite (voir `params.md` crèche publique, **Coût réel global**, et `INTAKE.md` du skill).
+
 ## Limites
 
-- Impact sur le **brut / avantages en nature** côté paie au-delà du seuil : **estimation** d’imposition, pas calcul de bulletin.
+- Impact sur le **brut / avantages en nature** côté paie au-delà du seuil : **estimation** lorsque le modèle seuil s’applique (`employerAidSalaryTaxableExcessApplies: true`) — pas calcul de bulletin.
 - Prise en charge employeur **non** déduite du crédit F8 si la **participation** saisie est **déjà** la part nette famille (cohérent avec BOFiP : assiette des frais réellement payés par le contribuable).
 
 ## CESU préfinancé employeur
 
-- Le **seuil d’exonération / excédent** sur l’aide employeur reste calculé sur **`annualEmployerChildcareAidEur`** seul. Le **total soutien employeur** (`trace.totalEmployerChildcareSupportAnnualEur`) = aide annuelle + CESU si `prefinancedCesuMode` = `on_top`.
+- Si **`employerAidSalaryTaxableExcessApplies: true`** : le **seuil d’exonération / excédent** sur l’aide employeur reste calculé sur **`annualEmployerChildcareAidEur`** seul. Si **`false`**, cette logique seuil / excédent salaire **n’est pas** appliquée (voir section CIF ci-dessus).
+- Le **total soutien employeur** (`trace.totalEmployerChildcareSupportAnnualEur`) = aide annuelle + CESU si `prefinancedCesuMode` = `on_top`.
 - **Agent (intake)** : toujours poser la question CESU et le mode **en plus** vs **même enveloppe** — `INTAKE.md` du skill.

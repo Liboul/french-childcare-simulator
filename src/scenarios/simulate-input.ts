@@ -58,6 +58,8 @@ export const simulateInputAllowedKeysBySlug: Record<string, readonly string[]> =
     "childcareProviderAcceptsCesu",
     "prefinancedCesuAvailableForChildcareFraction",
     "monthlyAncillaryCostsEur",
+    "employerAidSalaryTaxableExcessApplies",
+    "annualEmployerNetCostAfterCifEur",
     ...fiscalSatelliteKeys,
   ],
   "assistante-maternelle": [
@@ -124,6 +126,8 @@ const crecheBerceauEmployeurInputSchema = z
     childcareProviderAcceptsCesu: z.boolean().optional(),
     prefinancedCesuAvailableForChildcareFraction: fraction01.optional(),
     monthlyAncillaryCostsEur: nn.optional(),
+    employerAidSalaryTaxableExcessApplies: z.boolean().optional(),
+    annualEmployerNetCostAfterCifEur: nn.optional(),
     ...fiscalSatelliteFields,
   })
   .strict()

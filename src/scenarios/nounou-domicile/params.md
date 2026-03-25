@@ -19,7 +19,7 @@
 | `nombreParts`                     | Non (avec `revenuNetImposableEur`) | — **toujours** avec `revenuNetImposableEur`.                                                                                        |
 | `prefinancedCesuEmployerUses`     | Non (défaut `false`)               | L’employeur verse-t-il des **CESU préfinancés** ? Si `true`, **`prefinancedCesuMode` obligatoire**.                                 |
 | `prefinancedCesuMonthlyEur`       | Non                                | € / mois — montant de CESU employeur (indicatif pour la trace).                                                                     |
-| `prefinancedCesuMode`             | Si CESU oui                        | `on_top` \| `substitutes_constant_employer_cost` — en plus du coût saisi, ou arbitrage pour **même** coût employeur total.          |
+| `prefinancedCesuMode`             | Si CESU oui                        | `on_top` \| `substitutes_constant_employer_cost` — en plus du coût saisi, ou arbitrage pour **même** coût employeur total. En **`substitutes_constant_employer_cost`**, la **baisse de brut** qui compense le CESU **ne coïncide pas** euro pour euro avec le montant CESU : l’employeur **économise** les **cotisations patronales** sur la masse non versée (note dans le résultat ; pas de coefficient dans le moteur).          |
 | `childcareProviderAcceptsCesu`    | Non                                | La nounou / l’emploi accepte-t-il le paiement par CESU ? **Agent** : poser la question. |
 | `prefinancedCesuAvailableForChildcareFraction` | Non (défaut 1)      | Entre **0** et **1** — part du CESU employeur **utilisable pour cette garde** si une partie sert à d’autres services. |
 | `nounouEmploymentModel`           | Non                                | `full_single_employer` \| `co_famille` — un employeur pour ce contrat vs co-famille. **Agent** : **toujours** demander. |
@@ -61,6 +61,7 @@ La **base éligible** annuelle est `min(max(0, coût annuel − CMG annuelle), p
 - Pour `monthlyEmploymentCostEur`, ne pas seulement demander le montant — **proposer** d’estimer (simulateur Urssaf / emploi à domicile, ordre de grandeur salaire + cotisations, ou hypothèse explicite) si l’utilisateur ne le connaît pas ; voir `INTAKE.md` du skill.
 - **Toujours** demander les **CESU préfinancés employeur** : présence, montant mensuel si utile, mode **en plus** vs **arbitrage même coût total**, **acceptation des CESU par la nounou**, **fraction disponible pour la garde** si autres usages — voir `INTAKE.md` du skill (**CESU**).
 - **Toujours** demander **`nounouEmploymentModel`** : employeur unique (`full_single_employer`) vs **co-famille** (`co_famille`).
+- **Coût réel global foyer** : arbitrage **brut** / CESU peut **abaisser l’IR** (RNI plus bas) — **non** inclus dans `netMonthlyBurdenAfterCreditEur` ; rappel oral ou **`revenuNetImposableEur`** révisé pour le satellite — voir `params.md` crèche publique (**Coût réel global**) et `INTAKE.md` du skill.
 
 ## CESU préfinancé et moteur
 

@@ -413,7 +413,7 @@
         "exemptAnnualAmountPerChildEur": 1830,
         "excessTreatedAsTaxableBenefit": true
       },
-      "notes": "DR-03 s'appuie sur une jurisprudence (Cour de cass. 2019, via synthèse Légisocial) — pas d'URL primaire stabilisée dans le research pack.",
+      "notes": "DR-03 s'appuie sur une jurisprudence (Cour de cass. 2019, via synthèse Légisocial) — pas d'URL primaire stabilisée dans le research pack. Scénario berceau : si crédit d'impôt famille entreprise / convention sans avantage imposable salarial pour le salarié, désactiver la modélisation excédent via `employerAidSalaryTaxableExcessApplies: false` (voir `creche-berceau-employeur/params.md`).",
       "todoVerify": true
     },
     {

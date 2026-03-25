@@ -83,6 +83,9 @@ describe("scenarios (GARDE-005 … GARDE-011)", () => {
     expect(r.trace?.creditVsIrBrutSatellite?.annualCreditImpotEur).toBe(
       r.trace?.annualCreditGardeHorsDomicileEur,
     );
+    expect(
+      r.trace?.creditVsIrBrutSatellite?.notes.some((n) => n.includes("coût réel global")),
+    ).toBe(true);
   });
 
   it("creche berceau employeur stub sans participation", () => {
@@ -102,8 +105,40 @@ describe("scenarios (GARDE-005 … GARDE-011)", () => {
     });
     expect(r.status).toBe("partial");
     expect(r.trace?.employerTaxableExcessAnnualEur).toBe(170);
+    expect(r.trace?.employerAidSalaryTaxableExcessApplies).toBe(true);
     const t = renderCrecheBerceau(r);
     expect(t.lignes.some((l) => l.libelle.includes("Seuil exonération employeur"))).toBe(true);
+  });
+
+  it("creche berceau employeur — pas d’excédent salaire (CIF / convention)", () => {
+    const r = computeCrecheBerceauEmployeur({
+      monthlyParticipationEur: 800,
+      annualEmployerChildcareAidEur: 16000,
+      employerAidSalaryTaxableExcessApplies: false,
+      annualEmployerNetCostAfterCifEur: 4000,
+    });
+    expect(r.status).toBe("partial");
+    expect(r.trace?.employerTaxableExcessAnnualEur).toBe(0);
+    expect(r.trace?.employerAidSalaryTaxableExcessApplies).toBe(false);
+    expect(r.trace?.annualEmployerNetCostAfterCifEur).toBe(4000);
+    const t = renderCrecheBerceau(r);
+    expect(t.lignes.some((l) => l.libelle.includes("Excédent imposable salaire (modèle seuil désactivé)"))).toBe(
+      true,
+    );
+    expect(t.lignes.some((l) => l.libelle.includes("Coût employeur après CIF"))).toBe(true);
+    expect(r.notes.some((n) => n.includes("cotisations patronales"))).toBe(true);
+  });
+
+  it("nounou — CESU substitutes : note cotisations patronales", () => {
+    const r = computeNounouDomicile({
+      monthlyEmploymentCostEur: 900,
+      monthlyCmgPaidEur: 100,
+      prefinancedCesuEmployerUses: true,
+      prefinancedCesuMonthlyEur: 200,
+      prefinancedCesuMode: "substitutes_constant_employer_cost",
+    });
+    expect(r.status).toBe("partial");
+    expect(r.notes.some((n) => n.includes("cotisations patronales"))).toBe(true);
   });
 
   it("creche berceau employeur stub si participation negative", () => {

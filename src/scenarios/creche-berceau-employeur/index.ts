@@ -10,6 +10,7 @@ import {
   readCreditGardeHorsDomicileParams,
 } from "../../shared/credit-garde-hors-domicile";
 import { normalizeChildrenCountForCredit, normalizeCustody } from "../../shared/household";
+import { NOTE_ARBITRAGE_BRUT_CHARGES_PATRONALES } from "../../shared/employer-brut-vs-charges-patronales-note";
 import { getRulePack } from "../../shared/load-rules";
 import { monthlyCashflowAfterAides } from "../../shared/monthly-cashflow-after-aides";
 import type { PrefinancedCesuMode, ScenarioResultBase } from "../types";
@@ -42,6 +43,13 @@ export type CrecheBerceauEmployeurInput = {
   /** Part du CESU employeur utilisable pour cette garde (0–1) si une partie sert à d’autres services. Défaut 1. */
   prefinancedCesuAvailableForChildcareFraction?: number;
   monthlyAncillaryCostsEur?: number;
+  /**
+   * Si `true` (défaut) : excédent de l’aide employeur au-delà du seuil pack modélisé comme avantage imposable en salaire.
+   * Si `false` : **ne pas** appliquer cette modélisation (ex. prise en charge via **crédit d’impôt famille** entreprise, convention où le salarié **ne** supporte **pas** cet excédent en revenu imposable — coût employeur arbitré sur le brut ailleurs).
+   */
+  employerAidSalaryTaxableExcessApplies?: boolean;
+  /** € / an — coût **réel** employeur après CIF (ou équivalent), **information** pour l’arbitrage brut / coût employeur (ne modifie pas l’excédent salarial si `employerAidSalaryTaxableExcessApplies: false`). */
+  annualEmployerNetCostAfterCifEur?: number;
 };
 
 export type CrecheBerceauEmployeurTrace = {
@@ -58,6 +66,10 @@ export type CrecheBerceauEmployeurTrace = {
   employerExemptPortionAnnualEur: number;
   employerTaxableExcessAnnualEur: number;
   employerThresholdChildrenCount: number;
+  /** `false` si la saisie désactive le modèle seuil → excédent imposable salaire (ex. CIF entreprise). */
+  employerAidSalaryTaxableExcessApplies: boolean;
+  /** Saisie optionnelle : coût employeur après CIF. */
+  annualEmployerNetCostAfterCifEur?: number;
   creditVsIrBrutSatellite?: CreditVsIrBrutSatellite;
   prefinancedCesuEmployerUses: boolean;
   prefinancedCesuMode?: PrefinancedCesuMode;
@@ -134,12 +146,24 @@ export function computeCrecheBerceauEmployeur(
 
   const avantageParams = readAvantageEmployeurCrecheParams(pack);
   const exemptPerChild = avantageParams?.exemptAnnualAmountPerChildEur ?? 1830;
-  const { exemptPortionAnnualEur, taxableExcessAnnualEur } =
-    computeEmployerChildcareAidTaxableExcessAnnual(
-      exemptPerChild,
-      annualEmployerChildcareAidEur,
-      employerThresholdChildrenCount,
-    );
+  const employerAidSalaryTaxableExcessApplies = input.employerAidSalaryTaxableExcessApplies !== false;
+  const annualEmployerNetCostAfterCifEur =
+    input.annualEmployerNetCostAfterCifEur !== undefined &&
+    input.annualEmployerNetCostAfterCifEur !== null &&
+    !Number.isNaN(input.annualEmployerNetCostAfterCifEur)
+      ? Math.max(0, input.annualEmployerNetCostAfterCifEur)
+      : undefined;
+
+  const { exemptPortionAnnualEur, taxableExcessAnnualEur } = employerAidSalaryTaxableExcessApplies
+    ? computeEmployerChildcareAidTaxableExcessAnnual(
+        exemptPerChild,
+        annualEmployerChildcareAidEur,
+        employerThresholdChildrenCount,
+      )
+    : {
+        exemptPortionAnnualEur: annualEmployerChildcareAidEur,
+        taxableExcessAnnualEur: 0,
+      };
 
   const cesuUses = input.prefinancedCesuEmployerUses === true;
   const cesuAnnual = Math.max(0, input.prefinancedCesuAnnualEur ?? 0);
@@ -153,8 +177,23 @@ export function computeCrecheBerceauEmployeur(
 
   const notes: string[] = [
     "Calcul partiel : crédit d’impôt garde **hors domicile** (F8) sur la **part familiale** ; l’aide employeur ne réduit pas ce crédit si la participation saisie est déjà la part nette à payer.",
-    "Seuil d’exonération employeur : paramètre `avantage-employeur-creche-seuil-exoneration` (jurisprudence, `todoVerify` dans le pack) — excédent potentiellement imposable en salaire.",
+    employerAidSalaryTaxableExcessApplies
+      ? "Seuil d’exonération employeur : paramètre `avantage-employeur-creche-seuil-exoneration` (jurisprudence, `todoVerify` dans le pack) — excédent potentiellement imposable en salaire."
+      : "Excédent imposable salaire **non** modélisé ici (`employerAidSalaryTaxableExcessApplies: false`) — ex. crédit d’impôt famille entreprise / convention sans revenu imposable pour le salarié sur cette aide ; valider au dossier social et fiscal.",
   ];
+  if (!employerAidSalaryTaxableExcessApplies && annualEmployerNetCostAfterCifEur !== undefined) {
+    notes.push(
+      `Coût employeur après CIF (saisie) : ${String(annualEmployerNetCostAfterCifEur)} € / an — information pour arbitrage avec le brut ; distinct du montant versé à la structure (\`annualEmployerChildcareAidEur\`).`,
+    );
+  }
+
+  const brutPatronalNoteApplies =
+    !employerAidSalaryTaxableExcessApplies ||
+    annualEmployerNetCostAfterCifEur !== undefined ||
+    (cesuUses && cesuMode === "substitutes_constant_employer_cost");
+  if (brutPatronalNoteApplies) {
+    notes.push(NOTE_ARBITRAGE_BRUT_CHARGES_PATRONALES);
+  }
   if (monthlyParticipationEur > 0 && monthlyCmgStructureEur > 0) {
     notes.push(
       "Contrôle saisie : participation et CMG sont toutes deux non nulles — vérifier que la participation n’est pas déjà « nette » de la CMG (sinon double prise en compte pour la trésorerie et, si `deductCmgFromBase` est vrai dans le pack, pour la base du crédit). Voir `params.md` (crèche publique : Cohérence participation / CMG).",
@@ -175,7 +214,9 @@ export function computeCrecheBerceauEmployeur(
 
   if (cesuUses) {
     notes.push(
-      "CESU préfinancé employeur : le seuil d’exonération / excédent imposable reste calculé sur `annualEmployerChildcareAidEur` seul. Le **total soutien employeur** (aide déclarée + CESU effectif si « en plus ») figure en trace — voir `params.md`.",
+      employerAidSalaryTaxableExcessApplies
+        ? "CESU préfinancé employeur : le seuil d’exonération / excédent imposable reste calculé sur `annualEmployerChildcareAidEur` seul. Le **total soutien employeur** (aide déclarée + CESU effectif si « en plus ») figure en trace — voir `params.md`."
+        : "CESU préfinancé employeur : le **total soutien employeur** figure en trace ; le modèle excédent salaire sur l’aide est **désactivé** (`employerAidSalaryTaxableExcessApplies: false`) — voir `params.md`.",
     );
   }
   if (input.childcareProviderAcceptsCesu === false) {
@@ -222,6 +263,10 @@ export function computeCrecheBerceauEmployeur(
       employerExemptPortionAnnualEur: exemptPortionAnnualEur,
       employerTaxableExcessAnnualEur: taxableExcessAnnualEur,
       employerThresholdChildrenCount,
+      employerAidSalaryTaxableExcessApplies,
+      ...(annualEmployerNetCostAfterCifEur !== undefined
+        ? { annualEmployerNetCostAfterCifEur }
+        : {}),
       prefinancedCesuEmployerUses: cesuUses,
       ...(cesuMode !== undefined ? { prefinancedCesuMode: cesuMode } : {}),
       prefinancedCesuAnnualEur: cesuAnnual,

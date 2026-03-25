@@ -14,6 +14,7 @@ import {
   readCreditEmploiDomicileParams,
 } from "../../shared/credit-emploi-domicile";
 import { appendCesuPrefinanceCmgCompatibilityNotes } from "../../shared/cesu-cmg-compatibility-notes";
+import { NOTE_ARBITRAGE_BRUT_CHARGES_PATRONALES } from "../../shared/employer-brut-vs-charges-patronales-note";
 import { normalizeCustody, normalizeHouseholdChildRank } from "../../shared/household";
 import { getRulePack } from "../../shared/load-rules";
 import { monthlyCashflowAfterAides } from "../../shared/monthly-cashflow-after-aides";
@@ -235,6 +236,9 @@ export function computeNounouDomicile(input: NounouDomicileInput): NounouDomicil
     notes.push(
       "CESU préfinancé employeur : les lignes CMG / crédit d’impôt restent calculées sur `monthlyEmploymentCostEur` (assiette unique). Le **total charge employeur** inclut le CESU **effectif** (pondéré) en plus uniquement si le mode est `on_top` — voir tableau et `params.md`.",
     );
+    if (cesuMode === "substitutes_constant_employer_cost") {
+      notes.push(NOTE_ARBITRAGE_BRUT_CHARGES_PATRONALES);
+    }
     notes.push(
       "Déclaration fiscale : le crédit 199 (emploi à domicile) suit la **dépense réelle** déclarée (ex. case 7DR) — ne pas confondre avec un CESU **déclaratif** sur une autre ligne ; le moteur ne substitue pas automatiquement préfinancé vs base crédit.",
     );

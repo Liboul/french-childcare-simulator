@@ -1,3 +1,4 @@
+import { NOTE_ARBITRAGE_BRUT_CHARGES_PATRONALES } from "../../shared/employer-brut-vs-charges-patronales-note";
 import { findRule } from "../../config/find-rule";
 import type { RulePack } from "../../config/schema";
 import type { BilanLigne, BilanLigneSource } from "../bilan-table";
@@ -90,19 +91,51 @@ export function buildCrecheBerceauEmployeurLignes(
     });
   }
 
-  lignes.push({
-    libelle: "Seuil exonération employeur (part non imposable, annuel)",
-    montantEur: 0,
-    calcul: `Part dans la limite ${String(t.employerThresholdChildrenCount)} enfant(s) × seuil pack = ${String(t.employerExemptPortionAnnualEur)} € exonérés (règle avantage-employeur-creche-seuil-exoneration).`,
-    sources: avantageRule?.sources?.length ? sourcesFromRule(avantageRule) : [],
-  });
+  if (t.employerAidSalaryTaxableExcessApplies) {
+    lignes.push({
+      libelle: "Seuil exonération employeur (part non imposable, annuel)",
+      montantEur: 0,
+      calcul: `Part dans la limite ${String(t.employerThresholdChildrenCount)} enfant(s) × seuil pack = ${String(t.employerExemptPortionAnnualEur)} € exonérés (règle avantage-employeur-creche-seuil-exoneration).`,
+      sources: avantageRule?.sources?.length ? sourcesFromRule(avantageRule) : [],
+    });
 
-  lignes.push({
-    libelle: "Excédent d’aide employeur (imposable en salaire, estimation annuelle)",
-    montantEur: Math.round((t.employerTaxableExcessAnnualEur / 12) * 100) / 100,
-    calcul: `${String(t.employerTaxableExcessAnnualEur)} € / an au-delà du seuil — équivalent mensuel pour lecture (pas une charge de trésorerie).`,
-    sources: avantageRule?.sources?.length ? sourcesFromRule(avantageRule) : [],
-  });
+    lignes.push({
+      libelle: "Excédent d’aide employeur (imposable en salaire, estimation annuelle)",
+      montantEur: Math.round((t.employerTaxableExcessAnnualEur / 12) * 100) / 100,
+      calcul: `${String(t.employerTaxableExcessAnnualEur)} € / an au-delà du seuil — équivalent mensuel pour lecture (pas une charge de trésorerie).`,
+      sources: avantageRule?.sources?.length ? sourcesFromRule(avantageRule) : [],
+    });
+  } else {
+    lignes.push({
+      libelle: "Excédent imposable salaire (modèle seuil désactivé)",
+      montantEur: 0,
+      calcul:
+        "Saisie `employerAidSalaryTaxableExcessApplies: false` — pas d’excédent imposable en salaire modélisé (ex. crédit d’impôt famille entreprise, prise en charge non traitée comme avantage imposable pour le salarié). Valider convention / paie. Le montant `annualEmployerChildcareAidEur` reste une information sur la prise en charge versée à la structure.",
+      sources: [],
+    });
+  }
+
+  if (t.annualEmployerNetCostAfterCifEur !== undefined) {
+    lignes.push({
+      libelle: "Coût employeur après CIF (saisie, information)",
+      montantEur: 0,
+      calcul: `${String(t.annualEmployerNetCostAfterCifEur)} € / an — coût réel estimé employeur après crédit d’impôt famille (ou équivalent) ; à arbitrer avec le brut pour neutralité coût employeur (la baisse de brut **ne** coïncide **pas** euro pour euro avec ce montant ni avec la facture crèche : voir ligne suivante). Distinct de \`annualEmployerChildcareAidEur\` (versement / engagement côté structure).`,
+      sources: [],
+    });
+  }
+
+  const brutPatronalBilanApplies =
+    !t.employerAidSalaryTaxableExcessApplies ||
+    t.annualEmployerNetCostAfterCifEur !== undefined ||
+    (t.prefinancedCesuEmployerUses && t.prefinancedCesuMode === "substitutes_constant_employer_cost");
+  if (brutPatronalBilanApplies) {
+    lignes.push({
+      libelle: "Arbitrage brut / cotisations patronales (information)",
+      montantEur: 0,
+      calcul: NOTE_ARBITRAGE_BRUT_CHARGES_PATRONALES,
+      sources: [],
+    });
+  }
 
   lignes.push({
     libelle: "Base éligible crédit d’impôt F8 (équivalent mensuel, plafond par enfant)",
